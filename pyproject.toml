@@ -31,11 +31,11 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://.github.io/compas_grid"
-Documentation = "https://.github.io/compas_grid"
-Repository = ""
-Changelog = ""
-Issues = "https://github.com//compas_grid/issues"
+Homepage = "https://github.com/BRG-research/compas_grid.git"
+Documentation = "https://github.com/BRG-research/compas_grid.git"
+Repository = "https://github.com/BRG-research/compas_grid.git"
+Changelog = "https://github.com/BRG-research/compas_grid/blob/main/CHANGELOG.md"
+Issues = "https://github.com/BRG-research/compas_grid/issues"
 Forum = "https://forum.compas-framework.org/"
 
 # ============================================================================
