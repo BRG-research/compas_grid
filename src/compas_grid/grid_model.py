@@ -1,13 +1,14 @@
-from compas_model.models import Model
-from compas.datastructures import Mesh
-from compas_viewer import Viewer
-from compas_model.elements import PlateElement
-from compas.datastructures import VolMesh
-from compas.geometry import Point, Scale, Frame
-from compas.colors import Color, ColorMap
-from compas_viewer.scene import Tag
-from compas import json_dump, json_load
 from typing import *
+
+from compas import json_dump
+from compas.colors import Color
+from compas.colors import ColorMap
+from compas.datastructures import VolMesh
+from compas.geometry import Frame
+from compas.geometry import Point
+from compas.geometry import Scale
+from compas_model.models import Model
+from compas_viewer import Viewer
 
 
 class GridModel(Model):
@@ -174,8 +175,8 @@ class GridModel(Model):
         return [volmesh]
 
 
-viewer = Viewer(show_grid=False)
-counter = 0
+viewer: Viewer = Viewer(show_grid=False)
+counter: int = 0
 
 
 def add_objects_to_scene(viewer, output):
@@ -214,7 +215,6 @@ def add_objects_to_scene(viewer, output):
 if __name__ == "__main__":
     output = GridModel.from_meshgrid()
     json_dump(output, "grid.json")
-    a = json_load("grid.json")
     add_objects_to_scene(viewer, output)
     viewer.config.renderer.show_grid = False
 

@@ -4,23 +4,22 @@ from compas.geometry import Box
 from compas.geometry import bounding_box
 from compas.geometry import oriented_bounding_box
 from compas.itertools import pairwise
-
 from compas_model.elements import Element
 from compas_model.elements import Feature
 
 
-class ColumnFeature(Feature):
+class LineFeature(Feature):
     pass
 
 
-class ColumnElement(Element):
+class LineElement(Element):
     """Class representing block elements.
 
     Parameters
     ----------
     shape : :class:`compas.datastructures.Mesh`
         The base shape of the block.
-    features : list[:class:`beamFeature`], optional
+    features : list[:class:`LineFeature`], optional
         Additional block features.
     is_support : bool, optional
         Flag indicating that the block is a support.
@@ -33,7 +32,7 @@ class ColumnElement(Element):
     ----------
     shape : :class:`compas.datastructure.Mesh`
         The base shape of the block.
-    features : list[:class:`beamFeature`]
+    features : list[:class:`LineFeature`]
         A list of additional block features.
     is_support : bool
         Flag indicating that the block is a support.
@@ -43,20 +42,20 @@ class ColumnElement(Element):
     @property
     def __data__(self):
         # type: () -> dict
-        data = super(ColumnElement, self).__data__
+        data = super(LineElement, self).__data__
         data["bottom"] = self._bottom
         data["top"] = self._top
         data["features"] = self.features
         return data
 
     def __init__(self, bottom, top, features=None, frame=None, name=None):
-        # type: (compas.geometry.Polygon, compas.geometry.Polygon, list[beamFeature] | None, compas.geometry.Frame | None, str | None) -> None
+        # type: (compas.geometry.Polygon, compas.geometry.Polygon, list[LineFeature] | None, compas.geometry.Frame | None, str | None) -> None
 
-        super(ColumnElement, self).__init__(frame=frame, name=name)
+        super(LineElement, self).__init__(frame=frame, name=name)
         self._bottom = bottom
         self._top = top
         self.shape = self.compute_shape()
-        self.features = features or []  # type: list[beamFeature]
+        self.features = features or []  # type: list[LineFeature]
 
     @property
     def face_polygons(self):
@@ -65,7 +64,7 @@ class ColumnElement(Element):
 
     def compute_shape(self):
         # type: () -> compas.datastructures.Mesh
-        """Compute the shape of the beam from the given polygons and features.
+        """Compute the shape of the l from the given polygons and features.
         This shape is relative to the frame of the element.
 
         Returns
@@ -127,19 +126,19 @@ class ColumnElement(Element):
 
     @classmethod
     def from_polygon_and_thickness(cls, polygon, thickness, features=None, frame=None, name=None):
-        # type: (compas.geometry.Polygon, float, list[BeamFeature] | None, compas.geometry.Frame | None, str | None) -> ColumnElement
-        """Create a beam element from a polygon and a thickness.
+        # type: (compas.geometry.Polygon, float, list[LineFeature] | None, compas.geometry.Frame | None, str | None) -> LineElement
+        """Create a line element from a polygon and a thickness.
 
         Parameters
         ----------
         polygon : :class:`compas.geometry.Polygon`
-            The base polygon of the beam.
+            The base polygon of the line.
         thickness : float
             The total offset thickness above and blow the polygon.
 
         Returns
         -------
-        :class:`ColumnElement`
+        :class:`LineElement`
 
         """
         normal = polygon.normal
@@ -151,8 +150,8 @@ class ColumnElement(Element):
         top = polygon.copy()
         for point in top.points:
             point += up
-        beam = cls(bottom, top)
-        return beam
+        line_element = cls(bottom, top)
+        return line_element
 
 
 if __name__ == "__main__":
