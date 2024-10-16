@@ -3,7 +3,9 @@ from compas.datastructures import Mesh
 from compas.geometry import Box
 from compas.geometry import bounding_box
 from compas.geometry import oriented_bounding_box
+from compas.geometry import Line
 from compas.itertools import pairwise
+from compas.geometry import Polygon, Frame
 from compas_model.elements import Element
 from compas_model.elements import Feature
 
@@ -13,13 +15,14 @@ class ColumnFeature(Feature):
 
 
 class ColumnElement(Element):
-    """Class representing block elements.
+    """Class representing a column elements using an axis and two polygons.
+    Polygons are needed because the column can be inclined.
 
     Parameters
     ----------
     shape : :class:`compas.datastructures.Mesh`
         The base shape of the block.
-    features : list[:class:`beamFeature`], optional
+    features : list[:class:`ColumnFeature`], optional
         Additional block features.
     is_support : bool, optional
         Flag indicating that the block is a support.
@@ -32,7 +35,7 @@ class ColumnElement(Element):
     ----------
     shape : :class:`compas.datastructure.Mesh`
         The base shape of the block.
-    features : list[:class:`beamFeature`]
+    features : list[:class:`ColumnFeature`]
         A list of additional block features.
     is_support : bool
         Flag indicating that the block is a support.
@@ -48,14 +51,15 @@ class ColumnElement(Element):
         data["features"] = self.features
         return data
 
-    def __init__(self, bottom, top, features=None, frame=None, name=None):
-        # type: (compas.geometry.Polygon, compas.geometry.Polygon, list[beamFeature] | None, compas.geometry.Frame | None, str | None) -> None
+    def __init__(self, axis, bottom, top, features=None, frame=None, name=None):
+        # type: (compas.geometry.Polygon, compas.geometry.Polygon, list[columnFeature] | None, compas.geometry.Frame | None, str | None) -> None
 
         super(ColumnElement, self).__init__(frame=frame, name=name)
+        axis = axis or [0, 0, 1]
         self._bottom = bottom
         self._top = top
         self.shape = self.compute_shape()
-        self.features = features or []  # type: list[beamFeature]
+        self.features = features or []  # type: list[columnFeature]
 
     @property
     def face_polygons(self):
@@ -64,7 +68,7 @@ class ColumnElement(Element):
 
     def compute_shape(self):
         # type: () -> compas.datastructures.Mesh
-        """Compute the shape of the beam from the given polygons and features.
+        """Compute the shape of the column from the given polygons and features.
         This shape is relative to the frame of the element.
 
         Returns
@@ -73,7 +77,7 @@ class ColumnElement(Element):
 
         """
         offset = len(self._bottom)
-        vertices = self._bottom + self._top  # type: ignore
+        vertices = self._bottom.points + self._top.points  # type: ignore
         bottom = list(range(offset))
         top = [i + offset for i in bottom]
         faces = [bottom[::-1], top]
@@ -125,34 +129,61 @@ class ColumnElement(Element):
     # =============================================================================
 
     @classmethod
-    def from_polygon_and_thickness(cls, polygon, thickness, features=None, frame=None, name=None):
-        # type: (compas.geometry.Polygon, float, list[BeamFeature] | None, compas.geometry.Frame | None, str | None) -> ColumnElement
-        """Create a beam element from a polygon and a thickness.
+    def from_square_section(cls, width:float=0.4,  depth:float=0.4,  height:float=3.0, features:Feature=None, frame:Frame=None, name:str="None"):
+        """Create a column element from a square section.
 
         Parameters
         ----------
-        polygon : :class:`compas.geometry.Polygon`
-            The base polygon of the beam.
-        thickness : float
-            The total offset thickness above and blow the polygon.
+        width : float
+            The width of the column.
+        depth : float
+            The depth of the column.
+        height : float
+            The height of the column.
+        features : list[:class:`ColumnFeature`], optional
+            Additional block features.
+        frame : :class:`compas.geometry.Frame`, optional
+            The coordinate frame of the block.
+        name : str, optional
+            The name of the element.
 
         Returns
         -------
         :class:`ColumnElement`
 
         """
+
+        p0 = [-width*0.5, -depth*0.5, 0]
+        p1 = [-width*0.5, depth*0.5, 0]
+        p2 = [width*0.5, depth*0.5, 0]
+        p3 = [width*0.5, -depth*0.5, 0]
+        polygon = Polygon([p0, p1, p2, p3])
+        axis = Line([0, 0, 0], [0, 0, height])
+    
         normal = polygon.normal
-        down = normal * (-0.5 * thickness)
-        up = normal * (+0.5 * thickness)
-        bottom = polygon.copy()
-        for point in bottom.points:
-            point += down
+        up = normal * (1.0 * height)
         top = polygon.copy()
         for point in top.points:
             point += up
-        beam = cls(bottom, top)
-        return beam
-
+        bottom = polygon.copy()
+        
+        column = cls(axis=axis, bottom=bottom, top=top, features=features, frame=frame, name=name)
+        return column
+    
+    @classmethod
+    def from_polygon(cls, axis, polygon_on_xy_plane, horizontal_frame = Frame):
+        
+        pass
+        
+        
+    
+ 
 
 if __name__ == "__main__":
-    pass
+    
+    from compas_viewer import Viewer   
+    column_square = ColumnElement.from_square_section()
+    
+    viewer = Viewer()
+    viewer.scene.add(column.shape)
+    viewer.show()

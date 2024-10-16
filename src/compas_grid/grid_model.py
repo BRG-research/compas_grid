@@ -9,6 +9,8 @@ from compas.geometry import Point
 from compas.geometry import Scale
 from compas_model.models import Model
 from compas_viewer import Viewer
+from compas import json_load
+from compas.geometry import Box
 
 
 class GridModel(Model):
@@ -44,7 +46,7 @@ class GridModel(Model):
         volmesh.face_attribute(face, "strip", strips)
 
     @classmethod
-    def from_meshgrid(cls, dx=8, dy=8, dz=3.5, nx=5, ny=3, nz=2):
+    def from_meshgrid(cls, dx=8, dy=8, dz=3.5*7, nx=5, ny=3, nz=10):
         #######################################################################################################
         # 3D Grid, translate the grid to the center.
         # Vertex order
@@ -175,8 +177,7 @@ class GridModel(Model):
         return [volmesh]
 
 
-viewer: Viewer = Viewer(show_grid=False)
-counter: int = 0
+
 
 
 def add_objects_to_scene(viewer, output):
@@ -198,11 +199,11 @@ def add_objects_to_scene(viewer, output):
                     name=str(output.edge_attributes(edge)),
                 )
 
-            # for face in output.faces():
-            #     viewer.scene.add(
-            #         output.face_polygon(face),
-            #         color=output.face_attribute(face, 'color'),
-            #         name=str(output.face_attributes(face)))
+            for face in output.faces():
+                viewer.scene.add(
+                    output.face_polygon(face),
+                    color=output.face_attribute(face, 'color'),
+                    name=str(output.face_attributes(face)))
 
             for cell in output.cells():
                 scale: Scale = Scale.from_factors([0.75, 0.75, 0.75], Frame(output.cell_center(cell), [1, 0, 0], [0, 1, 0]))
@@ -210,35 +211,44 @@ def add_objects_to_scene(viewer, output):
 
         else:
             viewer.scene.add(output)
+        
+
+    
+viewer: Viewer = Viewer(show_grid=False)
+counter: int = 0
+
+        
+
 
 
 if __name__ == "__main__":
-    output = GridModel.from_meshgrid()
-    json_dump(output, "grid.json")
-    add_objects_to_scene(viewer, output)
-    viewer.config.renderer.show_grid = False
 
+    viewer.config.renderer.show_grid = False
+    output = GridModel.from_meshgrid()
+    # json_dump(output, "grid.json")
+    add_objects_to_scene(viewer, output)
+    # boxobj = viewer.scene.add(Box(1))
+    
     # @viewer.on(interval=1000)
     # def reload(frame):
 
     #     # make objects global
-    #     global counter
     #     global viewer
-
-    #     # remove previous objects
-    #     viewer.scene.clear()
+    #     global boxobj
 
     #     # read objects from
-    #     geometry = json_load("grid.json")
-    #     for g in geometry:
-    #         viewer.scene.add(g, name=str(counter))
+    #     if boxobj in viewer.scene.objects:
+    #         viewer.scene.remove(boxobj)
+    #         viewer.renderer.update()
+    #         print(boxobj, "deleted from scene")
+        
+    #     boxobj = viewer.scene.add(Box(1))
+    #     viewer.renderer.update()
 
     #     # update renderer
     #     viewer.ui.init()
-    #     viewer.scene.draw()
     #     print(viewer.scene.objects)
 
-    #     # count frames for debugging
-    #     counter = counter + 1
-
     viewer.show()
+
+
