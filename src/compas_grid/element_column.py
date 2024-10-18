@@ -1,13 +1,10 @@
-import compas.datastructures  # noqa: F401
 from compas.datastructures import Mesh
-from compas.geometry import Box
-from compas.geometry import bounding_box
-from compas.geometry import oriented_bounding_box
-from compas.geometry import Line
+from compas.geometry import Box, Line, Polygon, Frame, Vector, Plane
+from compas.geometry import intersection_line_plane
+from compas.geometry import bounding_box, oriented_bounding_box
 from compas.itertools import pairwise
-from compas.geometry import Polygon, Frame
-from compas_model.elements import Element
-from compas_model.elements import Feature
+from compas_model.elements import Element, Feature
+from typing import List, Optional, Dict, Any, Union, Tuple
 
 
 class ColumnFeature(Feature):
@@ -20,19 +17,25 @@ class ColumnElement(Element):
 
     Parameters
     ----------
-    shape : :class:`compas.datastructures.Mesh`
-        The base shape of the block.
+    axis : :class:`compas.geometry.Vector`
+        The axis of the column.
+    section : :class:`compas.geometry.Polygon`
+        The section of the column.
+    frame_bottom : :class:`compas.geometry.Frame`, optional
+        The frame of the bottom polygon.
+    frame_top : :class:`compas.geometry.Frame`, optional
+        The frame of the top polygon.
     features : list[:class:`ColumnFeature`], optional
         Additional block features.
-    is_support : bool, optional
-        Flag indicating that the block is a support.
-    frame : :class:`compas.geometry.Frame`, optional
-        The coordinate frame of the block.
     name : str, optional
         The name of the element.
 
     Attributes
     ----------
+    polygon_bottom : :class:`compas.geometry.Polygon`
+        The bottom polygon of the column.
+    polygon_top : :class:`compas.geometry.Polygon`
+        The top polygon of the column.
     shape : :class:`compas.datastructure.Mesh`
         The base shape of the block.
     features : list[:class:`ColumnFeature`]
@@ -43,31 +46,59 @@ class ColumnElement(Element):
     """
 
     @property
-    def __data__(self):
-        # type: () -> dict
-        data = super(ColumnElement, self).__data__
-        data["bottom"] = self._bottom
-        data["top"] = self._top
+    def __data__(self) -> Dict[str, Any]:
+        data: Dict[str, Any] = super(ColumnElement, self).__data__
+        data["axis"] = self.axis
+        data["section"] = self.section
+        data["frame_bottom"] = self._frame
+        data["frame_top"] = self._frame_top
         data["features"] = self.features
         return data
 
-    def __init__(self, axis, bottom, top, features=None, frame=None, name=None):
-        # type: (compas.geometry.Polygon, compas.geometry.Polygon, list[columnFeature] | None, compas.geometry.Frame | None, str | None) -> None
-
-        super(ColumnElement, self).__init__(frame=frame, name=name)
-        axis = axis or [0, 0, 1]
-        self._bottom = bottom
-        self._top = top
-        self.shape = self.compute_shape()
-        self.features = features or []  # type: list[columnFeature]
+    def __init__(
+        self,
+        axis: Vector,
+        section: Polygon,
+        frame_bottom: Optional[Frame] = Frame.worldXY(),  # if columns are inclined, the shape is cut by the inclined plane
+        frame_top: Optional[Frame] = None,  # if columns are inclined, the shape is cut by the inclined plane
+        features: Optional[List[ColumnFeature]] = None,
+        name: Optional[str] = None,
+    ):
+        super(ColumnElement, self).__init__(frame=frame_bottom, name=name)
+        self.axis: Vector = axis or Vector(0, 0, 1)
+        self.section: Polygon = section
+        self.frame_top: Frame = frame_top or Frame(self.frame.point + self.axis, self.frame.xaxis, self.frame.yaxis)
+        self.features: List[ColumnFeature] = features or []
+        self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()
+        self.shape: Mesh = self.compute_shape()
 
     @property
-    def face_polygons(self):
-        # type: () -> list[compas.geometry.Polygon]
+    def face_polygons(self) -> List[Polygon]:
         return [self.geometry.face_polygon(face) for face in self.geometry.faces()]  # type: ignore
 
-    def compute_shape(self):
-        # type: () -> compas.datastructures.Mesh
+    def compute_top_and_bottom_polygons(self) -> Tuple[Polygon, Polygon]:
+        """Compute the top and bottom polygons of the column.
+
+        Returns
+        -------
+        Tuple[:class:`compas.geometry.Polygon`, :class:`compas.geometry.Polygon`]
+        """
+
+        plane0: Plane = Plane.from_frame(self.frame)
+        plane1: Plane = Plane.from_frame(self.frame_top)
+        points0: List[List[float]] = []
+        points1: List[List[float]] = []
+        for i in range(len(self.section.points)):
+            line: Line = Line(self.section.points[i], self.section.points[i] + self.axis)
+            result0: Optional[List[float]] = intersection_line_plane(line, plane0)
+            result1: Optional[List[float]] = intersection_line_plane(line, plane1)
+            if not result0 or not result1:
+                raise ValueError("The line does not intersect the plane")
+            points0.append(result0)
+            points1.append(result1)
+        return Polygon(points0), Polygon(points1)
+
+    def compute_shape(self) -> Mesh:
         """Compute the shape of the column from the given polygons and features.
         This shape is relative to the frame of the element.
 
@@ -76,22 +107,37 @@ class ColumnElement(Element):
         :class:`compas.datastructures.Mesh`
 
         """
-        offset = len(self._bottom)
-        vertices = self._bottom.points + self._top.points  # type: ignore
-        bottom = list(range(offset))
-        top = [i + offset for i in bottom]
-        faces = [bottom[::-1], top]
+
+        offset: int = len(self.polygon_bottom)
+        vertices: List[Union[List[float], Any]] = self.polygon_bottom.points + self.polygon_top.points  # type: ignore
+        bottom: List[int] = list(range(offset))
+        top: List[int] = [i + offset for i in bottom]
+        faces: List[List[int]] = [bottom[::-1], top]
         for (a, b), (c, d) in zip(pairwise(bottom + bottom[:1]), pairwise(top + top[:1])):
             faces.append([a, b, d, c])
-        mesh = Mesh.from_vertices_and_faces(vertices, faces)
+        mesh: Mesh = Mesh.from_vertices_and_faces(vertices, faces)
         return mesh
 
     # =============================================================================
     # Implementations of abstract methods
     # =============================================================================
 
-    def compute_geometry(self, include_features=False):
-        geometry = self.shape
+    def compute_geometry(self, include_features: bool = False) -> Mesh:
+        """Compute the geometry of the element.
+        The geometry is transformed by the world transformation.
+
+        Parameters
+        ----------
+        include_features : bool, optional
+            Flag indicating whether to include features in the geometry.
+
+        Returns
+        -------
+        :class:`compas.datastructures.Mesh`
+            Geometry with applied features.
+        """
+
+        geometry: Mesh = self.shape
         if include_features:
             if self.features:
                 for feature in self.features:
@@ -99,27 +145,57 @@ class ColumnElement(Element):
         geometry.transform(self.worldtransformation)
         return geometry
 
-    def compute_aabb(self, inflate=0.0):
-        points = self.geometry.vertices_attributes("xyz")  # type: ignore
-        box = Box.from_bounding_box(bounding_box(points))
+    def compute_aabb(self, inflate: float = 0.0) -> Box:
+        """Compute the axis-aligned bounding box of the element.
+
+        Parameters
+        ----------
+        inflate : float, optional
+            The inflation factor of the bounding box.
+
+        Returns
+        -------
+        :class:`compas.geometry.Box`
+            The axis-aligned bounding box.
+        """
+        points: List[List[float]] = self.geometry.vertices_attributes("xyz")  # type: ignore
+        box: Box = Box.from_bounding_box(bounding_box(points))
         box.xsize += inflate
         box.ysize += inflate
         box.zsize += inflate
         return box
 
-    def compute_obb(self, inflate=0.0):
-        points = self.geometry.vertices_attributes("xyz")  # type: ignore
-        box = Box.from_bounding_box(oriented_bounding_box(points))
+    def compute_obb(self, inflate: float = 0.0) -> Box:
+        """Compute the oriented bounding box of the element.
+
+        Parameters
+        ----------
+        inflate : float, optional
+            The inflation factor of the bounding box.
+
+        Returns
+        -------
+        :class:`compas.geometry.Box`
+            The oriented bounding box.
+        """
+        points: List[List[float]] = self.geometry.vertices_attributes("xyz")  # type: ignore
+        box: Box = Box.from_bounding_box(oriented_bounding_box(points))
         box.xsize += inflate
         box.ysize += inflate
         box.zsize += inflate
         return box
 
-    def compute_collision_mesh(self):
-        # TODO: (TvM) make this a pluggable with default implementation in core and move import to top
+    def compute_collision_mesh(self) -> Mesh:
+        """Compute the collision mesh of the element.
+
+        Returns
+        -------
+        :class:`compas.datastructures.Mesh`
+            The collision mesh.
+        """
         from compas.geometry import convex_hull_numpy
 
-        points = self.geometry.vertices_attributes("xyz")  # type: ignore
+        points: List[List[float]] = self.geometry.vertices_attributes("xyz")  # type: ignore
         vertices, faces = convex_hull_numpy(points)
         vertices = [points[index] for index in vertices]  # type: ignore
         return Mesh.from_vertices_and_faces(vertices, faces)
@@ -129,21 +205,32 @@ class ColumnElement(Element):
     # =============================================================================
 
     @classmethod
-    def from_square_section(cls, width:float=0.4,  depth:float=0.4,  height:float=3.0, features:Feature=None, frame:Frame=None, name:str="None"):
-        """Create a column element from a square section.
+    def from_square_section(
+        cls,
+        width: float = 0.4,
+        depth: float = 0.4,
+        height: float = 3.0,
+        frame_bottom: Optional[Plane] = Frame.worldXY(),
+        frame_top: Optional[Plane] = None,
+        features: Optional[List[ColumnFeature]] = None,
+        name: str = "None",
+    ) -> "ColumnElement":
+        """Create a column element from a square section centered on XY frame.
 
         Parameters
         ----------
-        width : float
+        width : float, optional
             The width of the column.
-        depth : float
+        depth : float, optional
             The depth of the column.
-        height : float
+        height : float, optional
             The height of the column.
+        frame_bottom : :class:`compas.geometry.Plane`, optional
+            The frame of the bottom polygon.
+        frame_top : :class:`compas.geometry.Plane`, optional
+            The frame of the top polygon.
         features : list[:class:`ColumnFeature`], optional
             Additional block features.
-        frame : :class:`compas.geometry.Frame`, optional
-            The coordinate frame of the block.
         name : str, optional
             The name of the element.
 
@@ -153,37 +240,22 @@ class ColumnElement(Element):
 
         """
 
-        p0 = [-width*0.5, -depth*0.5, 0]
-        p1 = [-width*0.5, depth*0.5, 0]
-        p2 = [width*0.5, depth*0.5, 0]
-        p3 = [width*0.5, -depth*0.5, 0]
-        polygon = Polygon([p0, p1, p2, p3])
-        axis = Line([0, 0, 0], [0, 0, height])
-    
-        normal = polygon.normal
-        up = normal * (1.0 * height)
-        top = polygon.copy()
-        for point in top.points:
-            point += up
-        bottom = polygon.copy()
-        
-        column = cls(axis=axis, bottom=bottom, top=top, features=features, frame=frame, name=name)
+        p3: List[float] = [-width * 0.5, -depth * 0.5, 0]
+        p2: List[float] = [-width * 0.5, depth * 0.5, 0]
+        p1: List[float] = [width * 0.5, depth * 0.5, 0]
+        p0: List[float] = [width * 0.5, -depth * 0.5, 0]
+        polygon: Polygon = Polygon([p0, p1, p2, p3])
+        axis: Vector = Vector(0, 0, height)
+
+        column: ColumnElement = cls(axis=axis, section=polygon, frame_bottom=frame_bottom, frame_top=frame_top, features=features, name=name)
         return column
-    
-    @classmethod
-    def from_polygon(cls, axis, polygon_on_xy_plane, horizontal_frame = Frame):
-        
-        pass
-        
-        
-    
- 
+
 
 if __name__ == "__main__":
-    
-    from compas_viewer import Viewer   
-    column_square = ColumnElement.from_square_section()
-    
-    viewer = Viewer()
+    from compas_viewer import Viewer
+
+    column: ColumnElement = ColumnElement.from_square_section()
+
+    viewer: Viewer = Viewer()
     viewer.scene.add(column.shape)
     viewer.show()

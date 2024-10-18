@@ -46,7 +46,7 @@ class GridModel(Model):
         volmesh.face_attribute(face, "strip", strips)
 
     @classmethod
-    def from_meshgrid(cls, dx=8, dy=8, dz=3.5*7, nx=5, ny=3, nz=10):
+    def from_meshgrid(cls, dx=8, dy=8, dz=3.5 * 7, nx=5, ny=3, nz=10):
         #######################################################################################################
         # 3D Grid, translate the grid to the center.
         # Vertex order
@@ -177,9 +177,6 @@ class GridModel(Model):
         return [volmesh]
 
 
-
-
-
 def add_objects_to_scene(viewer, output):
     if isinstance(output, list):
         for item in output:
@@ -200,10 +197,7 @@ def add_objects_to_scene(viewer, output):
                 )
 
             for face in output.faces():
-                viewer.scene.add(
-                    output.face_polygon(face),
-                    color=output.face_attribute(face, 'color'),
-                    name=str(output.face_attributes(face)))
+                viewer.scene.add(output.face_polygon(face), color=output.face_attribute(face, "color"), name=str(output.face_attributes(face)))
 
             for cell in output.cells():
                 scale: Scale = Scale.from_factors([0.75, 0.75, 0.75], Frame(output.cell_center(cell), [1, 0, 0], [0, 1, 0]))
@@ -211,24 +205,19 @@ def add_objects_to_scene(viewer, output):
 
         else:
             viewer.scene.add(output)
-        
 
-    
+
 viewer: Viewer = Viewer(show_grid=False)
 counter: int = 0
 
-        
-
-
 
 if __name__ == "__main__":
-
     viewer.config.renderer.show_grid = False
     output = GridModel.from_meshgrid()
     # json_dump(output, "grid.json")
     add_objects_to_scene(viewer, output)
     # boxobj = viewer.scene.add(Box(1))
-    
+
     # @viewer.on(interval=1000)
     # def reload(frame):
 
@@ -241,8 +230,10 @@ if __name__ == "__main__":
     #         viewer.scene.remove(boxobj)
     #         viewer.renderer.update()
     #         print(boxobj, "deleted from scene")
-        
+
     #     boxobj = viewer.scene.add(Box(1))
+    #     boxobj.init()
+
     #     viewer.renderer.update()
 
     #     # update renderer
@@ -250,5 +241,3 @@ if __name__ == "__main__":
     #     print(viewer.scene.objects)
 
     viewer.show()
-
-
