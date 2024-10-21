@@ -178,67 +178,87 @@ class GridModel(Model):
         return [volmesh]
 
 
-def add_objects_to_scene(viewer: Any, output: Any) -> None:
-    if isinstance(output, list):
-        for item in output:
-            add_objects_to_scene(viewer, item)
-    else:
-        if isinstance(output, VolMesh):
-            for idx, vertex in enumerate(output.vertices()):
-                viewer.scene.add(
-                    Point(*output.vertex_coordinates(vertex)), name=str(idx) + " " + str(output.vertex_attributes(vertex)), color=output.vertex_attribute(vertex, "color")[2]
-                )
-
-            for edge in output.edges():
-                viewer.scene.add(
-                    output.edge_line(edge),
-                    color=output.edge_attribute(edge, "color"),
-                    linewidth=output.edge_attribute(edge, "axis") * 2 + 3,
-                    name=str(output.edge_attributes(edge)),
-                )
-
-            for face in output.faces():
-                viewer.scene.add(output.face_polygon(face), color=output.face_attribute(face, "color"), name=str(output.face_attributes(face)))
-
-            for cell in output.cells():
-                scale: Scale = Scale.from_factors([0.75, 0.75, 0.75], Frame(output.cell_center(cell), [1, 0, 0], [0, 1, 0]))
-                viewer.scene.add(output.cell_to_mesh(cell).transformed(scale), name=str(output.cell_attributes(cell)), color=output.cell_attribute(cell, "color")[2])
-
-        else:
-            viewer.scene.add(output)
-
-
-viewer: Viewer = Viewer(show_grid=False)
-counter: int = 0
+    @classmethod
+    def from_fan(cls):
+        
+        from compas_grid.element_column import ColumnElement
+        column_0 = ColumnElement.from_square_section()
+        column_1 = column_0.copy()
+        column_1.transform(Frame([8, 0, 0]))
+        
+        geometry = []
+        geometry.append(column_0.shape)
+        
+        from compas_grid.viewer import serialize
+        # print(geometry)
+        # serialize(geometry)
 
 
 if __name__ == "__main__":
-    viewer.config.renderer.show_grid = False
-    output = GridModel.from_meshgrid()
-    # json_dump(output, "grid.json")
-    add_objects_to_scene(viewer, output)
-    # boxobj = viewer.scene.add(Box(1))
+    
+    GridModel.from_fan()
 
-    # @viewer.on(interval=1000)
-    # def reload(frame):
+# def add_objects_to_scene(viewer: Any, output: Any) -> None:
+#     if isinstance(output, list):
+#         for item in output:
+#             add_objects_to_scene(viewer, item)
+#     else:
+#         if isinstance(output, VolMesh):
+#             for idx, vertex in enumerate(output.vertices()):
+#                 viewer.scene.add(
+#                     Point(*output.vertex_coordinates(vertex)), name=str(idx) + " " + str(output.vertex_attributes(vertex)), color=output.vertex_attribute(vertex, "color")[2]
+#                 )
 
-    #     # make objects global
-    #     global viewer
-    #     global boxobj
+#             for edge in output.edges():
+#                 viewer.scene.add(
+#                     output.edge_line(edge),
+#                     color=output.edge_attribute(edge, "color"),
+#                     linewidth=output.edge_attribute(edge, "axis") * 2 + 3,
+#                     name=str(output.edge_attributes(edge)),
+#                 )
 
-    #     # read objects from
-    #     if boxobj in viewer.scene.objects:
-    #         viewer.scene.remove(boxobj)
-    #         viewer.renderer.update()
-    #         print(boxobj, "deleted from scene")
+#             for face in output.faces():
+#                 viewer.scene.add(output.face_polygon(face), color=output.face_attribute(face, "color"), name=str(output.face_attributes(face)))
 
-    #     boxobj = viewer.scene.add(Box(1))
-    #     boxobj.init()
+#             for cell in output.cells():
+#                 scale: Scale = Scale.from_factors([0.75, 0.75, 0.75], Frame(output.cell_center(cell), [1, 0, 0], [0, 1, 0]))
+#                 viewer.scene.add(output.cell_to_mesh(cell).transformed(scale), name=str(output.cell_attributes(cell)), color=output.cell_attribute(cell, "color")[2])
 
-    #     viewer.renderer.update()
+#         else:
+#             viewer.scene.add(output)
 
-    #     # update renderer
-    #     viewer.ui.init()
-    #     print(viewer.scene.objects)
+# objects = []
+# viewer: Viewer = Viewer(show_grid=False)
+# counter: int = 0
 
-    viewer.show()
+
+# if __name__ == "__main__":
+#     viewer.config.renderer.show_grid = False
+#     output = GridModel.from_meshgrid()
+#     json_dump(output, "grid.json")
+#     add_objects_to_scene(viewer, output)
+#     # boxobj = viewer.scene.add(Box(1))
+
+#     # @viewer.on(interval=1000)
+#     # def reload(frame):
+
+#     #     # make objects global
+#     #     global viewer
+#     #     global boxobj
+
+#     #     # read objects from
+#     #     if boxobj in viewer.scene.objects:
+#     #         viewer.scene.remove(boxobj)
+#     #         viewer.renderer.update()
+#     #         print(boxobj, "deleted from scene")
+
+#     #     boxobj = viewer.scene.add(Box(1))
+#     #     boxobj.init()
+
+#     #     viewer.renderer.update()
+
+#     #     # update renderer
+#     #     viewer.ui.init()
+#     #     print(viewer.scene.objects)
+
+#     viewer.show()

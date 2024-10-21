@@ -48,11 +48,22 @@ class CableElement(Element):
 
     @property
     def __data__(self) -> Dict[str, Any]:
+        
         data: Dict[str, Any] = super(CableElement, self).__data__
-        data["axis"] = self.axis
+        data["axis"] = self.axis.__data__
         data["radius"] = self.radius
+        data["sides"] = self.sides
         data["features"] = self.features
         return data
+
+    @classmethod
+    def __from_data__(cls, data: Dict[str, Any]) -> 'CableElement':
+        return cls(
+            axis=Line(data["axis"]["start"], data["axis"]["end"]),
+            radius=data["radius"],
+            sides=data["sides"],
+            features=data["features"],
+        )
 
     def __init__(
         self,
@@ -66,7 +77,8 @@ class CableElement(Element):
         super(CableElement, self).__init__(frame=frame, name=name)
         self.axis: Line = axis or Line([0, 0, 0], [0, 0, 1])
         self.radius: float = radius
-        self.section: Polygon = Polygon.from_sides_and_radius_xy(sides, self.radius)
+        self.sides: float = sides
+        self.section: Polygon = Polygon.from_sides_and_radius_xy(self.sides, self.radius)
         self.features: List[CableFeature] = features or []
         self.shape: Mesh = self.compute_shape()
 
@@ -214,6 +226,7 @@ if __name__ == "__main__":
     from compas_viewer import Viewer
 
     cable: CableElement = CableElement.from_length_and_radius()
+    cable.copy()
     viewer: Viewer = Viewer()
     viewer.scene.add(cable.shape)
     viewer.show()

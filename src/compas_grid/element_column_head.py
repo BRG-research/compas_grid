@@ -43,9 +43,18 @@ class ColumnHeadElement(Element):
 
     @property
     def __data__(self) -> Dict[str, Any]:
+        
         data: Dict[str, Any] = super(ColumnHeadElement, self).__data__
+        data["shape"] = self.shape
         data["features"] = self.features
         return data
+
+    @classmethod
+    def __from_data__(cls, data: Dict[str, Any]) -> 'ColumnHeadElement':
+        return cls(
+            mesh=data["shape"],
+            features=data["features"],
+        )
 
     def __init__(self, mesh: Mesh, frame: Frame = Frame.worldXY(), features: Optional[List[ColumnHeadFeature]] = None, name: Optional[str] = None):
         super(ColumnHeadElement, self).__init__(frame=frame, name=name)
@@ -189,8 +198,9 @@ class ColumnHeadElement(Element):
 if __name__ == "__main__":
     from compas_viewer import Viewer
 
-    column: ColumnHeadElement = ColumnHeadElement.from_box()
+    column_head: ColumnHeadElement = ColumnHeadElement.from_box()
+    column_head.copy()
 
     viewer: Viewer = Viewer()
-    viewer.scene.add(column.shape)
+    viewer.scene.add(column_head.shape)
     viewer.show()

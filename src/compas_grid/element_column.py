@@ -11,11 +11,7 @@ from compas.geometry import oriented_bounding_box
 from compas.itertools import pairwise
 from compas_model.elements import Element
 from compas_model.elements import Feature
-from typing import List
-from typing import Optional
-from typing import Dict
-from typing import Any
-from typing import Tuple
+from typing import *
 
 
 class ColumnFeature(Feature):
@@ -54,25 +50,37 @@ class ColumnElement(Element):
         Flag indicating that the block is a support.
 
     """
-
+    
     @property
     def __data__(self) -> Dict[str, Any]:
+        
         data: Dict[str, Any] = super(ColumnElement, self).__data__
-        data["axis"] = self.axis
+        data["axis"] = self.axis.__data__
         data["section"] = self.section
-        data["frame_bottom"] = self._frame
-        data["frame_top"] = self._frame_top
+        data["frame_top"] = self.frame_top
+        data["shape"] = self.shape
         data["features"] = self.features
         return data
+
+    @classmethod
+    def __from_data__(cls, data: Dict[str, Any]) -> 'ColumnElement':
+        return cls(
+            axis=Line(data["axis"]["start"], data["axis"]["end"]),
+            section=data["section"],
+            frame_bottom=data["frame"],
+            frame_top=data["frame_top"],
+            features=data["features"],
+        )
+
 
     def __init__(
         self,
         axis: Line,
         section: Polygon,
-        frame_bottom: Optional[Frame] = Frame.worldXY(),  # if columns are inclined, the shape is cut by the inclined plane
-        frame_top: Optional[Frame] = None,  # if columns are inclined, the shape is cut by the inclined plane
-        features: Optional[List[ColumnFeature]] = None,
-        name: Optional[str] = None,
+        frame_bottom: Frame = Frame.worldXY(),  # if columns are inclined, the shape is cut by the inclined plane
+        frame_top: Frame = None,  # if columns are inclined, the shape is cut by the inclined plane
+        features: List[ColumnFeature] = None,
+        name: str = None,
     ):
         super(ColumnElement, self).__init__(frame=frame_bottom, name=name)
         self.axis: Line = axis or Line([0, 0, 0], [0, 0, 1])
@@ -265,6 +273,7 @@ if __name__ == "__main__":
     from compas_viewer import Viewer
 
     column: ColumnElement = ColumnElement.from_square_section()
+    column.copy()
 
     viewer: Viewer = Viewer()
     viewer.scene.add(column.shape)

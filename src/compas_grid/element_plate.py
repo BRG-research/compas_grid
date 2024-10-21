@@ -7,7 +7,8 @@ from compas.geometry import Frame
 from compas.geometry import Point
 from compas.itertools import pairwise
 from compas.geometry import Vector
-from typing import List
+from compas.geometry import Line
+from typing import *
 from compas_model.elements import Element
 from compas_model.elements import Feature
 from numpy.typing import NDArray
@@ -46,12 +47,22 @@ class PlateElement(Element):
     """
 
     @property
-    def __data__(self) -> dict:
-        data = super(PlateElement, self).__data__
+    def __data__(self) -> Dict[str, Any]:
+        
+        data: Dict[str, Any] = super(PlateElement, self).__data__
         data["bottom"] = self._bottom
         data["top"] = self._top
         data["features"] = self.features
         return data
+
+    @classmethod
+    def __from_data__(cls, data: Dict[str, Any]) -> 'PlateElement':
+        return cls(
+            bottom=data["bottom"],
+            top=data["top"],
+            features=data["features"],
+        )
+
 
     def __init__(self, bottom: Polygon, top: Polygon, features: List[PlateFeature] = None, frame: Frame = None, name: str = None):
         super(PlateElement, self).__init__(frame=frame, name=name)
@@ -162,6 +173,7 @@ if __name__ == "__main__":
     polygon = Polygon([[0, 0, 0], [0, 10, 0], [10, 10, 0], [10, 0, 0]])
     frame = Frame.worldXY()
     plate = PlateElement.from_polygon_and_thickness(polygon, 0.1, frame=frame)
+    plate.copy()
 
     viewer: Viewer = Viewer()
     viewer.scene.add(plate.shape)

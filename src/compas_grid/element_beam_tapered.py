@@ -56,14 +56,26 @@ class BeamTaperedElement(Element):
 
     @property
     def __data__(self) -> Dict[str, Any]:
+        
         data: Dict[str, Any] = super(BeamTaperedElement, self).__data__
-        data["axis"] = self.axis
+        data["axis"] = self.axis.__data__
         data["section_bottom"] = self.section_bottom
         data["section_top"] = self.section_top
-        data["frame_bottom"] = self._frame
-        data["frame_top"] = self._frame_top
+        data["frame_bottom"] = self.frame_top
+        data["frame_top"] = self.frame_top
         data["features"] = self.features
         return data
+
+    @classmethod
+    def __from_data__(cls, data: Dict[str, Any]) -> 'BeamTaperedElement':
+        return cls(
+            axis=Line(data["axis"]["start"], data["axis"]["end"]),
+            section_bottom=data["section_bottom"],
+            section_top=data["section_top"],
+            frame_bottom=data["frame"],
+            frame_top=data["frame_top"],
+            features=data["features"],
+        )
 
     def __init__(
         self,

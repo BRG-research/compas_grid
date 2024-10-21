@@ -57,13 +57,24 @@ class BeamElement(Element):
 
     @property
     def __data__(self) -> Dict[str, Any]:
+        
         data: Dict[str, Any] = super(BeamElement, self).__data__
-        data["axis"] = self.axis
+        data["axis"] = self.axis.__data__
         data["section"] = self.section
-        data["frame_bottom"] = self._frame
-        data["frame_top"] = self._frame_top
+        data["frame_bottom"] = self.frame_top
+        data["frame_top"] = self.frame_top
         data["features"] = self.features
         return data
+
+    @classmethod
+    def __from_data__(cls, data: Dict[str, Any]) -> 'BeamElement':
+        return cls(
+            axis=Line(data["axis"]["start"], data["axis"]["end"]),
+            section=data["section"],
+            frame_bottom=data["frame"],
+            frame_top=data["frame_top"],
+            features=data["features"],
+        )
 
     def __init__(
         self,
@@ -277,6 +288,7 @@ if __name__ == "__main__":
     )
 
     beam: BeamElement = BeamElement.from_square_section(width=0.15, depth=depth, height=1.2)
+    beam.copy()
     viewer: Viewer = Viewer()
     viewer.scene.add(beam.shape)
     viewer.show()
