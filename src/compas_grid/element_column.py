@@ -1,10 +1,21 @@
 from compas.datastructures import Mesh
-from compas.geometry import Box, Line, Polygon, Frame, Vector, Plane
+from compas.geometry import Box
+from compas.geometry import Line
+from compas.geometry import Polygon
+from compas.geometry import Frame
+from compas.geometry import Plane
+from compas.geometry import Point
 from compas.geometry import intersection_line_plane
-from compas.geometry import bounding_box, oriented_bounding_box
+from compas.geometry import bounding_box
+from compas.geometry import oriented_bounding_box
 from compas.itertools import pairwise
-from compas_model.elements import Element, Feature
-from typing import List, Optional, Dict, Any, Union, Tuple
+from compas_model.elements import Element
+from compas_model.elements import Feature
+from typing import List
+from typing import Optional
+from typing import Dict
+from typing import Any
+from typing import Tuple
 
 
 class ColumnFeature(Feature):
@@ -12,12 +23,11 @@ class ColumnFeature(Feature):
 
 
 class ColumnElement(Element):
-    """Class representing a column elements using an axis and two polygons.
-    Polygons are needed because the column can be inclined.
+    """Class representing a column element.
 
     Parameters
     ----------
-    axis : :class:`compas.geometry.Vector`
+    axis : :class:`compas.geometry.Line`
         The axis of the column.
     section : :class:`compas.geometry.Polygon`
         The section of the column.
@@ -57,7 +67,7 @@ class ColumnElement(Element):
 
     def __init__(
         self,
-        axis: Vector,
+        axis: Line,
         section: Polygon,
         frame_bottom: Optional[Frame] = Frame.worldXY(),  # if columns are inclined, the shape is cut by the inclined plane
         frame_top: Optional[Frame] = None,  # if columns are inclined, the shape is cut by the inclined plane
@@ -65,9 +75,9 @@ class ColumnElement(Element):
         name: Optional[str] = None,
     ):
         super(ColumnElement, self).__init__(frame=frame_bottom, name=name)
-        self.axis: Vector = axis or Vector(0, 0, 1)
+        self.axis: Line = axis or Line([0, 0, 0], [0, 0, 1])
         self.section: Polygon = section
-        self.frame_top: Frame = frame_top or Frame(self.frame.point + self.axis, self.frame.xaxis, self.frame.yaxis)
+        self.frame_top: Frame = frame_top or Frame(self.frame.point + self.axis.vector, self.frame.xaxis, self.frame.yaxis)
         self.features: List[ColumnFeature] = features or []
         self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()
         self.shape: Mesh = self.compute_shape()
@@ -89,7 +99,7 @@ class ColumnElement(Element):
         points0: List[List[float]] = []
         points1: List[List[float]] = []
         for i in range(len(self.section.points)):
-            line: Line = Line(self.section.points[i], self.section.points[i] + self.axis)
+            line: Line = Line(self.section.points[i], self.section.points[i] + self.axis.vector)
             result0: Optional[List[float]] = intersection_line_plane(line, plane0)
             result1: Optional[List[float]] = intersection_line_plane(line, plane1)
             if not result0 or not result1:
@@ -109,7 +119,7 @@ class ColumnElement(Element):
         """
 
         offset: int = len(self.polygon_bottom)
-        vertices: List[Union[List[float], Any]] = self.polygon_bottom.points + self.polygon_top.points  # type: ignore
+        vertices: List[Point] = self.polygon_bottom.points + self.polygon_top.points  # type: ignore
         bottom: List[int] = list(range(offset))
         top: List[int] = [i + offset for i in bottom]
         faces: List[List[int]] = [bottom[::-1], top]
@@ -245,7 +255,7 @@ class ColumnElement(Element):
         p1: List[float] = [width * 0.5, depth * 0.5, 0]
         p0: List[float] = [width * 0.5, -depth * 0.5, 0]
         polygon: Polygon = Polygon([p0, p1, p2, p3])
-        axis: Vector = Vector(0, 0, height)
+        axis: Line = Line([0, 0, 0], [0, 0, height])
 
         column: ColumnElement = cls(axis=axis, section=polygon, frame_bottom=frame_bottom, frame_top=frame_top, features=features, name=name)
         return column

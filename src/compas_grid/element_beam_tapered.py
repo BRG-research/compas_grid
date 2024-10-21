@@ -3,6 +3,7 @@ from compas.geometry import Box
 from compas.geometry import Line
 from compas.geometry import Polygon
 from compas.geometry import Frame
+from compas.geometry import Vector
 from compas.geometry import Plane
 from compas.geometry import Point
 from compas.geometry import intersection_line_plane
@@ -18,37 +19,35 @@ from typing import Any
 from typing import Tuple
 
 
-class BeamFeature(Feature):
+class BeamTaperedFeature(Feature):
     pass
 
 
-class BeamElement(Element):
+class BeamTaperedElement(Element):
     """Class representing a beam element.
 
     Parameters
     ----------
     axis : :class:`compas.geometry.Line`
         The axis of the beam.
-    section : :class:`compas.geometry.Polygon`
-        The section of the beam.
+    section_bottom : :class:`compas.geometry.Polygon`
+        The bottom polygon of the beam.
+    section_top : :class:`compas.geometry.Polygon`
+        The top polygon of the beam.
     frame_bottom : :class:`compas.geometry.Frame`, optional
         The frame of the bottom polygon.
     frame_top : :class:`compas.geometry.Frame`, optional
         The frame of the top polygon.
-    features : list[:class:`BeamFeature`], optional
+    features : list[:class:`BeamTaperedFeature`], optional
         Additional block features.
     name : str, optional
         The name of the element.
 
     Attributes
     ----------
-    polygon_bottom : :class:`compas.geometry.Polygon`
-        The bottom polygon of the beam.
-    polygon_top : :class:`compas.geometry.Polygon`
-        The top polygon of the beam.
     shape : :class:`compas.datastructure.Mesh`
         The base shape of the block.
-    features : list[:class:`BeamElement`]
+    features : list[:class:`BeamTaperedFeature`]
         A list of additional block features.
     is_support : bool
         Flag indicating that the block is a support.
@@ -57,9 +56,10 @@ class BeamElement(Element):
 
     @property
     def __data__(self) -> Dict[str, Any]:
-        data: Dict[str, Any] = super(BeamElement, self).__data__
+        data: Dict[str, Any] = super(BeamTaperedElement, self).__data__
         data["axis"] = self.axis
-        data["section"] = self.section
+        data["section_bottom"] = self.section_bottom
+        data["section_top"] = self.section_top
         data["frame_bottom"] = self._frame
         data["frame_top"] = self._frame_top
         data["features"] = self.features
@@ -68,18 +68,24 @@ class BeamElement(Element):
     def __init__(
         self,
         axis: Line,
-        section: Polygon,
+        section_bottom: Polygon,
+        section_top: Polygon,
         frame_bottom: Optional[Frame] = Frame.worldXY(),  # if beams are inclined, the shape is cut by the inclined plane
         frame_top: Optional[Frame] = None,  # if beams are inclined, the shape is cut by the inclined plane
-        features: Optional[List[BeamFeature]] = None,
+        features: Optional[List[BeamTaperedFeature]] = None,
         name: Optional[str] = None,
     ):
-        super(BeamElement, self).__init__(frame=frame_bottom, name=name)
-        self.axis: Line = axis or Line([0, 0, 0], [0, 0, 1])
-        self.section: Polygon = section
-        self.frame_top: Frame = frame_top or Frame(self.frame.point + self.axis.vector, self.frame.xaxis, self.frame.yaxis)
-        self.features: List[BeamFeature] = features or []
-        self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()
+        super(BeamTaperedElement, self).__init__(frame=frame_bottom, name=name)
+
+        if len(section_bottom) != len(section_top):
+            raise ValueError("The number of points in the bottom and top polygons must be the same")
+
+        self.section_bottom: Polygon = section_bottom
+        self.section_top: Polygon = section_top
+        self.axis: Line = axis or Line(section_bottom[0], section_top[0])
+        self.frame_top: Frame = frame_top or Frame(self.frame.point + self.axis, self.frame.xaxis, self.frame.yaxis)
+        self.features: List[BeamTaperedFeature] = features or []
+        self.section_bottom, self.section_top = self.compute_top_and_bottom_polygons()
         self.shape: Mesh = self.compute_shape()
 
     @property
@@ -98,8 +104,8 @@ class BeamElement(Element):
         plane1: Plane = Plane.from_frame(self.frame_top)
         points0: List[List[float]] = []
         points1: List[List[float]] = []
-        for i in range(len(self.section.points)):
-            line: Line = Line(self.section.points[i], self.section.points[i] + self.axis.vector)
+        for i in range(len(self.section_bottom.points)):
+            line: Line = Line(self.section_bottom.points[i], self.section_top.points[i])
             result0: Optional[List[float]] = intersection_line_plane(line, plane0)
             result1: Optional[List[float]] = intersection_line_plane(line, plane1)
             if not result0 or not result1:
@@ -118,8 +124,8 @@ class BeamElement(Element):
 
         """
 
-        offset: int = len(self.polygon_bottom)
-        vertices: List[Point] = self.polygon_bottom.points + self.polygon_top.points  # type: ignore
+        offset: int = len(self.section_bottom.points)
+        vertices: List[Point] = self.section_bottom.points + self.section_top.points  # type: ignore
         bottom: List[int] = list(range(offset))
         top: List[int] = [i + offset for i in bottom]
         faces: List[List[int]] = [bottom[::-1], top]
@@ -215,24 +221,28 @@ class BeamElement(Element):
     # =============================================================================
 
     @classmethod
-    def from_square_section(
+    def from_cross_sections(
         cls,
         width: float = 0.1,
-        depth: float = 0.2,
+        depth_0: float = 0.4,
+        depth_1: float = 0.2,
         height: float = 3.0,
         frame_bottom: Optional[Plane] = Frame.worldXY(),
         frame_top: Optional[Plane] = None,
-        features: Optional[List[BeamFeature]] = None,
+        features: Optional[List[BeamTaperedFeature]] = None,
         name: str = "None",
-    ) -> "BeamElement":
-        """Create a beam element from a square section centered on XY frame.
+    ) -> "BeamTaperedElement":
+        """
+        Create a beam element from two cross sections centered on XY frame.
 
         Parameters
         ----------
         width : float, optional
             The width of the beam.
-        depth : float, optional
-            The depth of the beam.
+        depth_0 : float, optional
+            The depth of the beam at the bottom.
+        depth_1 : float, optional
+            The depth of the beam at the top.
         height : float, optional
             The height of the beam.
         frame_bottom : :class:`compas.geometry.Plane`, optional
@@ -246,37 +256,35 @@ class BeamElement(Element):
 
         Returns
         -------
-        :class:`BeamElement`
+        :class:`BeamTaperedElement`
+
 
         """
 
-        p3: List[float] = [-width * 0.5, -depth * 0.5, 0]
-        p2: List[float] = [-width * 0.5, depth * 0.5, 0]
-        p1: List[float] = [width * 0.5, depth * 0.5, 0]
-        p0: List[float] = [width * 0.5, -depth * 0.5, 0]
-        polygon: Polygon = Polygon([p0, p1, p2, p3])
+        p00: List[float] = [width * 0.5, -depth_0 * 0.5, 0]
+        p01: List[float] = [width * 0.5, depth_0 * 0.5, 0]
+        p02: List[float] = [-width * 0.5, depth_0 * 0.5, 0]
+        p03: List[float] = [-width * 0.5, -depth_0 * 0.5, 0]
+        polygon_0: Polygon = Polygon([p00, p01, p02, p03])
+
+        p10: List[float] = [width * 0.5, -depth_1 * 0.5, height]
+        p11: List[float] = [width * 0.5, depth_1 * 0.5, height]
+        p12: List[float] = [-width * 0.5, depth_1 * 0.5, height]
+        p13: List[float] = [-width * 0.5, -depth_1 * 0.5, height]
+        polygon_1: Polygon = Polygon([p10, p11, p12, p13])
+
         axis: Line = Line([0, 0, 0], [0, 0, height])
 
-        beam: BeamElement = cls(axis=axis, section=polygon, frame_bottom=frame_bottom, frame_top=frame_top, features=features, name=name)
+        beam: BeamTaperedElement = cls(axis=axis, section_bottom=polygon_0, section_top=polygon_1, frame_bottom=frame_bottom, frame_top=frame_top, features=features, name=name)
         return beam
 
 
 if __name__ == "__main__":
     from compas_viewer import Viewer
 
-    depth: float = 0.013333
-
-    tol: float = 0.001
-    outline_cut_shape: Polygon = Polygon(
-        [
-            [-0.01, depth * 0.5 + tol * 1, 1.0],
-            [-0.07, depth * 0.5 + tol * 1, 0.01],
-            [0.07, depth * 0.5 + tol * 1, 0.01],
-            [0.07, depth * 0.5 + tol * 1, 1.0],
-        ]
+    beam: BeamTaperedElement = BeamTaperedElement.from_cross_sections(
+        frame_bottom=Frame(Point(0, 0, 0), Vector(1, 0, 0), Vector(0, 1, 0)), frame_top=Frame(Point(0, 0, 2.0), Vector(1, 0, 0), Vector(0, 1, 0))
     )
-
-    beam: BeamElement = BeamElement.from_square_section(width=0.15, depth=depth, height=1.2)
     viewer: Viewer = Viewer()
     viewer.scene.add(beam.shape)
     viewer.show()

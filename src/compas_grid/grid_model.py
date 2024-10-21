@@ -1,5 +1,4 @@
 from typing import *
-
 from compas import json_dump
 from compas.colors import Color
 from compas.colors import ColorMap
@@ -15,38 +14,40 @@ from compas.geometry import Box
 
 class GridModel(Model):
     @classmethod
-    def __from_data__(cls, data):
-        model = super(GridModel, cls).__from_data__(data)
+    def __from_data__(cls, data: dict) -> "GridModel":
+        model: GridModel = super(GridModel, cls).__from_data__(data)
         # todo: implement the rest of data
         return model
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super(GridModel, self).__init__()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "GridModel"
 
-    def sort_faces_by_axis(centers, faces, axis_index):
+    @staticmethod
+    def sort_faces_by_axis(centers: List[Point], faces: List[int], axis_index: int) -> List[int]:
         return [x for _, x in sorted(zip(centers, faces), key=lambda pair: pair[0][axis_index])]
 
-    def set_face_attributes(volmesh, face, axis, storey, color_func, nz):
+    @staticmethod
+    def set_face_attributes(volmesh: VolMesh, face: int, axis: str, storey: int, color_func: Callable[[float], Color], nz: int) -> None:
         volmesh.face_attribute(face, "axis", axis)
         volmesh.face_attribute(face, "storey", str(storey))
         volmesh.face_attribute(face, "color", color_func(1 / (nz + 1) * storey))
 
-        fv = list(volmesh.face_vertices(face))
-        fe = [(fv[i], fv[(i + 1) % len(fv)]) for i in range(len(fv))]
-        strips = {axis: float("inf") for axis in ["x", "y", "z"] if axis != axis}
+        fv: List[int] = list(volmesh.face_vertices(face))
+        fe: List[Tuple[int, int]] = [(fv[i], fv[(i + 1) % len(fv)]) for i in range(len(fv))]
+        strips: Dict[str, float] = {axis: float("inf") for axis in ["x", "y", "z"] if axis != axis}
 
         for e in fe:
-            edge_axis = volmesh.edge_attribute(e, "axis")
-            strip = volmesh.edge_attribute(e, "strip")
+            edge_axis: str = volmesh.edge_attribute(e, "axis")
+            strip: float = volmesh.edge_attribute(e, "strip")
             strips[edge_axis] = min(strip, strips[edge_axis])
 
         volmesh.face_attribute(face, "strip", strips)
 
     @classmethod
-    def from_meshgrid(cls, dx=8, dy=8, dz=3.5 * 7, nx=5, ny=3, nz=10):
+    def from_meshgrid(cls, dx: float = 8, dy: float = 8, dz: float = 3.5 * 7, nx: int = 5, ny: int = 3, nz: int = 10) -> List[VolMesh]:
         #######################################################################################################
         # 3D Grid, translate the grid to the center.
         # Vertex order
@@ -60,9 +61,9 @@ class GridModel(Model):
         #######################################################################################################
         # Color map for display of UVW coordinates.
         #######################################################################################################
-        cmap_red = ColorMap.from_two_colors(Color.from_hex("#ff0074"), Color.from_hex("#DDDDDD"), diverging=True)
-        cmap_green = ColorMap.from_two_colors(Color.from_hex("#40B5AD"), Color.from_hex("#DDDDDD"))
-        cmap_blue = ColorMap.from_two_colors(Color.from_hex("#0096FF"), Color.from_hex("#DDDDDD"))
+        cmap_red: ColorMap = ColorMap.from_two_colors(Color.from_hex("#ff0074"), Color.from_hex("#DDDDDD"), diverging=True)
+        cmap_green: ColorMap = ColorMap.from_two_colors(Color.from_hex("#40B5AD"), Color.from_hex("#DDDDDD"))
+        cmap_blue: ColorMap = ColorMap.from_two_colors(Color.from_hex("#0096FF"), Color.from_hex("#DDDDDD"))
 
         #######################################################################################################
         # Assign Node U, V, W identification to the vertices.
@@ -81,7 +82,7 @@ class GridModel(Model):
         # Assign Edge U, V, W identification to the edges.
         #######################################################################################################
 
-        def set_edge_attributes(volmesh, e, u, v, w, axis, color_func):
+        def set_edge_attributes(volmesh: VolMesh, e: Tuple[int, int], u: int, v: int, w: int, axis: int, color_func: Callable[[float], Color]) -> None:
             volmesh.edge_attribute(e, "uvw", [u, v, w])
             volmesh.edge_attribute(e, "axis", axis)
             volmesh.edge_attribute(e, "color", color_func(1 / [nx, ny, nz][axis] * [u, v, w][axis]))
@@ -140,7 +141,7 @@ class GridModel(Model):
             sorted_faces: List[int] = [x for _, x in sorted(zip(centers, volmesh.cell_faces(cells[i])), key=lambda pair: pair[0][1])]
             faces_x_axis: List[int] = [sorted_faces[0], sorted_faces[-1]]
 
-            def set_face_attributes(volmesh, f, uvw, axis, color_func):
+            def set_face_attributes(volmesh: VolMesh, f: int, uvw: List[int], axis: int, color_func: Callable[[float], Color]) -> None:
                 volmesh.face_attribute(f, "uvw", uvw)
                 volmesh.face_attribute(f, "axis", axis)
                 volmesh.face_attribute(f, "color", color_func(1 / [nx, ny, nz][axis] * uvw[axis]))
@@ -177,7 +178,7 @@ class GridModel(Model):
         return [volmesh]
 
 
-def add_objects_to_scene(viewer, output):
+def add_objects_to_scene(viewer: Any, output: Any) -> None:
     if isinstance(output, list):
         for item in output:
             add_objects_to_scene(viewer, item)

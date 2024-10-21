@@ -1,10 +1,15 @@
 from compas.datastructures import Mesh
-from compas.geometry import Box, Line, Polygon, Frame, Vector, Plane
-from compas.geometry import intersection_line_plane
-from compas.geometry import bounding_box, oriented_bounding_box
-from compas.itertools import pairwise
-from compas_model.elements import Element, Feature
-from typing import List, Optional, Dict, Any, Union, Tuple
+from compas.geometry import Box
+from compas.geometry import Polygon
+from compas.geometry import Frame
+from compas.geometry import bounding_box
+from compas.geometry import oriented_bounding_box
+from compas_model.elements import Element
+from compas_model.elements import Feature
+from typing import List
+from typing import Optional
+from typing import Dict
+from typing import Any
 
 
 class ColumnHeadFeature(Feature):
@@ -12,8 +17,7 @@ class ColumnHeadFeature(Feature):
 
 
 class ColumnHeadElement(Element):
-    """Class representing a column head elements using an axis and two polygons.
-    Polygons are needed because the column head an be inclined.
+    """Class representing a column head element.
 
     Parameters
     ----------
