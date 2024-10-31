@@ -179,19 +179,167 @@ class GridModel(Model):
 
 
     @classmethod
-    def from_fan(cls):
+    def from_fan(cls, 
+                 dx=6, 
+                 dy=6, 
+                 dz=3, 
+                 column_width=0.4,
+                 column_depth=0.4,
+                 column_head_width=0.96,
+                 column_head_depth=0.96,
+                 column_head_height=0.475,
+                 plate_width=3,
+                 plate_depth=3,
+                 plate_height=0.04,) -> None:
         
-        from compas_grid.element_column import ColumnElement
-        column_0 = ColumnElement.from_square_section()
-        column_1 = column_0.copy()
-        column_1.transform(Frame([8, 0, 0]))
-        
+        # Create a model.
+        model = Model()
         geometry = []
-        geometry.append(column_0.shape)
         
+        # Create Main Frames
+        frame_origin = Frame(Point(0,0,0), [1,0,0], [0,1,0], name="frame_origin")
+        frame_column = Frame(Point(0,0,0), [1,0,0], [0,1,0], name="frame_column")
+        frame_floor =  Frame(Point(0,0,dz), [1,0,0], [0,1,0], name="frame_floor")
+        frame_panel =  Frame(Point(0,0,dz+column_head_height), [1,0,0], [0,1,0], name="frame_panel")
+        frame_beam0 =  Frame(Point(0,0,dz+column_head_height), [0,1,0], [0,0,1], name="frame_beam0")
+        frame_beam1 =  Frame(Point(0,0,dz+column_head_height), [-1,0,0], [0,0,1], name="frame_beam1")
+        frame_beam_cut0 =  Frame(Point(dx*0.5,0,dz+column_head_height), [0,1,0], [0,0,1], name="frame_beam_cut0")
+        frame_beam_cut1 =  Frame(Point(column_head_width*0.5,0, dz+column_head_height), [0,1,0], [0,0,1], name="frame_beam_cut1")
+        frame_beam_cut2 =  Frame(Point(0,dx*0.5,dz+column_head_height), [1,0,0], [0,0,1], name="frame_beam_cut2")
+        frame_beam_cut3 =  Frame(Point(0, column_head_depth*0.5, dz+column_head_height), [1,0,0], [0,0,1], name="frame_beam_cut3")
+        
+
+        
+        
+        # Number of interpolation steps
+        num_steps = 12
+
+        # Interpolated frames
+        interpolated_frames_xform0 = []
+        interpolated_frames0 = []
+        interpolated_frames_xform1 = []
+        interpolated_frames1 = []
+
+        # Calculate the angle between the y-axes of the two frames
+
+        angle = frame_beam0.zaxis.angle(frame_beam1.zaxis)
+
+        # Interpolate the frames
+        from compas.geometry import Rotation
+        from compas.geometry import Transformation
+        for i in range(num_steps + 1):
+            t = i / num_steps
+            rotation = Rotation.from_axis_and_angle(frame_beam0.yaxis, angle * t, point=frame_beam0.point)
+            if (i < num_steps + 0 - (int)(num_steps*0.5)):
+                interpolated_frame = frame_beam0.transformed(rotation)
+                interpolated_frames0.append(interpolated_frame)
+                interpolated_frames_xform0.append(Transformation.from_frame(interpolated_frame))
+            else:
+                interpolated_frame = frame_beam0.transformed(rotation)
+                interpolated_frames1.append(interpolated_frame)
+                interpolated_frames_xform1.append(Transformation.from_frame(interpolated_frame))
+        
+        
+        geometry.append(frame_column)
+        geometry.append(frame_floor)
+        geometry.append(frame_panel)
+        geometry.append(frame_beam0)
+        geometry.append(frame_beam1)
+        geometry.append(frame_beam_cut0)
+        geometry.append(frame_beam_cut1)
+        geometry.append(frame_beam_cut2)
+        geometry.append(frame_beam_cut3)
+        # geometry.extend(interpolated_frames)
+        
+        # Create ColumnElements.
+        from compas_grid.element_column import ColumnElement
+        from compas.geometry import Translation
+        from compas.geometry import Transformation
+        column = ColumnElement.from_square_section(width=column_width, depth=column_depth, height=dz)
+        
+        T = [
+            Transformation.from_frame(frame_column)
+            ]
+                
+        for i in T:
+            model.add_element(column.transformed(i))
+        
+
+        # Create ColumnHeadElements.
+        from compas_grid.element_column_head import ColumnHeadElement
+        column_head = ColumnHeadElement.from_box(width=column_head_width, depth=column_head_depth, height=column_head_height)
+
+        T = [
+            Transformation.from_frame(frame_floor)
+            ]
+        
+        for i in T:
+            model.add_element(column_head.transformed(i))
+            
+            
+        # Create PlateElements.
+        from compas_grid.element_plate import PlateElement
+        plate = PlateElement.from_width_depth_thickness(dx*0.5, dy*0.5, thickness=plate_height)
+        T = [
+            Transformation.from_frame(frame_panel)
+            ]
+        for i in T:
+            model.add_element(plate.transformed(i))
+            
+        # Create BeamTaperedElements.
+        from compas_grid.element_beam_tapered import BeamTaperedElement
+        beam = BeamTaperedElement.from_cross_sections(width=plate_height, depth_0=0.5, depth_1=0.1, height=dx*0.72)
+        
+        for idx, xform in enumerate(interpolated_frames_xform0):
+            
+            from compas.geometry import Transformation
+            T = Transformation.from_frame_to_frame(interpolated_frames0[idx], frame_origin)
+            temp0 = frame_beam_cut0.transformed(T)
+            temp1 = frame_beam_cut1.transformed(T)
+            b = beam.transformed(xform)
+
+            g0, g1 = b.compute_top_and_bottom_polygons(temp0, temp1)
+            geometry.append(temp0)
+            geometry.append(temp1)
+            b.shape = b.compute_shape()
+            element_node = model.add_element(b)
+            
+        for idx, xform in enumerate(interpolated_frames_xform1):
+            
+            from compas.geometry import Transformation
+            T = Transformation.from_frame_to_frame(interpolated_frames1[idx], frame_origin)
+            temp0 = frame_beam_cut2.transformed(T)
+            temp1 = frame_beam_cut3.transformed(T)
+            b = beam.transformed(xform)
+
+            g0, g1 = b.compute_top_and_bottom_polygons(temp0, temp1)
+            geometry.append(temp0)
+            geometry.append(temp1)
+            b.shape = b.compute_shape()
+            element_node = model.add_element(b)
+        
+        # Array of elements
+        geo_to_array = []
+        for e in model.elements():
+            geo_to_array.append(e.compute_geometry().copy())
+            geo_to_array[-1].name = e.name
+    
+        import math
+        for i in range(4):
+            
+            T = Rotation.from_axis_and_angle([0,0,1], i*math.pi*0.5, point=[dx*0.0, dy*0.0, 0])
+            
+            for g in geo_to_array:
+                geometry.append(g.copy().transformed(T))
+            
+
+        
+        # Serialize the geometry.+(column_head_depth-column_depth)*0.5
+        
+        # for e in model.elements():
+        #     geometry.append(e.compute_geometry())
         from compas_grid.viewer import serialize
-        # print(geometry)
-        # serialize(geometry)
+        serialize(geometry)
 
 
 if __name__ == "__main__":

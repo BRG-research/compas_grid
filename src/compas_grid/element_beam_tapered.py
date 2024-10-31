@@ -95,25 +95,34 @@ class BeamTaperedElement(Element):
         self.section_bottom: Polygon = section_bottom
         self.section_top: Polygon = section_top
         self.axis: Line = axis or Line(section_bottom[0], section_top[0])
-        self.frame_top: Frame = frame_top or Frame(self.frame.point + self.axis, self.frame.xaxis, self.frame.yaxis)
+        self.frame_top: Frame = frame_top or Frame(self.frame.point + self.axis.vector, self.frame.xaxis, self.frame.yaxis)
         self.features: List[BeamTaperedFeature] = features or []
         self.section_bottom, self.section_top = self.compute_top_and_bottom_polygons()
         self.shape: Mesh = self.compute_shape()
+        self.name = self.__class__.__name__
 
     @property
     def face_polygons(self) -> List[Polygon]:
         return [self.geometry.face_polygon(face) for face in self.geometry.faces()]  # type: ignore
+    
+    def recompute(self):
+        self.section_bottom, self.section_top = self.compute_top_and_bottom_polygons()
+        self.shape: Mesh = self.compute_shape()        
 
-    def compute_top_and_bottom_polygons(self) -> Tuple[Polygon, Polygon]:
+    def compute_top_and_bottom_polygons(self, frame_cut0 : Frame = None, frame_cut1 : Frame = None) -> Tuple[Polygon, Polygon]:
         """Compute the top and bottom polygons of the beam.
 
         Returns
         -------
         Tuple[:class:`compas.geometry.Polygon`, :class:`compas.geometry.Polygon`]
         """
+        
+        
 
-        plane0: Plane = Plane.from_frame(self.frame)
-        plane1: Plane = Plane.from_frame(self.frame_top)
+        plane0: Plane = Plane.from_frame(frame_cut0) if frame_cut0 else Plane.from_frame(self.frame)
+        plane1: Plane = Plane.from_frame(frame_cut1) if frame_cut1 else Plane.from_frame(self.frame_top)
+                
+        
         points0: List[List[float]] = []
         points1: List[List[float]] = []
         for i in range(len(self.section_bottom.points)):
@@ -124,7 +133,9 @@ class BeamTaperedElement(Element):
                 raise ValueError("The line does not intersect the plane")
             points0.append(result0)
             points1.append(result1)
-        return Polygon(points0), Polygon(points1)
+        self.section_bottom = Polygon(points0)
+        self.section_top = Polygon(points1)
+        return self.section_bottom, self.section_top
 
     def compute_shape(self) -> Mesh:
         """Compute the shape of the beam from the given polygons and features.
@@ -239,6 +250,7 @@ class BeamTaperedElement(Element):
         depth_0: float = 0.4,
         depth_1: float = 0.2,
         height: float = 3.0,
+        offset: float = 0.0,
         frame_bottom: Optional[Plane] = Frame.worldXY(),
         frame_top: Optional[Plane] = None,
         features: Optional[List[BeamTaperedFeature]] = None,
@@ -273,19 +285,27 @@ class BeamTaperedElement(Element):
 
         """
 
+        t0 = 0
+        t1 = 1-t0
+        offset = (depth_1-depth_0)*0.5
+
         p00: List[float] = [width * 0.5, -depth_0 * 0.5, 0]
         p01: List[float] = [width * 0.5, depth_0 * 0.5, 0]
         p02: List[float] = [-width * 0.5, depth_0 * 0.5, 0]
         p03: List[float] = [-width * 0.5, -depth_0 * 0.5, 0]
         polygon_0: Polygon = Polygon([p00, p01, p02, p03])
 
-        p10: List[float] = [width * 0.5, -depth_1 * 0.5, height]
-        p11: List[float] = [width * 0.5, depth_1 * 0.5, height]
-        p12: List[float] = [-width * 0.5, depth_1 * 0.5, height]
-        p13: List[float] = [-width * 0.5, -depth_1 * 0.5, height]
+        p10: List[float] = [width * 0.5, -depth_1 * 0.5-offset, height]
+        p11: List[float] = [width * 0.5, depth_1 * 0.5-offset, height]
+        p12: List[float] = [-width * 0.5, depth_1 * 0.5-offset, height]
+        p13: List[float] = [-width * 0.5, -depth_1 * 0.5-offset, height]
         polygon_1: Polygon = Polygon([p10, p11, p12, p13])
+        
+        # recenter
+        polygon_1.translate([-width * 0.0, depth_0*-0.5, 0])
+        polygon_0.translate([-width * 0.0, depth_0*-0.5, 0])
 
-        axis: Line = Line([0, 0, 0], [0, 0, height])
+        axis: Line = Line(Point(0, 0, 0), Point(0, 0, height))
 
         beam: BeamTaperedElement = cls(axis=axis, section_bottom=polygon_0, section_top=polygon_1, frame_bottom=frame_bottom, frame_top=frame_top, features=features, name=name)
         return beam

@@ -81,6 +81,7 @@ class CableElement(Element):
         self.section: Polygon = Polygon.from_sides_and_radius_xy(self.sides, self.radius)
         self.features: List[CableFeature] = features or []
         self.shape: Mesh = self.compute_shape()
+        self.name = self.__class__.__name__
 
     def compute_shape(self) -> Mesh:
         """Compute the shape of the beam from the given polygons and features.

@@ -70,7 +70,8 @@ class PlateElement(Element):
         self._top: Polygon = top
         self.shape: Mesh = self.compute_shape()
         self.features: List[Feature] = features or []  # type: list[PlateFeature]
-
+        self.name = self.__class__.__name__
+    
     @property
     def face_polygons(self) -> List[Polygon]:
         return [self.geometry.face_polygon(face) for face in self.geometry.faces()]  # type: ignore
@@ -153,8 +154,8 @@ class PlateElement(Element):
 
         """
         normal: Vector = polygon.normal
-        down: Vector = normal * (-0.5 * thickness)
-        up: Vector = normal * (+0.5 * thickness)
+        down: Vector = normal * (0.0 * thickness)
+        up: Vector = normal * (1.0 * thickness)
         bottom: Polygon = polygon.copy()
         for point in bottom.points:
             point += down
@@ -163,6 +164,27 @@ class PlateElement(Element):
             point += up
         plate: PlateElement = cls(bottom, top)
         return plate
+    
+    @classmethod
+    def from_width_depth_thickness(cls, width: float, depth: float, thickness: float, features: List[Feature] = None, frame: Frame = None, name: str = None) -> "PlateElement":
+        """Create a plate element from a width, depth and thickness.
+
+        Parameters
+        ----------
+        width : float
+            The width of the plate.
+        depth : float
+            The depth of the plate.
+        thickness : float
+            The total offset thickness above and blow the polygon.
+
+        Returns
+        -------
+        :class:`PlateElement`
+
+        """
+        polygon: Polygon = Polygon.from_rectangle(Point(0,0,0), width, depth)
+        return cls.from_polygon_and_thickness(polygon, thickness, features=features, frame=frame, name=name)
 
 
 if __name__ == "__main__":

@@ -60,6 +60,7 @@ class ColumnHeadElement(Element):
         super(ColumnHeadElement, self).__init__(frame=frame, name=name)
         self.features: List[ColumnHeadFeature] = features or []
         self.shape: Mesh = mesh
+        self.name = self.__class__.__name__
 
     @property
     def face_polygons(self) -> List[Polygon]:
@@ -189,6 +190,7 @@ class ColumnHeadElement(Element):
         """
 
         box: Box = Box(xsize=width, ysize=depth, zsize=height, frame=Frame.worldXY())
+        box.translate([0,0,height*0.5])
         mesh: Mesh = Mesh.from_vertices_and_faces(box.vertices, box.faces)
 
         column: ColumnHeadElement = cls(mesh=mesh, features=features, name=name)

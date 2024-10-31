@@ -92,6 +92,7 @@ class BeamElement(Element):
         self.features: List[BeamFeature] = features or []
         self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()
         self.shape: Mesh = self.compute_shape()
+        self.name = self.__class__.__name__
 
     @property
     def face_polygons(self) -> List[Polygon]:
