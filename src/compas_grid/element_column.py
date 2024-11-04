@@ -268,6 +268,7 @@ class ColumnElement(Element):
         return column
 
 
+
 if __name__ == "__main__":
     from compas_viewer import Viewer
 

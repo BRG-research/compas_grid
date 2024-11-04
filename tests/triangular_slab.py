@@ -21,304 +21,434 @@ from compas.datastructures.mesh.slice import mesh_slice_plane
 from compas_snippets.viewer_live import ViewerLive
 from math import pi
 from math import sqrt
+from math import radians
+from math import sin
+from math import floor
+from math import ceil
 from typing import *
 from compas_snippets.polygon import cut_polygon_with_plane
+from compas_grid.element_plate import PlateElement
+from compas_grid.element_column import ColumnElement
+from compas_grid.element_column_head import ColumnHeadElement
+from compas_model.models import Model
+from compas_model.models import GroupNode
 
 
 # Parameters
-quarter_width: float = 3000
-quarter_depth: float = 3000
-quarter_divisions: int = 12
-angle: float = pi * 0.5
-board_thickness = 40
-corner_offset: float = 500
-equal_end: bool = True
-inclination_0: float = 350
-inclination_1: float = 50
-capitel_width: float = 100
-quarter_lines_offset = Vector(board_thickness * 0.5, board_thickness * 0.5, 0)
+QUARTER_WIDTH : float = 3000
+QUARTER_DEPTH : float = 3000
+QUARTER_DIVISIONS : int = 12
+BOARD_THICKNESS = 40
+COLUMN_HEAD_RADIUS : float = 350
+COLUMN_RADIUS : float = 200
+EQUAL_RIB_ANGLE : float = 5*0
+RIB_INLCINATION_0 : float = 100
+RIB_INLCINATION_1 : float = 350
+COLUMN_HEAD_BASE_WIDTH : float = 100
+BOUNDARY_OFFSET_0 : float = BOARD_THICKNESS*1
+BOUNDARY_OFFSET_1 = Vector(BOARD_THICKNESS*0.5, BOARD_THICKNESS*0.5, 0)
 
+
+
+
+
+model : Model = Model(name="triangular_slab")
+slab_quarter : GroupNode = model.add_group("slab_quarter")
+ribs_diagonal : GroupNode = model.add_group("ribs_diagonal", slab_quarter)
+ribs_boundary : GroupNode = model.add_group("ribs_boundary", slab_quarter)
+floor_level : GroupNode = model.add_group("floor_level", slab_quarter)
+column : GroupNode = model.add_group("column", slab_quarter)
+
+# Slice the mesh by the two side planes, take the largest mesh.
+def slice_and_select_largest(mesh, plane):
+    mesh_pair = mesh_slice_plane(mesh, plane)
+    if mesh_pair:
+        if mesh_pair[0].aabb().volume < mesh_pair[1].aabb().volume:
+            mesh_pair = mesh_pair[::-1]
+        return mesh_pair[0]
+    return mesh
 
 def loft_two_polygons(polygon1: Polygon, polygon2: Polygon, triangulate=False) -> Mesh:
-    v: List[Point] = polygon1.points + polygon2.points
+    
+    
+    v : List[Point] = polygon1.points + polygon2.points
     f = []
-
+    
     # Top and bottom faces
-
     if triangulate:
         top_faces = earclip_polygon(polygon1)
         f.extend(top_faces)
         for top_face in top_faces:
-            bottom_face = [i + len(polygon1.points) for i in top_face]
+            bottom_face = [i+len(polygon1.points) for i in top_face]
             bottom_face.reverse()
-            f.append(bottom_face)
+            f.append(bottom_face)   
     else:
         top_faces = []
         bottom_faces = []
         for i in range(len(polygon1.points)):
             top_faces.append(i)
-            bottom_faces.append(i + len(polygon1.points))
+            bottom_faces.append(i+len(polygon1.points))
+        bottom_faces.reverse()
+        f.append(top_faces)
+        f.append(bottom_faces)
+    
+    # Side faces
+    n = len(polygon1.points)
+    for i in range(len(polygon1.points)):
+        if triangulate:
+            f.append([i, (i+1)%n, (i+1)%n+n])
+            f.append([(i+1)%n+n, i+n, i])
+        else:
+            f.append([i, (i+1)%n, (i+1)%n+n, i+n])
+    
+    mesh = Mesh.from_vertices_and_faces(v, f)
+    mesh.unify_cycles()
+    return mesh
+        
+        
+def loft_multiple_polygons(polygons: List[Polygon], triangulate=False) -> Mesh:
+    v: List[Point] = []
+    f: List[List[int]] = []
+
+    # Collect vertices from all polygons
+    for polygon in polygons:
+        v.extend(polygon.points)
+
+    # Top and bottom faces
+    if triangulate:
+        top_faces = earclip_polygon(polygons[0])
+        f.extend(top_faces)
+        for top_face in top_faces:
+            bottom_face = [i+len(polygons[0].points)*(len(polygons)-1) for i in top_face]
+            bottom_face.reverse()
+            f.append(bottom_face)   
+    else:
+        top_faces = []
+        bottom_faces = []
+        for i in range(len(polygons[0].points)):
+            top_faces.append(i)
+            bottom_faces.append(i+len(polygons[0].points)*(len(polygons)-1))
         bottom_faces.reverse()
         f.append(top_faces)
         f.append(bottom_faces)
 
     # Side faces
-    n = len(polygon1.points)
-    for i in range(len(polygon1.points)):
-        if triangulate:
-            f.append([i, (i + 1) % n, (i + 1) % n + n])
-            f.append([(i + 1) % n + n, i + n, i])
-        else:
-            f.append([i, (i + 1) % n, (i + 1) % n + n, i + n])
+    n = len(polygons[0].points)
+    for i in range(len(polygons) - 1):
+        for j in range(n):
+            if triangulate:
+                f.append([i * n + j, i * n + (j + 1) % n, (i + 1) * n + (j + 1) % n])
+                f.append([(i + 1) * n + (j + 1) % n, (i + 1) * n + j, i * n + j])
+            else:
+                f.append([i * n + j, 
+                          i * n + (j + 1) % n, 
+                          (i + 1) * n + (j + 1) % n, 
+                          (i + 1) * n + j])
 
     mesh = Mesh.from_vertices_and_faces(v, f)
-    mesh.unify_cycles()
+    # mesh.unify_cycles()
     return mesh
 
 
 # Base polygon where diagonals placed
-quarter_polygon: Polygon = Polygon(
-    [
-        [0, 0, 0],
-        [quarter_width, 0, 0],
-        [quarter_width, quarter_depth, 0],
-        [0, quarter_depth, 0],
-    ]
-)
+quarter_polygon : Polygon = Polygon([
+    [0, 0, 0],
+    [QUARTER_WIDTH, 0, 0],
+    [QUARTER_WIDTH, QUARTER_DEPTH, 0],
+    [0, QUARTER_DEPTH, 0],    
+])
 
-quarter_polygon_offset: Polygon = Polygon(
-    [
-        [0, 0, 0],
-        [quarter_width - board_thickness * 1.0, 0, 0],
-        [quarter_width - board_thickness * 1.0, quarter_depth - board_thickness, 0],
-        [0, quarter_depth - board_thickness, 0],
-    ]
-)
+quarter_polygon_offset : Polygon = Polygon([
+    [0, 0, 0],
+    [QUARTER_WIDTH-BOUNDARY_OFFSET_0, 0, 0],
+    [QUARTER_WIDTH-BOUNDARY_OFFSET_0, QUARTER_DEPTH-BOUNDARY_OFFSET_0, 0],
+    [0, QUARTER_DEPTH-BOUNDARY_OFFSET_0, 0],    
+])
 
-quarter_block: Polygon = Polygon(
-    [
-        [0, 0, 0],
-        [quarter_width, 0, 0],
-        [quarter_width, quarter_depth, 0],
-        [0, quarter_depth, 0],
-    ]
-)
+quarter_block : Polygon = Polygon([
+    [0, 0, 0],
+    [QUARTER_WIDTH, 0, 0],
+    [QUARTER_WIDTH, QUARTER_DEPTH, 0],
+    [0, QUARTER_DEPTH, 0],    
+])
 
+############################################################################################################
+# Ribs
+############################################################################################################
 
 # Vertical boards
-quarter_lines: List[Line] = []
+quarter_lines : List[Line] = []
 quarter_polygons: List[Polygon] = []
-temp: Any = []
+temp : Any = []
 
-quarter_line: Line = Line(quarter_polygon[0], quarter_polygon[1]).scaled(1 * sqrt(2))
-quarter_line = Line(quarter_line.start + quarter_line.direction * corner_offset, quarter_line.end)
+quarter_line : Line = Line(quarter_polygon[0], quarter_polygon[1]).scaled(1*sqrt(2))
 
-quarter_line.translate(quarter_lines_offset)
+quarter_line = Line(quarter_line.start+quarter_line.direction*(COLUMN_HEAD_RADIUS-BOUNDARY_OFFSET_1[0]), quarter_line.end)
 
-beam_shapes: List[Mesh] = []
+quarter_line.translate(BOUNDARY_OFFSET_1) # offset also inside to duplicate boundary ribs
 
-offset_direction: Vector = Vector.cross(quarter_line.direction, Vector.Zaxis()) * board_thickness * 0.5
-quarter_line_offseted: Polygon = Polygon(
-    [quarter_line.start + offset_direction, quarter_line.end + offset_direction, quarter_line.end - offset_direction, quarter_line.start - offset_direction]
-)
-cut_polygon: Polygon = quarter_polygon_offset.transformed(Scale.from_factors([1.00, 1.00, 1], Frame(quarter_polygon[2])))
+beam_shapes : List[Mesh] = [] 
 
-border_plane0: Plane = Plane(quarter_polygon_offset[2], quarter_polygon_offset[1] - quarter_polygon_offset[2])
-border_plane1: Plane = Plane(quarter_polygon_offset[2], quarter_polygon_offset[2] - quarter_polygon_offset[3])
+offset_direction : Vector = Vector.cross(quarter_line.direction, Vector.Zaxis())*BOARD_THICKNESS*0.5
+quarter_line_offseted : Polygon = Polygon([
+    quarter_line.start+offset_direction, 
+    quarter_line.end+offset_direction, 
+    quarter_line.end-offset_direction, 
+    quarter_line.start-offset_direction])
+cut_polygon : Polygon = quarter_polygon_offset.transformed(Scale.from_factors([1.00,1.00,1],Frame(quarter_polygon[2])))
+
+border_plane0 : Plane = Plane(quarter_polygon_offset[2],  quarter_polygon_offset[1]-quarter_polygon_offset[2])
+border_plane1 : Plane = Plane(quarter_polygon_offset[2], quarter_polygon_offset[2]-quarter_polygon_offset[3])
 
 # Slice planes
-slice_plane_point: Point = midpoint_point_point(quarter_polygon_offset[1], quarter_polygon_offset[2])
-slice_plane_normal: Vector = Vector.cross(quarter_polygon_offset[2] - quarter_polygon_offset[1], Vector.Zaxis())
-slice_plane_0: Plane = Plane(slice_plane_point, slice_plane_normal)
+slice_plane_point : Point = midpoint_point_point(quarter_polygon_offset[1], quarter_polygon_offset[2])
+slice_plane_normal : Vector = Vector.cross(quarter_polygon_offset[2]-quarter_polygon_offset[1], Vector.Zaxis())
+slice_plane_0 : Plane = Plane(slice_plane_point, slice_plane_normal)
 slice_plane_point = midpoint_point_point(quarter_polygon_offset[2], quarter_polygon_offset[3])
-slice_plane_normal = Vector.cross(quarter_polygon_offset[3] - quarter_polygon_offset[2], Vector.Zaxis())
-slice_plane_1: Plane = Plane(slice_plane_point, slice_plane_normal)
+slice_plane_normal = Vector.cross(quarter_polygon_offset[3]-quarter_polygon_offset[2], Vector.Zaxis())
+slice_plane_1 : Plane = Plane(slice_plane_point, slice_plane_normal)
 
-print(slice_plane_0)
 
-for i in range(quarter_divisions + 1):
-    # Linear interpolation of dicisions
-    t: float = i / quarter_divisions
+max_z_0 : float = 0
+max_z_1 : float = 0
+max_z_2 : float = 0
 
-    # Rotate the line and its polygon
-    rotation: Rotation = Rotation.from_axis_and_angle([0, 0, 1], angle * t, point=quarter_lines_offset)
-    quarter_line_rotated: Line = quarter_line.transformed(rotation)
+angle : float = Vector.angle(quarter_polygon[1]-quarter_polygon[0], quarter_polygon[1]-quarter_polygon[2])
+rib_arc : List[Point] = []
 
-    # # Rotate the offset polygon
-    # quarter_line_offseted_rotated : Polygon = quarter_line_offseted.transformed(rotation)
-    # quarter_line_offseted_rotated_cut : Polygon = Polygon(boolean_intersection_polygon_polygon(cut_polygon, quarter_line_offseted_rotated))
-    # quarter_polygons.append(quarter_line_offseted_rotated_cut)
+for i in range(QUARTER_DIVISIONS+1):
+    
+    # Linear interpolation of divisions
+    t : float = i / QUARTER_DIVISIONS
+
+    # Rotate the line and its polygon 
+    rotation : Rotation = Rotation.from_axis_and_angle([0,0,1], angle * t, point=BOUNDARY_OFFSET_1)
+    quarter_line_rotated : Line = quarter_line.transformed(rotation)
+    
 
     # Intersect the rotated line with the offset polygon and replace the line end point with the intersection point
-    if equal_end:
-        for j in range(len(quarter_polygon_offset.points)):
-            segment: Line = Line(quarter_polygon_offset[j], quarter_polygon_offset[(j + 1) % len(quarter_polygon_offset)])
-            result: List[float] = intersection_segment_segment(quarter_line_rotated, segment)
-            if result[0]:
-                quarter_line_rotated = Line(quarter_line_rotated.start, Point(*result[0]))
-                break
+    for j in range(len(quarter_polygon_offset.points)):
+        segment : Line = Line(quarter_polygon[j], quarter_polygon[(j+1)%len(quarter_polygon)])
+        result : List[float] = intersection_segment_segment(quarter_line_rotated, segment)
+        if result[0]: 
+            quarter_line_rotated = Line(quarter_line_rotated.start, Point(*result[0]))
+            break
 
     # Extend the line by the thickness
-    quarter_line_rotated = Line(quarter_line_rotated.start, quarter_line_rotated.end + quarter_line_rotated.direction * board_thickness)
+    # quarter_line_rotated : Line = Line(quarter_line_rotated.start, quarter_line_rotated.end+quarter_line_rotated.direction*BOARD_THICKNESS)
+    l_prime : float = 0
+    
+    # Create polygon of a plate
+    if EQUAL_RIB_ANGLE !=0:        
+        rad : float = radians(EQUAL_RIB_ANGLE)
+        rib_length : float = quarter_line_rotated.start.distance_to_point(quarter_line_rotated.end)
+        capitel_length : float = (quarter_line_rotated.start+Vector(0, 0, RIB_INLCINATION_1)+quarter_line_rotated.direction*COLUMN_HEAD_BASE_WIDTH).distance_to_point(quarter_line_rotated.start+Vector(0, 0, RIB_INLCINATION_1))
+        l : float = rib_length - capitel_length
+        l_prime = (l * sin(rad)) / sin(pi*0.5 - rad)
+    else:
+        l_prime = RIB_INLCINATION_1-RIB_INLCINATION_0
 
-    # Create polygon
-    quarter_polygon_rotated: Polygon = Polygon(
+    quarter_polygon_rotated : Polygon = Polygon(
         [
             quarter_line_rotated.start,
-            quarter_line_rotated.start + Vector(0, 0, inclination_0),
-            quarter_line_rotated.start + Vector(0, 0, inclination_0) + quarter_line_rotated.direction * capitel_width,
-            quarter_line_rotated.end + Vector(0, 0, inclination_1),
             quarter_line_rotated.end,
+            quarter_line_rotated.end+Vector(0, 0, RIB_INLCINATION_1-l_prime),
+            quarter_line_rotated.start+Vector(0, 0, RIB_INLCINATION_1)+quarter_line_rotated.direction*COLUMN_HEAD_BASE_WIDTH,
+            quarter_line_rotated.start+Vector(0, 0, RIB_INLCINATION_1),
         ]
     )
+    
+    
+    
+    # Find the lowest and highest points
+    if i == 0:
+        max_z_0 = quarter_polygon_rotated[2].z
+    
+    if i == QUARTER_DIVISIONS:
+        max_z_2 = quarter_polygon_rotated[2].z
+    
+    if i == int(floor(QUARTER_DIVISIONS*0.5)) or i == int(ceil(QUARTER_DIVISIONS*0.5)):
+        max_z_1 = max(quarter_polygon_rotated[2].z, max_z_1)
 
+    
+    # if RIB_INLCINATION_0 != RIB_INLCINATION_1:
+    #     quarter_polygon_rotated.points.insert(3,  quarter_line_rotated.start+Vector(0, 0, RIB_INLCINATION_1)+quarter_line_rotated.direction*COLUMN_HEAD_BASE_WIDTH,)
+            
     # Offset the two polygons in both sides
-    normal = Vector.cross(quarter_polygon_rotated[1] - quarter_polygon_rotated[0], quarter_polygon_rotated[-1] - quarter_polygon_rotated[0])
-    normal.unitize()
-    quarter_polygon_offset_rotated_0: Polygon = quarter_polygon_rotated.translated(normal * board_thickness * 0.5)
-    quarter_polygon_offset_rotated_1: Polygon = quarter_polygon_rotated.translated(normal * -board_thickness * 0.5)
-
+    normal = Vector.cross(quarter_polygon_rotated[1]-quarter_polygon_rotated[0],quarter_polygon_rotated[-1]-quarter_polygon_rotated[0]).unitized()
+    quarter_polygon_offset_rotated_0 : Polygon = quarter_polygon_rotated.translated(normal*BOARD_THICKNESS*0.5)
+    quarter_polygon_offset_rotated_1 : Polygon = quarter_polygon_rotated.translated(normal*-BOARD_THICKNESS*0.5)
+    
+    # Collect points for column head
+    rib_arc.append(quarter_polygon_rotated[0]+normal*BOARD_THICKNESS*0.5)
+    rib_arc.append(quarter_polygon_rotated[0]-normal*BOARD_THICKNESS*0.5)
+    
     # Loft the two polygons
     mesh = loft_two_polygons(quarter_polygon_offset_rotated_0, quarter_polygon_offset_rotated_1, False)
+        
+    # Initial mesh slicing
+    split_mesh = slice_and_select_largest(mesh, border_plane0)
 
-    # Slice the mesh by the two side planes, take the largest mesh.
-    mesh_pair0 = mesh_slice_plane(mesh, border_plane0)
-    split_mesh = mesh
+    # Further mesh slicing
+    split_mesh = slice_and_select_largest(split_mesh, border_plane1)
 
-    if mesh_pair0:
-        if mesh_pair0[0].aabb().volume < mesh_pair0[1].aabb().volume:
-            mesh_pair0 = mesh_pair0[::-1]
-        split_mesh = mesh_pair0[0]
-
-    mesh_pair1 = mesh_slice_plane(split_mesh, border_plane1)
-
-    if mesh_pair1:
-        if mesh_pair1[0].aabb().volume < mesh_pair1[1].aabb().volume:
-            mesh_pair1 = mesh_pair1[::-1]
-        split_mesh = mesh_pair1[0]
-
+    # Append the final split mesh to beam_shapes
     beam_shapes.append(split_mesh)
+    
+    ############################################################################################################
+    # Create beam_elements and add them to the model
+    ############################################################################################################
+    element_plate : PlateElement = PlateElement.from_polygon_and_thickness(
+        polygon=quarter_polygon_rotated,
+        thickness=BOARD_THICKNESS,
+        frame = Frame(quarter_polygon_rotated[2], quarter_line_rotated.direction, Vector.Zaxis()),
+        name = "rib" + str(i),
+        shape = split_mesh
+    )
 
-    #     if mesh_pair0[0].aabb().volume
-    #     if mesh_pair0.b
-    #     beam_shapes.append(mesh_pair0[0])
-    # if mesh_pair1:
-    #     beam_shapes.append(mesh_pair1[0])
+    model.add_element(element_plate, ribs_diagonal)
 
-    # temp.append(temp_polygon)
+# print(max_z_0, max_z_1, max_z_2)
+# temp.append(Polygon(rib_arc))
 
-    #
+############################################################################################################
+# Vertical side-boards
+# Create two side boards if the boundary thickness is greater than zero.
+############################################################################################################
+if BOUNDARY_OFFSET_0 > 0:
+    
+    vertical_extension : float = 0.15 if EQUAL_RIB_ANGLE == 0.0 else 1.0
+    
+    cut_plane : Plane = Plane(
+        quarter_polygon_offset[2], 
+        Vector.cross(quarter_polygon[0]-quarter_polygon[2], Vector.Zaxis())
+    )
+    
+    
+    offset0 : Vector = Vector(-BOUNDARY_OFFSET_0*1.0, 0, 0)
+    edge0 : Line = Line(quarter_polygon[1], quarter_polygon[2])
+    edge0 = Line(edge0.start, edge0.end+edge0.direction*BOUNDARY_OFFSET_0)
+    side0 : Polygon = Polygon([
+        edge0.start+offset0,
+        edge0.end+offset0,
+        edge0.end+Vector(0, 0, max_z_1+BOUNDARY_OFFSET_0*vertical_extension)+offset0,
+        edge0.start+Vector(0, 0, max_z_0+BOUNDARY_OFFSET_0*vertical_extension)+offset0,
 
-    # Cut the the mesh by the side planes and always keep the biggest mesh
-    # Cut Planes : border_plane0 and border_plane1
-
-    # temp.append(quarter_line_rotated)
-    # temp.append(Polyline(quarter_polygon_rotated.points))
-    # temp.append(quarter_polygon_offset_rotated_0)
-    # temp.append(quarter_polygon_offset_rotated_1)
-
-    # # Get angle cut plane
-    # quarter_line_z : Line = Line(quarter_line_rotated.start+Vector(0,0,inclination_0), quarter_line_rotated.end+Vector(0,0,inclination_1), 0)
-    # is_parallel : bool = is_parallel_vector_vector(quarter_line_z.direction, quarter_line_rotated.direction)
-
-    # plane_normal : Vector = Vector.Zaxis()
-    # if (is_parallel == False):
-    #     triangle_normal : Vector = Vector.cross(quarter_line_rotated.direction, quarter_line_z.direction)
-    #     plane_normal : Vector = Vector.cross(quarter_line_z.direction, triangle_normal.unitized())
-
-    # plane : Plane = Plane(quarter_line_z.start, plane_normal)
-
-    # # Project polygon on the rotated plane
-    # projection : Projection = Projection.from_plane_and_direction(plane, Vector.Zaxis())
-    # quarter_line_offseted_rotated_cut_projected = quarter_line_offseted_rotated_cut.transformed(projection)
-    # quarter_polygons.append(quarter_line_offseted_rotated_cut_projected)
-
-    # # Cut the two polygons the plane
-    # quarter_line_offseted_rotated_cut_cut = cut_polygon_with_plane(quarter_line_offseted_rotated_cut, capitel_base_cut_plane)
-    # quarter_line_offseted_rotated_cut_projected_cut0 = cut_polygon_with_plane(quarter_line_offseted_rotated_cut_projected, capitel_base_cut_plane)
-    # quarter_line_offseted_rotated_cut_projected_cut1 = cut_polygon_with_plane(quarter_line_offseted_rotated_cut_projected, Plane(capitel_base_cut_plane.point, -capitel_base_cut_plane.normal))
-    # quarter_line_offseted_rotated_cut_projected_cut1.transform(Projection.from_plane_and_direction(capitel_base_cut_plane, Vector.Zaxis()))
-    # # print(quarter_line_offseted_rotated_cut_projected_cut1)
-    # def merge_two_polylines(polyline0: Polygon, polyline1: Polygon) :
-
-    #     id0 : int = -1
-    #     id1 : int = -1
-    #     for j in range(len(polyline0)):
-    #         line0 : Line = Line(polyline0[j], polyline0[(j+1)%len(polyline0)])
-    #         for k in range(len(polyline1)):
-    #             line1 : Line = Line(polyline1[k], polyline1[(k+1)%len(polyline1)])
-    #             distance : float = distance_point_point(line0.midpoint, line1.midpoint)
-    #             if (distance < 0.001):
-    #                 id0 = j
-    #                 id1 = k
-    #                 break
-    #     if (id0 == -1 or id1 == -1):
-    #         return None
-
-    #     def shift_left(lst, n):
-    #         n : int = n % len(lst)  # To handle cases where n > len(lst)
-    #         return lst[n:] + lst[:n]
-
-    #     def shift_right(lst: list, n: int) -> list:
-    #         n = n % len(lst)  # To handle cases where n > len(lst)
-    #         return lst[-n:] + lst[:-n]
-
-    #     points0 = list(polyline0.points)
-    #     points1 = list(polyline1.points)
-    #     points0 = shift_left(points0, id0+1)
-    #     points1 = shift_left(points1, id1+1)
-
-    #     return Polygon(points0 + points1[1:-1])
-    #     return Polyline(points0), Polyline(points1)
-
-    # merged_polyline = merge_two_polylines(quarter_line_offseted_rotated_cut_projected_cut0, quarter_line_offseted_rotated_cut_projected_cut1)
-    # merged_polyline_xy = merged_polyline.transformed(Projection.from_plane_and_direction(Plane.worldXY(), -Vector.Zaxis()))
-
-    # mesh = loft_two_polygons(merged_polyline, merged_polyline_xy, False)
-    # temp.append(mesh)
-
-    # quarter_polygons.append(quarter_line_offseted_rotated_cut_projected_cut0)
-    # quarter_polygons.append(quarter_line_offseted_rotated_cut_projected_cut1)
-
-    # Convert polygon to polylines
-    # Find common edge by checking closest point distance to edge centers
-    # Delete that segment and merge the two polylines
-    # for j in range(len(quarter_line_offseted_rotated_cut_cut)-1):
-    #     segment0 : Line = Line(quarter_line_offseted_rotated_cut_cut[j], quarter_line_offseted_rotated_cut_cut[(j+1)%len(quarter_line_offseted_rotated_cut_cut)])
-    #     for k in range(len(quarter_line_offseted_rotated_cut_projected_cut0)):
-    #         segment1 : Line = Line(quarter_line_offseted_rotated_cut_projected_cut1[k], quarter_line_offseted_rotated_cut_projected_cut1[(k+1)%len(quarter_line_offseted_rotated_cut_projected_cut1)])
-    #         distance = distance_point_point(segment0.midpoint, segment1.midpoint)
-    #         if (distance < 0.001):
-    #             print("found the smallest distance")
-
-    # quarter_line_offseted_rotated_cut_projected_cut1.transform(Projection.from_plane_and_direction(capitel_base_cut_plane, Vector.Zaxis()))
-    # print(boolean_union_polygon_polygon(quarter_line_offseted_rotated_cut_projected_cut0, quarter_line_offseted_rotated_cut_projected_cut1))
-
-    # quarter_polygons.append(boolean_union_polygon_polygon(
-    #      quarter_line_offseted_rotated_cut_projected_cut0.transformed(Projection.from_plane_and_direction(Plane.worldXY(), -Vector.Zaxis())),
-    #      quarter_line_offseted_rotated_cut_projected_cut1.transformed(Projection.from_plane_and_direction(Plane.worldXY(), -Vector.Zaxis()))))
-
-    # polygon = Polygon.from_sides_and_radius_xy(10, 1000).transformed(Transformation.from_frame_to_frame(Frame.worldXY(), Frame.from_plane(capitel_base_cut_plane)))
-    # temp.append(polygon)
-    # print(quarter_line_offseted_rotated_cut_cut)
-
-    # # Loft the two polygons
-    # mesh = loft_two_polygons(quarter_line_offseted_rotated_cut, quarter_line_offseted_rotated_cut_projected, False)
-    # # mesh = loft_two_polygons(quarter_line_offseted_rotated_cut_cut, quarter_line_offseted_rotated_cut_projected_cut, False)
-    # beam_shapes.append(mesh)
-
-    # Or rotate the line first
-    # Then cut it.
-    # Then move its end vertically.
-    # Then plane normal.
+    ])
+    
+    
+    element_plate : PlateElement = PlateElement.from_polygon_and_thickness(
+        polygon=side0,
+        thickness=BOUNDARY_OFFSET_0,
+        frame = Frame(quarter_polygon[2], quarter_polygon[1], Vector.Zaxis()),
+        name = "rib_boundary" + str(i),
+    )
+    
+    mesh_split = slice_and_select_largest(element_plate.shape, cut_plane)
+    element_plate.shape = mesh_split
 
 
-# ViewerLive.run()
+    model.add_element(element_plate, ribs_boundary)
+    
+    offset1 : Vector = Vector(0, -BOUNDARY_OFFSET_0*1.0, 0)
+    edge1 : Line = Line(quarter_polygon[3], quarter_polygon[2])
+    edge1 = Line(edge1.start, edge1.end+edge1.direction*BOUNDARY_OFFSET_0)
+    side1 : Polygon = Polygon([
+        edge1.start+offset1,
+        edge1.end+offset1,
+        edge1.end+Vector(0, 0, max_z_1+BOUNDARY_OFFSET_0*vertical_extension)+offset1,
+        edge1.start+Vector(0, 0, max_z_2+BOUNDARY_OFFSET_0*vertical_extension)+offset1,
+    ])
+    
+    
+    element_plate : PlateElement = PlateElement.from_polygon_and_thickness(
+        polygon=side1,
+        thickness=BOUNDARY_OFFSET_0,
+        frame = Frame(quarter_polygon[2], quarter_polygon[1], Vector.Zaxis()),
+        name = "rib_boundary" + str(i),
+    )
+    
+    mesh_split = slice_and_select_largest(element_plate.shape, cut_plane)
+    element_plate.shape = mesh_split
+
+    model.add_element(element_plate, ribs_boundary)
+    
+
+############################################################################################################
+# Top boards
+# TODO: boards by horizontal divisions
+# TODO: boards by triangular divisions
+############################################################################################################
+    element_plate : PlateElement = PlateElement.from_polygon_and_thickness(
+        polygon=side1,
+        thickness=BOARD_THICKNESS,
+        frame = Frame(quarter_polygon[2], quarter_polygon[1], Vector.Zaxis()),
+        name = "top_plate" + str(i),
+    )
+
+############################################################################################################
+# Column-head
+############################################################################################################
+rib_arc.pop()
+rib_arc_polygon : Polygon = Polygon(rib_arc)
+points : List[Point] = []
+for i in range(4):
+    points.extend(rib_arc_polygon.rotated(radians(90*(i))))
+quarter_column_head : Polygon = Polygon(points)
+
+
+# TODO: Replace Scale with accurate measurements
+column_head_0 : Polygon = quarter_column_head
+column_head_1 : Polygon = quarter_column_head.translated(Vector(0, 0, RIB_INLCINATION_1))
+column_head_2 : Polygon = quarter_column_head.scaled(1.2).translated(Vector(0, 0, RIB_INLCINATION_1))
+column_head_3 : Polygon = quarter_column_head.scaled(1.2).translated(Vector(0, 0, RIB_INLCINATION_1+20))
+column_head_4 : Polygon = quarter_column_head.scaled(0.5).translated(Vector(0, 0, RIB_INLCINATION_1+50))
+column_head_polygons : List[Polygon] = [column_head_0, column_head_1, column_head_2, column_head_3, column_head_4]
+
+# Loft all the polygons
+v, f = [], []
+v.extend(column_head_0.points)
+v.extend(column_head_1.points)
+v.extend(column_head_2.points)
+v.extend(column_head_3.points)
+v.extend(column_head_4.points)
+
+ear_faces = earclip_polygon(column_head_0)
+f.extend(ear_faces)
+
+for i in range(len(column_head_polygons)-1):
+    for j in range(len(column_head_polygons[i].points)):
+        f.append([j+i*len(column_head_polygons[i].points), (j+1)%len(column_head_polygons[i].points)+i*len(column_head_polygons[i].points), (j+1)%len(column_head_polygons[i].points)+(i+1)*len(column_head_polygons[i].points), j+(i+1)*len(column_head_polygons[i].points)])
+
+column_head_mesh = loft_multiple_polygons(column_head_polygons, False) # TODO: replace with ElementColumnHead
+temp.append(column_head_mesh)
+
+############################################################################################################
+# Column
+############################################################################################################
+column_0 : Polygon = Polygon.from_sides_and_radius_xy(QUARTER_DIVISIONS*4, COLUMN_RADIUS).translated(Vector(0, 0, RIB_INLCINATION_1+50))
+column_1 : Polygon = column_0.translated(Vector(0, 0, 3000))
+column_mesh = loft_two_polygons(column_0, column_1, False) # TODO: replace with ElementColumn
+temp.append(column_mesh)
+
+############################################################################################################
+# Viewer
+############################################################################################################
+
 ViewerLive.clear()
-ViewerLive.add(quarter_polygon)
-ViewerLive.add(quarter_polygon_offset)
-ViewerLive.add(quarter_lines)
-ViewerLive.add(quarter_polygons)
-ViewerLive.add(beam_shapes)
+elements = list(model.elements())
+for element in elements:
+    element.shape.name = element.name
+    ViewerLive.add(element.shape)
+    
+
+
+# # # ViewerLive.add(quarter_polygon)
+# # # ViewerLive.add(quarter_polygon_offset)
+# # # ViewerLive.add(quarter_lines)
+# # # ViewerLive.add(quarter_polygons)
+# # # ViewerLive.add(beam_shapes)
 ViewerLive.add(temp)
 ViewerLive.serialize()
+
+# ViewerLive.run()
