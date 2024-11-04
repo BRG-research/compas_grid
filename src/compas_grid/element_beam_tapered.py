@@ -56,7 +56,6 @@ class BeamTaperedElement(Element):
 
     @property
     def __data__(self) -> Dict[str, Any]:
-        
         data: Dict[str, Any] = super(BeamTaperedElement, self).__data__
         data["axis"] = self.axis.__data__
         data["section_bottom"] = self.section_bottom
@@ -67,7 +66,7 @@ class BeamTaperedElement(Element):
         return data
 
     @classmethod
-    def __from_data__(cls, data: Dict[str, Any]) -> 'BeamTaperedElement':
+    def __from_data__(cls, data: Dict[str, Any]) -> "BeamTaperedElement":
         return cls(
             axis=Line(data["axis"]["start"], data["axis"]["end"]),
             section_bottom=data["section_bottom"],
@@ -104,25 +103,22 @@ class BeamTaperedElement(Element):
     @property
     def face_polygons(self) -> List[Polygon]:
         return [self.geometry.face_polygon(face) for face in self.geometry.faces()]  # type: ignore
-    
+
     def recompute(self):
         self.section_bottom, self.section_top = self.compute_top_and_bottom_polygons()
-        self.shape: Mesh = self.compute_shape()        
+        self.shape: Mesh = self.compute_shape()
 
-    def compute_top_and_bottom_polygons(self, frame_cut0 : Frame = None, frame_cut1 : Frame = None) -> Tuple[Polygon, Polygon]:
+    def compute_top_and_bottom_polygons(self, frame_cut0: Frame = None, frame_cut1: Frame = None) -> Tuple[Polygon, Polygon]:
         """Compute the top and bottom polygons of the beam.
 
         Returns
         -------
         Tuple[:class:`compas.geometry.Polygon`, :class:`compas.geometry.Polygon`]
         """
-        
-        
 
         plane0: Plane = Plane.from_frame(frame_cut0) if frame_cut0 else Plane.from_frame(self.frame)
         plane1: Plane = Plane.from_frame(frame_cut1) if frame_cut1 else Plane.from_frame(self.frame_top)
-                
-        
+
         points0: List[List[float]] = []
         points1: List[List[float]] = []
         for i in range(len(self.section_bottom.points)):
@@ -286,8 +282,8 @@ class BeamTaperedElement(Element):
         """
 
         t0 = 0
-        t1 = 1-t0
-        offset = (depth_1-depth_0)*0.5
+        t1 = 1 - t0
+        offset = (depth_1 - depth_0) * 0.5
 
         p00: List[float] = [width * 0.5, -depth_0 * 0.5, 0]
         p01: List[float] = [width * 0.5, depth_0 * 0.5, 0]
@@ -295,15 +291,15 @@ class BeamTaperedElement(Element):
         p03: List[float] = [-width * 0.5, -depth_0 * 0.5, 0]
         polygon_0: Polygon = Polygon([p00, p01, p02, p03])
 
-        p10: List[float] = [width * 0.5, -depth_1 * 0.5-offset, height]
-        p11: List[float] = [width * 0.5, depth_1 * 0.5-offset, height]
-        p12: List[float] = [-width * 0.5, depth_1 * 0.5-offset, height]
-        p13: List[float] = [-width * 0.5, -depth_1 * 0.5-offset, height]
+        p10: List[float] = [width * 0.5, -depth_1 * 0.5 - offset, height]
+        p11: List[float] = [width * 0.5, depth_1 * 0.5 - offset, height]
+        p12: List[float] = [-width * 0.5, depth_1 * 0.5 - offset, height]
+        p13: List[float] = [-width * 0.5, -depth_1 * 0.5 - offset, height]
         polygon_1: Polygon = Polygon([p10, p11, p12, p13])
-        
+
         # recenter
-        polygon_1.translate([-width * 0.0, depth_0*-0.5, 0])
-        polygon_0.translate([-width * 0.0, depth_0*-0.5, 0])
+        polygon_1.translate([-width * 0.0, depth_0 * -0.5, 0])
+        polygon_0.translate([-width * 0.0, depth_0 * -0.5, 0])
 
         axis: Line = Line(Point(0, 0, 0), Point(0, 0, height))
 

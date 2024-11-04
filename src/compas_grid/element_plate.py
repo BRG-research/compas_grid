@@ -48,7 +48,6 @@ class PlateElement(Element):
 
     @property
     def __data__(self) -> Dict[str, Any]:
-        
         data: Dict[str, Any] = super(PlateElement, self).__data__
         data["bottom"] = self._bottom
         data["top"] = self._top
@@ -56,13 +55,12 @@ class PlateElement(Element):
         return data
 
     @classmethod
-    def __from_data__(cls, data: Dict[str, Any]) -> 'PlateElement':
+    def __from_data__(cls, data: Dict[str, Any]) -> "PlateElement":
         return cls(
             bottom=data["bottom"],
             top=data["top"],
             features=data["features"],
         )
-
 
     def __init__(self, bottom: Polygon, top: Polygon, features: List[PlateFeature] = None, frame: Frame = None, name: str = None):
         super(PlateElement, self).__init__(frame=frame, name=name)
@@ -71,7 +69,7 @@ class PlateElement(Element):
         self.shape: Mesh = self.compute_shape()
         self.features: List[Feature] = features or []  # type: list[PlateFeature]
         self.name = self.__class__.__name__
-    
+
     @property
     def face_polygons(self) -> List[Polygon]:
         return [self.geometry.face_polygon(face) for face in self.geometry.faces()]  # type: ignore
@@ -164,7 +162,7 @@ class PlateElement(Element):
             point += up
         plate: PlateElement = cls(bottom, top)
         return plate
-    
+
     @classmethod
     def from_width_depth_thickness(cls, width: float, depth: float, thickness: float, features: List[Feature] = None, frame: Frame = None, name: str = None) -> "PlateElement":
         """Create a plate element from a width, depth and thickness.
@@ -183,7 +181,7 @@ class PlateElement(Element):
         :class:`PlateElement`
 
         """
-        polygon: Polygon = Polygon.from_rectangle(Point(0,0,0), width, depth)
+        polygon: Polygon = Polygon.from_rectangle(Point(0, 0, 0), width, depth)
         return cls.from_polygon_and_thickness(polygon, thickness, features=features, frame=frame, name=name)
 
 

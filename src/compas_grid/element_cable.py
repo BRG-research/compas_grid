@@ -48,7 +48,6 @@ class CableElement(Element):
 
     @property
     def __data__(self) -> Dict[str, Any]:
-        
         data: Dict[str, Any] = super(CableElement, self).__data__
         data["axis"] = self.axis.__data__
         data["radius"] = self.radius
@@ -57,7 +56,7 @@ class CableElement(Element):
         return data
 
     @classmethod
-    def __from_data__(cls, data: Dict[str, Any]) -> 'CableElement':
+    def __from_data__(cls, data: Dict[str, Any]) -> "CableElement":
         return cls(
             axis=Line(data["axis"]["start"], data["axis"]["end"]),
             radius=data["radius"],

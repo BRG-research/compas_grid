@@ -57,7 +57,6 @@ class BeamElement(Element):
 
     @property
     def __data__(self) -> Dict[str, Any]:
-        
         data: Dict[str, Any] = super(BeamElement, self).__data__
         data["axis"] = self.axis.__data__
         data["section"] = self.section
@@ -67,7 +66,7 @@ class BeamElement(Element):
         return data
 
     @classmethod
-    def __from_data__(cls, data: Dict[str, Any]) -> 'BeamElement':
+    def __from_data__(cls, data: Dict[str, Any]) -> "BeamElement":
         return cls(
             axis=Line(data["axis"]["start"], data["axis"]["end"]),
             section=data["section"],

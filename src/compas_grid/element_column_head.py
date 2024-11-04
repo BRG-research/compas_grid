@@ -43,14 +43,13 @@ class ColumnHeadElement(Element):
 
     @property
     def __data__(self) -> Dict[str, Any]:
-        
         data: Dict[str, Any] = super(ColumnHeadElement, self).__data__
         data["shape"] = self.shape
         data["features"] = self.features
         return data
 
     @classmethod
-    def __from_data__(cls, data: Dict[str, Any]) -> 'ColumnHeadElement':
+    def __from_data__(cls, data: Dict[str, Any]) -> "ColumnHeadElement":
         return cls(
             mesh=data["shape"],
             features=data["features"],
@@ -190,7 +189,7 @@ class ColumnHeadElement(Element):
         """
 
         box: Box = Box(xsize=width, ysize=depth, zsize=height, frame=Frame.worldXY())
-        box.translate([0,0,height*0.5])
+        box.translate([0, 0, height * 0.5])
         mesh: Mesh = Mesh.from_vertices_and_faces(box.vertices, box.faces)
 
         column: ColumnHeadElement = cls(mesh=mesh, features=features, name=name)
