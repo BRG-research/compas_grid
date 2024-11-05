@@ -197,7 +197,7 @@ class ColumnHeadElement(Element):
     
     @classmethod
     def from_loft(
-        cls, polygons : List[Polygon], top_holes : List[Polygon],  bottom_holes : List[Polygon], features: Optional[List[ColumnHeadFeature]] = None, name: str = "None"
+        cls, polygons : List[Polygon], top_holes : List[Polygon] = [],  bottom_holes : List[Polygon] = [], features: Optional[List[ColumnHeadFeature]] = None, name: str = "None"
     ) -> "ColumnHeadElement":
         """Loft a list of polygons. 
         When top and bottom holes are provided, inner loft is created too. 
@@ -231,6 +231,8 @@ class ColumnHeadElement(Element):
         polygon_1 = polygons[-1]
         
         v_0, f_0 = conforming_delaunay_triangulation(boundary=polygon_0, holes=top_holes)
+        v_0 = v_0.tolist()
+        f_0 = f_0.tolist()
         v_1, f_1 = [], []
         v_1.extend(polygon_1.points)
         for hole in bottom_holes:
@@ -248,11 +250,13 @@ class ColumnHeadElement(Element):
         f.extend(f_0)
         v.extend(v_1)
         f.extend(f_1)
-                    
+        
 
         ########################################################################################
         # Inner sides
         ########################################################################################
+        
+        
     
         n_top = len(v_0)
         n_boundary = len(polygon_0.points)
@@ -306,6 +310,8 @@ class ColumnHeadElement(Element):
         ########################################################################################
         # Create Mesh
         ########################################################################################
+        for face in f:
+            face.reverse()
         mesh = Mesh.from_vertices_and_faces(v, f)
 
         ########################################################################################

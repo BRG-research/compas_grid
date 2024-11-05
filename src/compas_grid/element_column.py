@@ -266,6 +266,48 @@ class ColumnElement(Element):
 
         column: ColumnElement = cls(axis=axis, section=polygon, frame_bottom=frame_bottom, frame_top=frame_top, features=features, name=name)
         return column
+    
+    @classmethod
+    def from_round_section(
+        cls,
+        radius: float = 0.2,
+        sides: int = 24,
+        height: float = 3.0,
+        frame_bottom: Optional[Plane] = Frame.worldXY(),
+        frame_top: Optional[Plane] = None,
+        features: Optional[List[ColumnFeature]] = None,
+        name: str = "None",
+    ) -> "ColumnElement":
+        """Create a column element from a round section centered on XY frame.
+
+        Parameters
+        ----------
+        radius : float, optional
+            The radius of the column.
+        sides : int, optional
+            The number of sides of the polygon.
+        height : float, optional
+            The height of the column.
+        frame_bottom : :class:`compas.geometry.Plane`, optional
+            The frame of the bottom polygon.
+        frame_top : :class:`compas.geometry.Plane`, optional
+            The frame of the top polygon.
+        features : list[:class:`ColumnFeature`], optional
+            Additional block features.
+        name : str, optional
+            The name of the element.
+
+        Returns
+        -------
+        :class:`ColumnElement`
+
+        """
+
+        polygon: Polygon = Polygon.from_sides_and_radius_xy(24, radius)
+        axis: Line = Line([0, 0, 0], [0, 0, height])
+
+        column: ColumnElement = cls(axis=axis, section=polygon, frame_bottom=frame_bottom, frame_top=frame_top, features=features, name=name)
+        return column
 
 
 
