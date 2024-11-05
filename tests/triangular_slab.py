@@ -16,6 +16,8 @@ from compas.geometry import is_parallel_vector_vector
 from compas.geometry import intersection_segment_segment
 from compas.geometry import distance_point_point
 from compas.geometry import midpoint_point_point
+from compas.geometry import offset_polygon
+from compas_cgal.triangulation import conforming_delaunay_triangulation
 from compas.datastructures import Mesh
 from compas.datastructures.mesh.slice import mesh_slice_plane
 from compas_snippets.viewer_live import ViewerLive
@@ -40,7 +42,9 @@ QUARTER_DEPTH : float = 3000
 QUARTER_DIVISIONS : int = 12
 BOARD_THICKNESS = 40
 COLUMN_HEAD_RADIUS : float = 350
-COLUMN_RADIUS : float = 200
+COLUMN_HEAD_BOTTOM_0 : float = 20
+COLUMN_HEAD_BOTTOM_1 : float = 100
+COLUMN_RADIUS : float = 150
 EQUAL_RIB_ANGLE : float = 5*0
 RIB_INLCINATION_0 : float = 100
 RIB_INLCINATION_1 : float = 350
@@ -114,23 +118,23 @@ def loft_multiple_polygons(polygons: List[Polygon], triangulate=False) -> Mesh:
     for polygon in polygons:
         v.extend(polygon.points)
 
-    # Top and bottom faces
-    if triangulate:
-        top_faces = earclip_polygon(polygons[0])
-        f.extend(top_faces)
-        for top_face in top_faces:
-            bottom_face = [i+len(polygons[0].points)*(len(polygons)-1) for i in top_face]
-            bottom_face.reverse()
-            f.append(bottom_face)   
-    else:
-        top_faces = []
-        bottom_faces = []
-        for i in range(len(polygons[0].points)):
-            top_faces.append(i)
-            bottom_faces.append(i+len(polygons[0].points)*(len(polygons)-1))
-        bottom_faces.reverse()
-        f.append(top_faces)
-        f.append(bottom_faces)
+    # # Top and bottom faces
+    # if triangulate:
+    #     top_faces = earclip_polygon(polygons[0])
+    #     f.extend(top_faces)
+    #     for top_face in top_faces:
+    #         bottom_face = [i+len(polygons[0].points)*(len(polygons)-1) for i in top_face]
+    #         bottom_face.reverse()
+    #         f.append(bottom_face)   
+    # else:
+    #     top_faces = []
+    #     bottom_faces = []
+    #     for i in range(len(polygons[0].points)):
+    #         top_faces.append(i)
+    #         bottom_faces.append(i+len(polygons[0].points)*(len(polygons)-1))
+    #     bottom_faces.reverse()
+    #     f.append(top_faces)
+    #     f.append(bottom_faces)
 
     # Side faces
     n = len(polygons[0].points)
@@ -398,38 +402,115 @@ quarter_column_head : Polygon = Polygon(points)
 
 
 # TODO: Replace Scale with accurate measurements
+# Polygon.off
+
+column_head_hole_0 : Polygon = Polygon([[-COLUMN_RADIUS*0.5, -COLUMN_RADIUS*0.5, 0], [COLUMN_RADIUS*0.5, -COLUMN_RADIUS*0.5, 0], [COLUMN_RADIUS*0.5, COLUMN_RADIUS*0.5, 0], [-COLUMN_RADIUS*0.5, COLUMN_RADIUS*0.5, 0]])
+column_head_hole_1 : Polygon = column_head_hole_0.translated(Vector(0, 0, RIB_INLCINATION_1+COLUMN_HEAD_BOTTOM_1))
+
+# temp.append(column_head_hole_0)
+# temp.append(column_head_hole_1)
 column_head_0 : Polygon = quarter_column_head
 column_head_1 : Polygon = quarter_column_head.translated(Vector(0, 0, RIB_INLCINATION_1))
-column_head_2 : Polygon = quarter_column_head.scaled(1.2).translated(Vector(0, 0, RIB_INLCINATION_1))
-column_head_3 : Polygon = quarter_column_head.scaled(1.2).translated(Vector(0, 0, RIB_INLCINATION_1+20))
-column_head_4 : Polygon = quarter_column_head.scaled(0.5).translated(Vector(0, 0, RIB_INLCINATION_1+50))
+column_head_2 : Polygon = Polygon(offset_polygon(column_head_0, -COLUMN_HEAD_BASE_WIDTH)).translated(Vector(0, 0, RIB_INLCINATION_1))
+column_head_3 : Polygon = column_head_2.translated(Vector(0, 0, COLUMN_HEAD_BOTTOM_0))
+column_head_4 : Polygon = Polygon(offset_polygon(quarter_column_head, COLUMN_HEAD_RADIUS-COLUMN_RADIUS-BOARD_THICKNESS*0.5)).translated(Vector(0, 0, RIB_INLCINATION_1+COLUMN_HEAD_BOTTOM_1))
+
+
+
+def smooth_polygon(polygon: Polygon, iterations: int = 1, alpha: float = 0.5) -> Polygon:
+    """
+    Smooth a polygon by averaging each point with its neighboring points.
+
+    Parameters
+    ----------
+    polygon : Polygon
+        The input polygon to be smoothed.
+    iterations : int, optional
+        The number of smoothing iterations to perform. Default is 1.
+    alpha : float, optional
+        The smoothing factor. Default is 0.5.
+
+    Returns
+    -------
+    Polygon
+        The smoothed polygon.
+    """
+    points: List[Point] = polygon.points
+
+    for _ in range(iterations):
+        new_points: List[Point] = []
+        for i in range(len(points)):
+            prev_point = points[i - 1]
+            curr_point = points[i]
+            next_point = points[(i + 1) % len(points)]
+            new_point = Point(
+                alpha * (prev_point.x + next_point.x) / 2 + (1 - alpha) * curr_point.x,
+                alpha * (prev_point.y + next_point.y) / 2 + (1 - alpha) * curr_point.y,
+                alpha * (prev_point.z + next_point.z) / 2 + (1 - alpha) * curr_point.z
+            )
+            new_points.append(new_point)
+        points = new_points
+
+    return Polygon(points)
+
+column_head_4 = smooth_polygon(column_head_4, 10, 0.1)
+
+
+# temp.append(column_head_4)
+# v0, f0 = conforming_delaunay_triangulation(
+#     column_head_hole_0,
+#     holes=[column_head_0] ,
+# )
+
+# v1, f1 = conforming_delaunay_triangulation(
+#     column_head_hole_1,
+#     holes=[column_head_4] ,
+# )
+
+# mesh0 = Mesh.from_vertices_and_faces(v0, f0)
+# mesh1 = Mesh.from_vertices_and_faces(v1, f1)
+# mesh1.translate(Vector(0, 0, RIB_INLCINATION_1+COLUMN_HEAD_BOTTOM_1))
+                                    
+# temp.append(mesh0)
+# temp.append(mesh1)
+
+
 column_head_polygons : List[Polygon] = [column_head_0, column_head_1, column_head_2, column_head_3, column_head_4]
 
 # Loft all the polygons
-v, f = [], []
-v.extend(column_head_0.points)
-v.extend(column_head_1.points)
-v.extend(column_head_2.points)
-v.extend(column_head_3.points)
-v.extend(column_head_4.points)
+# v, f = [], []
+# v.extend(column_head_0.points)
+# v.extend(column_head_1.points)
+# v.extend(column_head_2.points)
+# v.extend(column_head_3.points)
+# v.extend(column_head_4.points)
 
-ear_faces = earclip_polygon(column_head_0)
-f.extend(ear_faces)
+# ear_faces = earclip_polygon(column_head_0)
+# f.extend(ear_faces)
 
-for i in range(len(column_head_polygons)-1):
-    for j in range(len(column_head_polygons[i].points)):
-        f.append([j+i*len(column_head_polygons[i].points), (j+1)%len(column_head_polygons[i].points)+i*len(column_head_polygons[i].points), (j+1)%len(column_head_polygons[i].points)+(i+1)*len(column_head_polygons[i].points), j+(i+1)*len(column_head_polygons[i].points)])
+# for i in range(len(column_head_polygons)-1):
+#     for j in range(len(column_head_polygons[i].points)):
+#         f.append([j+i*len(column_head_polygons[i].points), (j+1)%len(column_head_polygons[i].points)+i*len(column_head_polygons[i].points), (j+1)%len(column_head_polygons[i].points)+(i+1)*len(column_head_polygons[i].points), j+(i+1)*len(column_head_polygons[i].points)])
 
-column_head_mesh = loft_multiple_polygons(column_head_polygons, False) # TODO: replace with ElementColumnHead
-temp.append(column_head_mesh)
+# column_head_mesh = loft_multiple_polygons(column_head_polygons, False) # TODO: replace with ElementColumnHead
+# temp.append(column_head_mesh)
 
+
+# temp.append(column_head_hole_0)
+# temp.append(column_head_hole_1)
+# temp.extend(column_head_polygons)
+# temp.append(column_head_4)
+# column_head_element = ColumnHeadElement.from_loft(polygons=[column_head_hole_0, column_head_hole_1], top_holes=[column_head_0], bottom_holes=[column_head_4])
+column_head_element = ColumnHeadElement.from_loft(polygons=column_head_polygons, top_holes=[column_head_hole_0], bottom_holes=[column_head_hole_1])
+# print(column_head_element.shape)
+temp.append(column_head_element.shape)
 ############################################################################################################
 # Column
 ############################################################################################################
-column_0 : Polygon = Polygon.from_sides_and_radius_xy(QUARTER_DIVISIONS*4, COLUMN_RADIUS).translated(Vector(0, 0, RIB_INLCINATION_1+50))
-column_1 : Polygon = column_0.translated(Vector(0, 0, 3000))
-column_mesh = loft_two_polygons(column_0, column_1, False) # TODO: replace with ElementColumn
-temp.append(column_mesh)
+# column_0 : Polygon = Polygon.from_sides_and_radius_xy(QUARTER_DIVISIONS*4, COLUMN_RADIUS).translated(Vector(0, 0, RIB_INLCINATION_1+COLUMN_HEAD_BOTTOM_1))
+# column_1 : Polygon = column_0.translated(Vector(0, 0, 3000))
+# column_mesh = loft_two_polygons(column_0, column_1, False) # TODO: replace with ElementColumn
+# temp.append(column_mesh)
 
 ############################################################################################################
 # Viewer
