@@ -142,6 +142,7 @@ class GridModel(Model):
         cmap_red: ColorMap = ColorMap.from_two_colors(Color.from_hex("#ff0074"), Color.from_hex("#DDDDDD"), diverging=True)
         cmap_green: ColorMap = ColorMap.from_two_colors(Color.from_hex("#40B5AD"), Color.from_hex("#DDDDDD"))
         cmap_blue: ColorMap = ColorMap.from_two_colors(Color.from_hex("#0096FF"), Color.from_hex("#DDDDDD"))
+        
 
         #######################################################################################################
         # Assign Node U, V, W identification to the vertices.

@@ -20,6 +20,7 @@ output = GridModel.from_spacings(
 
 
 temp = []
+attributes = []
 # for idx, vertex in enumerate(output.vertices()):
 #     temp.append(Point(*output.vertex_coordinates(vertex)),
 #                 # name=str(idx) + " " + str(output.vertex_attributes(vertex)),
@@ -62,3 +63,34 @@ try:
     ViewerLive.serialize()
 except ImportError:
     print("compas_snippets.viewer_live is not available. Skipping viewer execution.")
+    
+from compas_viewer import Viewer
+viewer: Viewer = Viewer(show_grid=False)
+
+for idx, vertex in enumerate(output.vertices()):
+    viewer.scene.add(
+        Point(*output.vertex_coordinates(vertex)), 
+        name=str(idx) + " " + str(output.vertex_attributes(vertex)["uvw"]), 
+        # color=output.vertex_attribute(vertex, "color")[2]
+    )
+
+for edge in output.edges():
+    viewer.scene.add(
+        output.edge_line(edge),
+        # color=output.edge_attribute(edge, "color"),
+        linewidth=1,
+        name=str(output.edge_attributes(edge)["uvw"]),
+    )
+
+for face in output.faces():
+    viewer.scene.add(
+        output.face_polygon(face), 
+        # color=output.face_attribute(face, "color"), 
+        name=str(output.face_attributes(face)["uvw"])
+        )
+
+# for cell in output.cells():
+#     scale: Scale = Scale.from_factors([0.75, 0.75, 0.75], Frame(output.cell_center(cell), [1, 0, 0], [0, 1, 0]))
+#     viewer.scene.add(output.cell_to_mesh(cell).transformed(scale), name=str(output.cell_attributes(cell)), color=output.cell_attribute(cell, "color")[2])
+
+viewer.show()
