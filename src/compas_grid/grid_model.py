@@ -46,8 +46,79 @@ class GridModel(Model):
 
         volmesh.face_attribute(face, "strip", strips)
 
+
+    @staticmethod
+    def _from_spacings(x_spacings: List[float], y_spacings: List[float], z_spacings: List[float]) -> 'VolMesh':
+        """
+        TODO: This method must be past of compas VolMesh class.
+        Construct a volmesh from a 3D meshgrid defined by lists of spacings in the x, y, and z directions.
+
+        Parameters
+        ----------
+        x_spacings : list of float
+            The spacings between points in the x direction.
+        y_spacings : list of float
+            The spacings between points in the y direction.
+        z_spacings : list of float
+            The spacings between points in the z direction.
+
+        Returns
+        -------
+        :class:`VolMesh`
+
+        See Also
+        --------
+        :meth:`from_obj`, :meth:`from_vertices_and_cells`
+        
+        Examples
+        --------
+        volmesh = GridModel.from_spacings([6000, 6000, 6000], [6000, 6000, 6000], [4725.884, 3800, 3800])
+
+        """
+        
+        from itertools import product
+        
+        def cumulative_distances(spacings: List[float]) -> List[float]:
+            distances = [0.0]
+            for spacing in spacings:
+                distances.append(distances[-1] + spacing)
+            return distances
+
+        x_distances = cumulative_distances(x_spacings)
+        y_distances = cumulative_distances(y_spacings)
+        z_distances = cumulative_distances(z_spacings)
+
+        vertices = [
+            [x, y, z]
+            for z, x, y in product(z_distances, x_distances, y_distances)
+        ]
+        nx = len(x_distances) - 1
+        ny = len(y_distances) - 1
+        nz = len(z_distances) - 1
+
+        cells = []
+        for k, i, j in product(range(nz), range(nx), range(ny)):
+            a = k * ((nx + 1) * (ny + 1)) + i * (ny + 1) + j
+            b = k * ((nx + 1) * (ny + 1)) + (i + 1) * (ny + 1) + j
+            c = k * ((nx + 1) * (ny + 1)) + (i + 1) * (ny + 1) + j + 1
+            d = k * ((nx + 1) * (ny + 1)) + i * (ny + 1) + j + 1
+            aa = (k + 1) * ((nx + 1) * (ny + 1)) + i * (ny + 1) + j
+            bb = (k + 1) * ((nx + 1) * (ny + 1)) + (i + 1) * (ny + 1) + j
+            cc = (k + 1) * ((nx + 1) * (ny + 1)) + (i + 1) * (ny + 1) + j + 1
+            dd = (k + 1) * ((nx + 1) * (ny + 1)) + i * (ny + 1) + j + 1
+            bottom = [d, c, b, a]
+            front = [a, b, bb, aa]
+            right = [b, c, cc, bb]
+            left = [a, aa, dd, d]
+            back = [c, d, dd, cc]
+            top = [aa, bb, cc, dd]
+            cells.append([bottom, front, left, back, right, top])
+
+        return VolMesh.from_vertices_and_cells(vertices, cells)
+
+
     @classmethod
-    def from_meshgrid(cls, dx: float = 8, dy: float = 8, dz: float = 3.5 * 7, nx: int = 5, ny: int = 3, nz: int = 10) -> List[VolMesh]:
+    def from_spacings(cls, x, y, z) -> List[VolMesh]: # dx: float = 8, dy: float = 8, dz: float = 3.5 * 7, nx: int = 5, ny: int = 3, nz: int = 10
         #######################################################################################################
         # 3D Grid, translate the grid to the center.
         # Vertex order
@@ -55,8 +126,15 @@ class GridModel(Model):
         # 1 4 7 10
         # 0 3 6 9
         #######################################################################################################
-        volmesh: VolMesh = VolMesh.from_meshgrid(dx, dy, dz, nx, ny, nz)
-        volmesh.translate([dx * -0.5, dy * -0.5, 0])
+        # volmesh: VolMesh = VolMesh.from_meshgrid(dx, dy, dz, nx, ny, nz)
+        
+        volmesh: VolMesh = GridModel._from_spacings(x, y, z)
+        # volmesh.translate([dx * -0.5, dy * -0.5, 0])
+        
+        nx : int = len(x) 
+        ny : int = len(y) 
+        nz : int = len(z)
+        
 
         #######################################################################################################
         # Color map for display of UVW coordinates.
@@ -175,7 +253,7 @@ class GridModel(Model):
             volmesh.cell_attribute(cell, "uvw", min_uvw)
             volmesh.cell_attribute(cell, "color", [cmap_red(1 / (nx) * min_uvw[0]), cmap_green(1 / (ny) * min_uvw[1]), cmap_blue(1 / (nz) * min_uvw[2])])
 
-        return [volmesh]
+        return volmesh
 
     @classmethod
     def from_fan(

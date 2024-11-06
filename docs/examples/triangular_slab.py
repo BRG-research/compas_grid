@@ -562,4 +562,4 @@ for element in elements:
 ViewerLive.add(temp)
 ViewerLive.serialize()
 
-# ViewerLive.run()
+ViewerLive.run()
