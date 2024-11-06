@@ -15,7 +15,7 @@ git commit -m "MISC:<description>"        <--- for any other reasons to be descr
 git commit -m "WIP:<description>"         <--- for not finished work
 git commit -m "REFACTOR:<description>"    <--- for refactored code
 git commit -m "MERGE:<description>"       <--- for merging operations
-git commit -m "WIP-CAP:<description>      <--- for when combining multiple commits into one
+git commit -m "WIP-CAP:<description>"      <--- for when combining multiple commits into one
 ```
 
 ## Installation
