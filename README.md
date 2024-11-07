@@ -15,7 +15,7 @@ flowchart TB
   end
 
   subgraph Graph
-      dict --> Graph.from_lines;
+      rhino_geometry --> Graph.from_lines;
   end
   
   subgraph CellNetwork
