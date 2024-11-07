@@ -10,6 +10,10 @@ flowchart LR
     JSON-->Graph;
     Graph-->CellNetwork;
     CellNetwork-->Model;
+    CellNetwork-->is_beam;
+    CellNetwork-->is_column;
+    CellNetwork-->level;
+    CellNetwork-->surface_type;
 ```
 
 
