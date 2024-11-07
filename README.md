@@ -15,7 +15,7 @@ flowchart TB
   end
 
   subgraph Graph
-      rhino_geometry --> line_graph;
+      rhino_geometry --> Graph.from_lines(rhino_geometry["Line::Column"] + rhino_geometry["Line::Beam"]);
   end
   
   subgraph CellNetwork
