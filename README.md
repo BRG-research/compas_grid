@@ -6,14 +6,10 @@ Model of simple grid structures for multi-storey buildings.
 
 ```mermaid
 flowchart LR
-    classDef blackWhite fill:#ffffff,stroke:#000000,color:#000000;
-    
     Geometry([Geometry: Points, Lines, Faces])-->JSON;
     JSON-->Graph;
     Graph-->CellNetwork;
     CellNetwork-->Model;
-    
-    class Geometry, JSON, Graph, CellNetwork, Model blackWhite;
 ```
 
 
