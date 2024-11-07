@@ -6,10 +6,9 @@ Model of simple grid structures for multi-storey buildings.
 
 ```mermaid
   graph TD;
-      Geometry-->B;
-      A-->C;
-      B-->D;
-      C-->D;
+      Geometry-->Graph;
+      Graph-->CellNetwork;
+      CellNetwork-->Model;
 ```
 
 [```mermaid
