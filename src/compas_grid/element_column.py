@@ -266,7 +266,7 @@ class ColumnElement(Element):
 
         column: ColumnElement = cls(axis=axis, section=polygon, frame_bottom=frame_bottom, frame_top=frame_top, features=features, name=name)
         return column
-    
+
     @classmethod
     def from_round_section(
         cls,
@@ -308,7 +308,6 @@ class ColumnElement(Element):
 
         column: ColumnElement = cls(axis=axis, section=polygon, frame_bottom=frame_bottom, frame_top=frame_top, features=features, name=name)
         return column
-
 
 
 if __name__ == "__main__":

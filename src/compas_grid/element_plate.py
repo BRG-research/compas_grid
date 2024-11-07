@@ -137,7 +137,7 @@ class PlateElement(Element):
     # =============================================================================
 
     @classmethod
-    def from_polygon_and_thickness(cls, polygon: Polygon, thickness: float, features: List[Feature] = None, frame: Frame = None, name: str = None, shape = None) -> "PlateElement":
+    def from_polygon_and_thickness(cls, polygon: Polygon, thickness: float, features: List[Feature] = None, frame: Frame = None, name: str = None, shape=None) -> "PlateElement":
         """Create a plate element from a polygon and a thickness.
 
         Parameters
@@ -165,7 +165,9 @@ class PlateElement(Element):
         return plate
 
     @classmethod
-    def from_width_depth_thickness(cls, width: float, depth: float, thickness: float, features: List[Feature] = None, frame: Frame = None, name: str = None, shape = None) -> "PlateElement":
+    def from_width_depth_thickness(
+        cls, width: float, depth: float, thickness: float, features: List[Feature] = None, frame: Frame = None, name: str = None, shape=None
+    ) -> "PlateElement":
         """Create a plate element from a width, depth and thickness.
 
         Parameters

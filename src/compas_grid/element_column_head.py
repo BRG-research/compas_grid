@@ -194,13 +194,13 @@ class ColumnHeadElement(Element):
 
         column_head_element: ColumnHeadElement = cls(mesh=mesh, features=features, name=name)
         return column_head_element
-    
+
     @classmethod
     def from_loft(
-        cls, polygons : List[Polygon], top_holes : List[Polygon] = [],  bottom_holes : List[Polygon] = [], features: Optional[List[ColumnHeadFeature]] = None, name: str = "None"
+        cls, polygons: List[Polygon], top_holes: List[Polygon] = [], bottom_holes: List[Polygon] = [], features: Optional[List[ColumnHeadFeature]] = None, name: str = "None"
     ) -> "ColumnHeadElement":
-        """Loft a list of polygons. 
-        When top and bottom holes are provided, inner loft is created too. 
+        """Loft a list of polygons.
+        When top and bottom holes are provided, inner loft is created too.
 
         Parameters
         ----------
@@ -220,16 +220,16 @@ class ColumnHeadElement(Element):
         :class:`ColumnHeadElement`
             Column head instance.
         """
-        
+
         ########################################################################################
         #  Top and bottom polygons
         ########################################################################################
         from compas_cgal.triangulation import conforming_delaunay_triangulation
-        
+
         # Mesh top and bottom polygons
         polygon_0 = polygons[0]
         polygon_1 = polygons[-1]
-        
+
         v_0, f_0 = conforming_delaunay_triangulation(boundary=polygon_0, holes=top_holes)
         v_0 = v_0.tolist()
         f_0 = f_0.tolist()
@@ -237,75 +237,56 @@ class ColumnHeadElement(Element):
         v_1.extend(polygon_1.points)
         for hole in bottom_holes:
             v_1.extend(hole.points)
-            
 
         for f in f_0:
-            face = [i+len(v_0) for i in f]
+            face = [i + len(v_0) for i in f]
             face.reverse()
             f_1.append(face)
-            
+
         # Mesh side polygons
         v, f = [], []
         v.extend(v_0)
         f.extend(f_0)
         v.extend(v_1)
         f.extend(f_1)
-        
 
         ########################################################################################
         # Inner sides
         ########################################################################################
-        
-        
-    
+
         n_top = len(v_0)
         n_boundary = len(polygon_0.points)
-        n_hole_vertex = n_top-n_boundary
+        n_hole_vertex = n_top - n_boundary
         for i in range(0, n_hole_vertex):
-            face = [i+n_boundary, (i+1)%n_hole_vertex+n_boundary, (i+1)%n_hole_vertex+n_boundary+n_top, i+n_boundary+n_top]
+            face = [i + n_boundary, (i + 1) % n_hole_vertex + n_boundary, (i + 1) % n_hole_vertex + n_boundary + n_top, i + n_boundary + n_top]
             f.append(face)
-        
-        
+
         ########################################################################################
         # Outer sides
         ########################################################################################
-        
+
         v_count = len(v)
-        
-        for i in range(1, len(polygons)-1):
+
+        for i in range(1, len(polygons) - 1):
             v.extend(polygons[i].points)
-            
+
         n = len(polygons[0].points)
         a = 0
-        b = n_top*2
+        b = n_top * 2
 
         for j in range(n):
-            f.append([
-                j, 
-                (j+1)%n, 
-                (j+1)%n+b, 
-                j+b]) 
-        
-        for i in range(1, len(polygons)-2):
-            c = (i-1)*n
+            f.append([j, (j + 1) % n, (j + 1) % n + b, j + b])
+
+        for i in range(1, len(polygons) - 2):
+            c = (i - 1) * n
             for j in range(n):
-                f.append([
-                    v_count+c+j, 
-                    v_count+c+(j+1)%n, 
-                    v_count+c+(j+1)%n+n, 
-                    v_count+c+j+n]) 
-            
+                f.append([v_count + c + j, v_count + c + (j + 1) % n, v_count + c + (j + 1) % n + n, v_count + c + j + n])
 
         # Side faces for the last polygon
         b = n_top
-        c = (len(polygons)-3)*n
+        c = (len(polygons) - 3) * n
         for j in range(n):
-            f.append([
-                v_count+c+j, 
-                v_count+c+(j+1)%n, 
-                (j+1)%n+b, 
-                j+b]) 
-            
+            f.append([v_count + c + j, v_count + c + (j + 1) % n, (j + 1) % n + b, j + b])
 
         ########################################################################################
         # Create Mesh

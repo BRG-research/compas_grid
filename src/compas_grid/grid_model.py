@@ -46,9 +46,8 @@ class GridModel(Model):
 
         volmesh.face_attribute(face, "strip", strips)
 
-
     @staticmethod
-    def _from_spacings(x_spacings: List[float], y_spacings: List[float], z_spacings: List[float]) -> 'VolMesh':
+    def _from_spacings(x_spacings: List[float], y_spacings: List[float], z_spacings: List[float]) -> "VolMesh":
         """
         TODO: This method must be past of compas VolMesh class.
         Construct a volmesh from a 3D meshgrid defined by lists of spacings in the x, y, and z directions.
@@ -69,15 +68,15 @@ class GridModel(Model):
         See Also
         --------
         :meth:`from_obj`, :meth:`from_vertices_and_cells`
-        
+
         Examples
         --------
         volmesh = GridModel.from_spacings([6000, 6000, 6000], [6000, 6000, 6000], [4725.884, 3800, 3800])
 
         """
-        
+
         from itertools import product
-        
+
         def cumulative_distances(spacings: List[float]) -> List[float]:
             distances = [0.0]
             for spacing in spacings:
@@ -88,10 +87,7 @@ class GridModel(Model):
         y_distances = cumulative_distances(y_spacings)
         z_distances = cumulative_distances(z_spacings)
 
-        vertices = [
-            [x, y, z]
-            for z, x, y in product(z_distances, x_distances, y_distances)
-        ]
+        vertices = [[x, y, z] for z, x, y in product(z_distances, x_distances, y_distances)]
         nx = len(x_distances) - 1
         ny = len(y_distances) - 1
         nz = len(z_distances) - 1
@@ -116,9 +112,8 @@ class GridModel(Model):
 
         return VolMesh.from_vertices_and_cells(vertices, cells)
 
-
     @classmethod
-    def from_spacings(cls, x, y, z) -> List[VolMesh]: # dx: float = 8, dy: float = 8, dz: float = 3.5 * 7, nx: int = 5, ny: int = 3, nz: int = 10
+    def from_spacings(cls, x, y, z) -> List[VolMesh]:  # dx: float = 8, dy: float = 8, dz: float = 3.5 * 7, nx: int = 5, ny: int = 3, nz: int = 10
         #######################################################################################################
         # 3D Grid, translate the grid to the center.
         # Vertex order
@@ -127,14 +122,13 @@ class GridModel(Model):
         # 0 3 6 9
         #######################################################################################################
         # volmesh: VolMesh = VolMesh.from_meshgrid(dx, dy, dz, nx, ny, nz)
-        
+
         volmesh: VolMesh = GridModel._from_spacings(x, y, z)
         # volmesh.translate([dx * -0.5, dy * -0.5, 0])
-        
-        nx : int = len(x) 
-        ny : int = len(y) 
-        nz : int = len(z)
-        
+
+        nx: int = len(x)
+        ny: int = len(y)
+        nz: int = len(z)
 
         #######################################################################################################
         # Color map for display of UVW coordinates.
@@ -142,7 +136,6 @@ class GridModel(Model):
         cmap_red: ColorMap = ColorMap.from_two_colors(Color.from_hex("#ff0074"), Color.from_hex("#DDDDDD"), diverging=True)
         cmap_green: ColorMap = ColorMap.from_two_colors(Color.from_hex("#40B5AD"), Color.from_hex("#DDDDDD"))
         cmap_blue: ColorMap = ColorMap.from_two_colors(Color.from_hex("#0096FF"), Color.from_hex("#DDDDDD"))
-        
 
         #######################################################################################################
         # Assign Node U, V, W identification to the vertices.
