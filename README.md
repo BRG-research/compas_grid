@@ -4,6 +4,7 @@ Model of simple grid structures for multi-storey buildings.
 
 ## Workflow
 
+```mermaid
 flowchart LR
     classDef blackWhite fill:#ffffff,stroke:#000000,color:#000000;
     
@@ -13,7 +14,7 @@ flowchart LR
     CellNetwork-->Model;
     
     class Geometry, JSON, Graph, CellNetwork, Model blackWhite;
-
+```
 
 
 ## Commit style
