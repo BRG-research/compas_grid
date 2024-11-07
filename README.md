@@ -4,12 +4,13 @@ Model of simple grid structures for multi-storey buildings.
 
 ## Workflow
 
-```mermaid
-flowchart LR
-    A{Geometry (Point, Lines, Explode Mesh Faces)} --> 
-    B(Graph) --> 
-    C(Cell Network) -->
-    D(Model)
+flowchart TD
+    A[Christmas] -->|Get money| B(Go shopping)
+    B --> C{Let me think}
+    C -->|One| D[Laptop]
+    C -->|Two| E[iPhone]
+    C -->|Three| F[fa:fa-car Car]
+  
 
 [```mermaid
 ---
