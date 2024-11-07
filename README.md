@@ -5,6 +5,13 @@ Model of simple grid structures for multi-storey buildings.
 ## Workflow
 
 ```mermaid
+flowchart LR
+    A{Geometry (Point, Lines, Explode Mesh Faces)} --> 
+    B(Graph) --> 
+    C(Cell Network) -->
+    D(Model)
+
+[```mermaid
 ---
 config:
   layout: fixed
@@ -16,7 +23,7 @@ flowchart TD
     B --> C["fa:fa-diagram-project CellNetwork"]
     C --> n4["fa:fa-diagram-project Model<br>"]
     C@{ shape: rounded}
-    n4@{ shape: rounded}
+    n4@{ shape: rounded}](url)
 
 
 ## Commit style
