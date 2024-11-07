@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+-   Added work-in-progress example: `docs/examples/crea_json_to_cell_network.py` .
+
 ### Changed
 
 ### Removed
