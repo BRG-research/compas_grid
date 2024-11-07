@@ -5,15 +5,43 @@ Model of simple grid structures for multi-storey buildings.
 ## Workflow
 
 ```mermaid
-flowchart LR
-    Geometry([Geometry: Points, Lines, Faces])-->JSON;
-    JSON-->Graph;
-    Graph-->CellNetwork;
-    CellNetwork-->Model;
-    CellNetwork-->is_beam;
-    CellNetwork-->is_column;
-    CellNetwork-->level;
-    CellNetwork-->surface_type;
+flowchart TB
+  %% Define custom classes
+  classDef defaultStyle fill:000,stroke:#333,stroke-width:2px;
+  classDef subgraphStyle fill:#f2f2f2,stroke:#333,stroke-width:0px;
+
+  subgraph Geometry
+      Selection[select: points, lines, faces] --> json_dump;
+  end
+
+  subgraph Graph
+      dict --> Graph.from_lines;
+  end
+  
+  subgraph CellNetwork
+      cell_network --> cell_network.add_vertex;
+      cell_network --> cell_network.add_face;
+      cell_network --> cell_network.add_cell;
+      cell_network --> attribute_is_beam;
+      cell_network --> attribute_is_column;
+      cell_network --> attribute_level;
+      cell_network --> attribute_surface_type;
+  end
+
+  subgraph Model
+      model --> add_element;
+      model --> add_group;
+      model --> add_interaction;
+  end
+  
+  %% Define relationships
+  Geometry --> Graph;
+  Graph --> CellNetwork;
+  CellNetwork --> Model;
+  
+  %% Apply subgraph-specific styles if needed
+  class Geometry,Graph,CellNetwork,Model subgraphStyle;
+
 ```
 
 
