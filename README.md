@@ -4,6 +4,7 @@ Model of simple grid structures for multi-storey buildings.
 
 ## Workflow
 
+```mermaid
 ---
 config:
   layout: fixed
@@ -16,6 +17,7 @@ flowchart TD
     C --> n4["fa:fa-diagram-project Model<br>"]
     C@{ shape: rounded}
     n4@{ shape: rounded}
+
 
 ## Commit style
 
