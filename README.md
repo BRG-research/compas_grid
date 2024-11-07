@@ -4,13 +4,13 @@ Model of simple grid structures for multi-storey buildings.
 
 ## Workflow
 
-```{mermaid}
+```mermaid
 flowchart LR
     A{Geometry (Point, Lines, Explode Mesh Faces)} --> 
     B(Graph) --> 
     C(Cell Network) -->
     D(Model)
-```
+
 
 ## Commit style
 
