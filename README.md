@@ -11,7 +11,7 @@ flowchart TB
   classDef subgraphStyle fill:#f2f2f2,stroke:#333,stroke-width:0px;
 
   subgraph Geometry
-      Selection[select: Line[Columns, Beams], Mesh[Floor, Facade, Core]] --> json_dump;
+      Selection[select: Line::Columns, Line::Beams, Mesh::Floor, Mesh::Facade, Mesh::Core] --> json_dump;
   end
 
   subgraph Graph
