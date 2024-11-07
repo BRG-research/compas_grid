@@ -5,12 +5,12 @@ Model of simple grid structures for multi-storey buildings.
 ## Workflow
 
 ```mermaid
----
-config:
-  layout: fixed
-  look: neo
-  theme: mc
----
+    ---
+    config:
+      layout: fixed
+      look: neo
+      theme: mc
+    ---
   flowchart TD;
       Geometry-->Graph;
       Graph-->CellNetwork;
