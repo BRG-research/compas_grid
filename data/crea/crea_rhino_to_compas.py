@@ -1,48 +1,54 @@
 #! python3
-import compas
+import Rhino
 from compas import json_dump
 from compas.scene import Scene
-import compas_rhino.objects
-import compas_rhino.conversions
-from System import Guid
-import Rhino
+from compas_rhino.layers import find_objects_on_layer
+from compas_rhino.objects import find_object
+from compas_rhino.conversions import curve_to_compas_line
+from compas_rhino.conversions import curve_to_compas_polyline
+from compas_rhino.conversions import mesh_to_compas
 from compas.geometry import Line
 from compas.geometry import Polyline
+from compas.datastructures import Mesh
+from System import Guid
 from typing import *
 
+
 def select_lines(name):
-    guids : List[Guid] = compas_rhino.layers.find_objects_on_layer(name)
+    guids : List[Guid] = find_objects_on_layer(name)
     lines : List[Line] = []
     for guid in guids:
-        obj : Rhino.DocObjects.CurveObject = compas_rhino.objects.find_object(guid)
-        line : Line = compas_rhino.conversions.curve_to_compas_line(obj.Geometry)
+        obj : Rhino.DocObjects.CurveObject = find_object(guid)
+        line : Line = curve_to_compas_line(obj.Geometry)
         lines.append(line)
     return lines
 
 def select_polylines(name):
-    guids : List[Guid] = compas_rhino.layers.find_objects_on_layer(name)
+    guids : List[Guid] = find_objects_on_layer(name)
     polylines : List[Polyline] = []
     for guid in guids:
-        obj : Rhino.DocObjects.CurveObject = compas_rhino.objects.find_object(guid)
+        obj : Rhino.DocObjects.CurveObject = find_object(guid)
         if (not isinstance(obj.Geometry, Rhino.Geometry.PolylineCurve)):
             continue
-        polyline : Polyline = compas_rhino.conversions.curve_to_compas_polyline(obj.Geometry)
+        polyline : Polyline = curve_to_compas_polyline(obj.Geometry)
         polylines.append(polyline)
     return polylines
 
-columns : List[Line] = select_lines("Columns")
-beams : List[Line] = select_lines("Beams")
-double_heights : List[Line] = select_lines("DoubleHeights")
-staircase : List[Polyline] = select_polylines("Staircase")
-references : List[Polyline] = select_polylines("References")
-raster : List[Polyline] = select_polylines("Raster")
+def select_meshes(name):
+    guids : List[Guid] = find_objects_on_layer(name)
+    meshes : List[Rhino.Geometry.Mesh] = []
+    for guid in guids:
+        obj : Rhino.DocObjects.MeshObject = find_object(guid)
+        mesh : Mesh = mesh_to_compas(obj.Geometry)
+        meshes.append(mesh)
+    return meshes
 
 serialization_dictionary : Dict = {}
-serialization_dictionary["Columns"] = columns
-serialization_dictionary["Beams"] = beams
-serialization_dictionary["DoubleHeights"] = double_heights
-serialization_dictionary["Staircase"] = staircase
-serialization_dictionary["References"] = references
-serialization_dictionary["Raster"] = raster
+serialization_dictionary["Line::Column"] = select_lines("Line::Column")
+serialization_dictionary["Line::Beam"] = select_lines("Line::Beam")
+serialization_dictionary["Mesh::Floor"] = select_meshes("Mesh::Floor")
+serialization_dictionary["Mesh::Facade"] = select_meshes("Mesh::Facade")
+serialization_dictionary["Mesh::Core"] = select_meshes("Mesh::Core")
 
+# from compas import json_dump
 json_dump(serialization_dictionary, "C:/brg/2_code/compas_grid/data/crea/crea.json")
