@@ -13,18 +13,6 @@ Model of simple grid structures for multi-storey buildings.
 
 ```
 
-[```mermaid
----
-config:
-  layout: fixed
-  look: neo
-  theme: mc
----
-flowchart TD
-    A("fa:fa-cube Geometry:<br>Points, Lines, Faces<br>") --> B("fa:fa-diagram-project Graph<br>")
-    B --> C["fa:fa-diagram-project CellNetwork"]
-    C --> n4["fa:fa-diagram-project Model<br>"]
-
 
 
 ## Commit style
