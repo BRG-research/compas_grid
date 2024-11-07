@@ -5,7 +5,7 @@ Model of simple grid structures for multi-storey buildings.
 ## Workflow
 
 ```mermaid
-  graph TD;
+  flowchart TD;
       Geometry-->Graph;
       Graph-->CellNetwork;
       CellNetwork-->Model;
