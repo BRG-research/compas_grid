@@ -188,17 +188,3 @@ class PlateElement(Element):
         polygon: Polygon = Polygon.from_rectangle(Point(0, 0, 0), width, depth)
         return cls.from_polygon_and_thickness(polygon, thickness, features=features, frame=frame, name=name, shape=shape)
 
-
-if __name__ == "__main__":
-    from compas.geometry import Frame
-    from compas.geometry import Polygon
-    from compas_viewer import Viewer
-
-    polygon = Polygon([[0, 0, 0], [0, 10, 0], [10, 10, 0], [10, 0, 0]])
-    frame = Frame.worldXY()
-    plate = PlateElement.from_polygon_and_thickness(polygon, 0.1, frame=frame)
-    plate.copy()
-
-    viewer: Viewer = Viewer()
-    viewer.scene.add(plate.shape)
-    viewer.show()

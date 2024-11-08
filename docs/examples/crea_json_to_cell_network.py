@@ -1,11 +1,18 @@
 from typing import Dict, List, Any, Tuple
 from compas import json_load
-from compas.geometry import Line, midpoint_line, Box, Frame
+from compas.geometry import Line, midpoint_line, Box, Frame, Polygon, Vector
+from compas.geometry import Transformation
 from compas.datastructures import Graph, CellNetwork, Mesh
 from compas.tolerance import TOL
 from compas_viewer import Viewer
 from compas_viewer.scene import ViewerSceneObject
 from collections import OrderedDict
+from compas_grid.element_beam import BeamElement
+from compas_grid.element_plate import PlateElement
+from compas_grid.element_column import ColumnElement
+from compas_grid.element_column_head import ColumnHeadElement
+from compas_model.models import Model
+from compas_model.models import ElementNode
 
 # Constants
 PRECISION: int = 3
@@ -131,13 +138,63 @@ partition_and_assign_attributes(graph, cell_network, "z", "w")
 #######################################################################################################
 # MODEL
 # Crate model with the following elements:
-# - Column
-# - ColumnHead
-# - Beams
-# - Floors
+# - BeamElement
+# - PlateElement
+# - ColumnElement
+# - ColumnHeadElement
+# TODO: The direction of the edges in the CellNetwork must be checked
 #######################################################################################################
 
 
+
+model : Model = Model()
+columns = model.add_group("columns")
+# beams = model.add_group("beams")
+# floors = model.add_group("floors")
+
+for edge in cell_network.edges_where({"is_column": True}):
+    axis: Line = cell_network.edge_line(edge)
+    if axis[0][2] > axis[1][2]:
+        axis = Line(axis[1], axis[0])
+    width: float = 75
+    depth: float = 75
+    element : ColumnElement = ColumnElement.from_square_section(width=150, depth=150, height=axis.length)
+    element.frame = Frame(axis.start, [1,0,0], [0,1,0])
+    elmenent_node : ElementNode = model.add_element(element=element, parent=columns)
+    width: float = 150
+    depth: float = 150
+    height: float = 150
+    element_head : ColumnHeadElement = ColumnHeadElement.from_box(width=width, depth=depth, height=height)
+    element_head.frame = Frame(axis.end, [1,0,0], [0,1,0])
+    elmenent_node : ElementNode = model.add_element(element=element_head, parent=columns)
+    
+
+    
+for edge in cell_network.edges_where({"is_beam": True}):
+    axis: Line = cell_network.edge_line(edge)
+    width: float = 300
+    depth: float = 150
+    element : BeamElement = BeamElement.from_square_section(width=width, depth=depth, height=axis.length)
+    element.frame = Frame(axis.start, [0,0,1], Vector.cross(axis.direction, [0,0,1]))
+    elmenent_node : ElementNode = model.add_element(element=element, parent=columns)
+    
+for face in cell_network.faces_where({"is_floor": True}):
+    width: float = 3000
+    depth: float = 3000
+    polygon: Polygon = Polygon([[-width,-depth,0], [-width,depth,0], [width,depth,0], [width,-depth,0]])
+    thickness: float = 100
+    element : PlateElement = PlateElement.from_polygon_and_thickness(polygon, thickness)
+    element.frame = Frame(cell_network.face_polygon(face).centroid, [1,0,0], [0,1,0])
+    elmenent_node : ElementNode = model.add_element(element=element, parent=columns)
+    
+from compas_snippets.viewer_live import ViewerLive
+ViewerLive.clear()
+for element in model.elements():
+    
+    ViewerLive.add(element.compute_geometry())
+ViewerLive.add(lines_from_user_input)
+ViewerLive.serialize()
+# ViewerLive.run()
 
 #######################################################################################################
 # VIEWER

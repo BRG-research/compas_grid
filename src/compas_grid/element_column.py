@@ -314,13 +314,3 @@ class ColumnElement(Element):
         column: ColumnElement = cls(axis=axis, section=polygon, frame_bottom=frame_bottom, frame_top=frame_top, features=features, name=name)
         return column
 
-
-if __name__ == "__main__":
-    from compas_viewer import Viewer
-
-    column: ColumnElement = ColumnElement.from_square_section()
-    column.copy()
-
-    viewer: Viewer = Viewer()
-    viewer.scene.add(column.shape)
-    viewer.show()

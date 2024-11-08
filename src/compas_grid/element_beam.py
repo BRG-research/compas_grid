@@ -272,24 +272,3 @@ class BeamElement(Element):
         beam: BeamElement = cls(axis=axis, section=polygon, frame_bottom=frame_bottom, frame_top=frame_top, features=features, name=name)
         return beam
 
-
-if __name__ == "__main__":
-    from compas_viewer import Viewer
-
-    depth: float = 0.013333
-
-    tol: float = 0.001
-    outline_cut_shape: Polygon = Polygon(
-        [
-            [-0.01, depth * 0.5 + tol * 1, 1.0],
-            [-0.07, depth * 0.5 + tol * 1, 0.01],
-            [0.07, depth * 0.5 + tol * 1, 0.01],
-            [0.07, depth * 0.5 + tol * 1, 1.0],
-        ]
-    )
-
-    beam: BeamElement = BeamElement.from_square_section(width=0.15, depth=depth, height=1.2)
-    beam.copy()
-    viewer: Viewer = Viewer()
-    viewer.scene.add(beam.shape)
-    viewer.show()

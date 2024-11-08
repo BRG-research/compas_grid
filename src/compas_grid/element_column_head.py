@@ -301,13 +301,3 @@ class ColumnHeadElement(Element):
         column_head_element: ColumnHeadElement = cls(mesh=mesh, features=features, name=name)
         return column_head_element
 
-
-if __name__ == "__main__":
-    from compas_viewer import Viewer
-
-    column_head: ColumnHeadElement = ColumnHeadElement.from_box()
-    column_head.copy()
-
-    viewer: Viewer = Viewer()
-    viewer.scene.add(column_head.shape)
-    viewer.show()
