@@ -14,11 +14,24 @@ PRECISION: int = 3
 rhino_geometry: Dict[str, List[Any]] = json_load('data/crea/crea.json')
 
 #######################################################################################################
-# GRAPH AND CELL NETWORK
+# GRAPH
 #######################################################################################################
 
-# Create Graph from lines
-graph: Graph = Graph.from_lines(rhino_geometry["Line::Column"] + rhino_geometry["Line::Beam"])
+# Create Graph from lines and mesh face edges
+lines_from_user_input : List[Line] = []
+for key, geometries in rhino_geometry.items():
+    if isinstance(geometries[0], Line):
+        for line in geometries:
+            lines_from_user_input.append(Line(line[0], line[1]))
+    elif isinstance(geometries[0], Mesh):
+        for mesh in geometries:
+            for line in mesh.to_lines():
+                lines_from_user_input.append(Line(line[0], line[1]))
+graph: Graph = Graph.from_lines(lines_from_user_input, precision=PRECISION)
+
+#######################################################################################################
+# CELL NETWORK
+#######################################################################################################
 
 # Convert Graph to CellNetwork using vertices and edges
 cell_network: CellNetwork = CellNetwork()
@@ -149,10 +162,5 @@ viewer.scene.add(cell_network.faces_to_mesh(list(cell_network.faces_where({"is_f
 #     viewer.scene.add(Box(xsize=attributes["v"]*100, frame=Frame([attributes["x"], attributes["y"]+1000, attributes["z"]])))
 #     viewer.scene.add(Box(xsize=attributes["u"]*100, frame=Frame([attributes["x"]+1000, attributes["y"], attributes["z"]])))
 
-# Add geometries to the viewer scene
-# for key, geometries in rhino_geometry.items():
-#     viewer_scene_object: ViewerSceneObject = viewer.scene.add(geometries)
-#     viewer_scene_object.name = key
-
 # Show the viewer
-viewer.show()
+# viewer.show()
