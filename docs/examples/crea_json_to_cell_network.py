@@ -1,6 +1,6 @@
 from typing import Dict, List, Any, Tuple
 from compas import json_load
-from compas.geometry import Line, midpoint_line, Box, Frame, Polygon, Vector
+from compas.geometry import Line, midpoint_line, Box, Frame, Polygon, Vector, Point
 from compas.geometry import Transformation
 from compas.datastructures import Graph, CellNetwork, Mesh
 from compas.tolerance import TOL
@@ -11,8 +11,11 @@ from compas_grid.element_beam import BeamElement
 from compas_grid.element_plate import PlateElement
 from compas_grid.element_column import ColumnElement
 from compas_grid.element_column_head import ColumnHeadElement
+from compas_grid.interface_cutter import CutterInterface
 from compas_model.models import Model
 from compas_model.models import ElementNode
+from compas.colors import Color
+
 
 # Constants
 PRECISION: int = 3
@@ -23,17 +26,47 @@ rhino_geometry: Dict[str, List[Any]] = json_load('data/crea/crea.json')
 #######################################################################################################
 # GRAPH
 #######################################################################################################
+def create_ordered_line(point1: Point, point2: Point) -> Line:
+    """
+    Create a Line object with the correct orientation based on the comparison of xyz coordinates,
+    with priority given to the z coordinate.
+
+    Parameters
+    ----------
+    point1 : Point
+        The first point.
+    point2 : Point
+        The second point.
+
+    Returns
+    -------
+    Line
+        The Line object with the correct orientation.
+    """
+    if point1[2] < point2[2]:
+        return Line(point1, point2)
+    elif point1[2] > point2[2]:
+        return Line(point2, point1)
+    elif point1[0] < point2[0]:
+        return Line(point1, point2)
+    elif point1[0] > point2[0]:
+        return Line(point2, point1)
+    elif point1[1] < point2[1]:
+        return Line(point1, point2)
+    else:
+        return Line(point2, point1)
 
 # Create Graph from lines and mesh face edges
 lines_from_user_input : List[Line] = []
 for key, geometries in rhino_geometry.items():
     if isinstance(geometries[0], Line):
         for line in geometries:
-            lines_from_user_input.append(Line(line[0], line[1]))
+            lines_from_user_input.append(create_ordered_line(line[0], line[1]))         
     elif isinstance(geometries[0], Mesh):
         for mesh in geometries:
             for line in mesh.to_lines():
-                lines_from_user_input.append(Line(line[0], line[1]))
+                lines_from_user_input.append(create_ordered_line(line[0], line[1]))     
+
 graph: Graph = Graph.from_lines(lines_from_user_input, precision=PRECISION)
 
 #######################################################################################################
@@ -145,32 +178,49 @@ partition_and_assign_attributes(graph, cell_network, "z", "w")
 # TODO: The direction of the edges in the CellNetwork must be checked
 #######################################################################################################
 
-
+cell_network_columns : List[tuple[int, int] ] = list(cell_network.edges_where({"is_column": True})) # Order as in the model
+cell_network_beams : List[tuple[int, int] ] = list(cell_network.edges_where({"is_beam": True})) # Order as in the model
+cell_network_floors : List[int] = list(cell_network.faces_where({"is_floor": True})) # Order as in the model
 
 model : Model = Model()
 columns = model.add_group("columns")
-# beams = model.add_group("beams")
-# floors = model.add_group("floors")
+column_heads = model.add_group("column_heads")
+beams = model.add_group("beams")
+floors = model.add_group("floors")
 
-for edge in cell_network.edges_where({"is_column": True}):
-    axis: Line = cell_network.edge_line(edge)
+
+# Initialize Viewer
+viewer: Viewer = Viewer(show_grid=False)
+
+map_column_head_to_cell_network_vertex : Dict[ElementNode, int] = {}
+for idx, edge in enumerate(cell_network_columns):
+    axis: Line = cell_network.edge_line(edge) 
+    # We do not know what comes out of CellNetwork since edge are sorted by vertices u and v...
+    
+    column_head_vertex = edge[1]
     if axis[0][2] > axis[1][2]:
         axis = Line(axis[1], axis[0])
+        column_head_vertex = edge[0]
     width: float = 75
     depth: float = 75
-    element : ColumnElement = ColumnElement.from_square_section(width=150, depth=150, height=axis.length)
-    element.frame = Frame(axis.start, [1,0,0], [0,1,0])
-    elmenent_node : ElementNode = model.add_element(element=element, parent=columns)
+    element_column : ColumnElement = ColumnElement.from_square_section(width=150, depth=150, height=axis.length)
+    element_column.frame = Frame(axis.start, [1,0,0], [0,1,0])
+    element_column_node : ElementNode = model.add_element(element=element_column, parent=columns)
     width: float = 150
     depth: float = 150
     height: float = 150
-    element_head : ColumnHeadElement = ColumnHeadElement.from_box(width=width, depth=depth, height=height)
-    element_head.frame = Frame(axis.end, [1,0,0], [0,1,0])
-    elmenent_node : ElementNode = model.add_element(element=element_head, parent=columns)
+    element_column_head : ColumnHeadElement = ColumnHeadElement.from_box(width=width, depth=depth, height=height)
+    element_column_head.frame = Frame(cell_network.vertex_point(column_head_vertex), [1,0,0], [0,1,0])
+    elmenent_column_head_node : ElementNode = model.add_element(element=element_column_head, parent=column_heads)
+    map_column_head_to_cell_network_vertex[column_head_vertex] = element_column_head
+    
+    # Interaction
+    model.add_interaction(element_column, element_column_head, interaction=CutterInterface(frame=Frame.worldXY(), name="column_head_column"))
+    
     
 
     
-for edge in cell_network.edges_where({"is_beam": True}):
+for edge in cell_network_beams:
     axis: Line = cell_network.edge_line(edge)
     width: float = 300
     depth: float = 150
@@ -178,7 +228,15 @@ for edge in cell_network.edges_where({"is_beam": True}):
     element.frame = Frame(axis.start, [0,0,1], Vector.cross(axis.direction, [0,0,1]))
     elmenent_node : ElementNode = model.add_element(element=element, parent=columns)
     
-for face in cell_network.faces_where({"is_floor": True}):
+    # Interaction - not all beams are connected to column heads, e.g. foundations and other things...
+    if edge[0] in map_column_head_to_cell_network_vertex:
+        model.add_interaction(map_column_head_to_cell_network_vertex[edge[0]], element, interaction=CutterInterface(frame=Frame.worldXY(), name="column_head_and_beam"))
+    
+    if edge[1] in map_column_head_to_cell_network_vertex:
+        model.add_interaction(map_column_head_to_cell_network_vertex[edge[1]], element, interaction=CutterInterface(frame=Frame.worldXY(), name="column_head_and_beam"))
+
+
+for face in cell_network_floors:
     width: float = 3000
     depth: float = 3000
     polygon: Polygon = Polygon([[-width,-depth,0], [-width,depth,0], [width,depth,0], [width,-depth,0]])
@@ -187,43 +245,43 @@ for face in cell_network.faces_where({"is_floor": True}):
     element.frame = Frame(cell_network.face_polygon(face).centroid, [1,0,0], [0,1,0])
     elmenent_node : ElementNode = model.add_element(element=element, parent=columns)
     
-from compas_snippets.viewer_live import ViewerLive
-ViewerLive.clear()
-for element in model.elements():
-    
-    ViewerLive.add(element.compute_geometry())
-ViewerLive.add(lines_from_user_input)
-ViewerLive.serialize()
-# ViewerLive.run()
+    # Interaction - not all faces are connected to column heads, e.g. ground floor...
+    for vertex in cell_network.face_vertices(face):
+        if vertex in map_column_head_to_cell_network_vertex:
+            model.add_interaction(map_column_head_to_cell_network_vertex[vertex], element, interaction=CutterInterface(frame=Frame.worldXY(), name="column_head_and_plate"))
+  
 
 #######################################################################################################
 # VIEWER
 #######################################################################################################
 
-# Initialize Viewer
-viewer: Viewer = Viewer(show_grid=False)
 
-# Viewer: Add elements to the scene
-lines = [cell_network.edge_line(edge) for edge in cell_network.edges_where({"is_column": True})]
-viewer.scene.add(lines, color=(0, 0, 255), linewidth=1, name="is_column")
+# Add all edge to the viewer to see the directed graph
+for edge in cell_network.edges():
+    line: Line = cell_network.edge_line(edge)
+    viewer.scene.add(line.vector, anchor=line.start, linecolor=Color.black())
+
+# Add column edges to the scene
+# lines = [cell_network.edge_line(edge) for edge in cell_network.edges_where({"is_column": True})]
+# viewer.scene.add(lines, color=(0, 0, 255), linewidth=1, name="is_column")
 
 # Add beam edges to the scene
-beam_lines = [cell_network.edge_line(edge) for edge in cell_network.edges_where({"is_beam": True})]
-viewer.scene.add(beam_lines, color=(255, 0, 0), linewidth=1, name="is_beam")
+# beam_lines = [cell_network.edge_line(edge) for edge in cell_network.edges_where({"is_beam": True})]
+# viewer.scene.add(beam_lines, color=(255, 0, 0), linewidth=1, name="is_beam")
 
-# Add floor faces to the scene
-floor_faces = [cell_network.faces_to_mesh([face]) for face in cell_network.faces_where({"is_floor": True})]
-viewer.scene.add(floor_faces, color=(255, 0, 0), linewidth=1, name="is_floor")
+# # Add floor faces to the scene
+# floor_faces = [cell_network.faces_to_mesh([face]) for face in cell_network.faces_where({"is_floor": True})]
+# viewer.scene.add(floor_faces, color=(255, 0, 0), linewidth=1, name="is_floor")
 
-# Add facade faces to the scene
-facade_faces = [cell_network.faces_to_mesh([face]) for face in cell_network.faces_where({"is_facade": True})]
-viewer.scene.add(facade_faces, color=(0, 255, 0), linewidth=1, name="is_facade")
+# # Add facade faces to the scene
+# facade_faces = [cell_network.faces_to_mesh([face]) for face in cell_network.faces_where({"is_facade": True})]
+# viewer.scene.add(facade_faces, color=(0, 255, 0), linewidth=1, name="is_facade")
 
-# Add core faces to the scene
-core_faces = [cell_network.faces_to_mesh([face]) for face in cell_network.faces_where({"is_core": True})]
-viewer.scene.add(core_faces, color=(255, 255, 0), linewidth=1, name="is_core")
+# # Add core faces to the scene
+# core_faces = [cell_network.faces_to_mesh([face]) for face in cell_network.faces_where({"is_core": True})]
+# viewer.scene.add(core_faces, color=(255, 255, 0), linewidth=1, name="is_core")
 
-viewer.scene.add(cell_network.faces_to_mesh(list(cell_network.faces_where({"is_floor": True, "w": 5}))),  color=(255, 0, 0), name="floor_5")
+# viewer.scene.add(cell_network.faces_to_mesh(list(cell_network.faces_where({"is_floor": True, "w": 5}))),  color=(255, 0, 0), name="floor_5")
 
 # for vertex, attributes in cell_network.vertices(True):
 #     viewer.scene.add(Box(xsize=attributes["w"]*100, frame=Frame([attributes["x"], attributes["y"], attributes["z"]+1000])))
@@ -231,4 +289,4 @@ viewer.scene.add(cell_network.faces_to_mesh(list(cell_network.faces_where({"is_f
 #     viewer.scene.add(Box(xsize=attributes["u"]*100, frame=Frame([attributes["x"]+1000, attributes["y"], attributes["z"]])))
 
 # Show the viewer
-# viewer.show()
+viewer.show()
