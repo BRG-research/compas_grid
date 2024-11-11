@@ -271,4 +271,3 @@ class BeamElement(Element):
 
         beam: BeamElement = cls(axis=axis, section=polygon, frame_bottom=frame_bottom, frame_top=frame_top, features=features, name=name)
         return beam
-

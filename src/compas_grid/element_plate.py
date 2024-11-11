@@ -187,4 +187,3 @@ class PlateElement(Element):
         """
         polygon: Polygon = Polygon.from_rectangle(Point(0, 0, 0), width, depth)
         return cls.from_polygon_and_thickness(polygon, thickness, features=features, frame=frame, name=name, shape=shape)
-

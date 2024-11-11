@@ -300,4 +300,3 @@ class ColumnHeadElement(Element):
         ########################################################################################
         column_head_element: ColumnHeadElement = cls(mesh=mesh, features=features, name=name)
         return column_head_element
-

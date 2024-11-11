@@ -313,4 +313,3 @@ class ColumnElement(Element):
 
         column: ColumnElement = cls(axis=axis, section=polygon, frame_bottom=frame_bottom, frame_top=frame_top, features=features, name=name)
         return column
-
