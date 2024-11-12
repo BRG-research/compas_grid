@@ -179,79 +179,68 @@ partition_and_assign_attributes(graph, cell_network, "z", "w")
 # - ColumnHeadElement
 # TODO: The direction of the edges in the CellNetwork must be checked
 #######################################################################################################
+cell_network_columns: List[tuple[int, int]] = list(cell_network.edges_where({"is_column": True}))  # Order as in the model
+cell_network_beams: List[tuple[int, int]] = list(cell_network.edges_where({"is_beam": True}))  # Order as in the model
+cell_network_floors: List[int] = list(cell_network.faces_where({"is_floor": True}))  # Order as in the model
 
-cell_network_columns : List[tuple[int, int] ] = list(cell_network.edges_where({"is_column": True})) # Order as in the model
-cell_network_beams : List[tuple[int, int] ] = list(cell_network.edges_where({"is_beam": True})) # Order as in the model
-cell_network_floors : List[int] = list(cell_network.faces_where({"is_floor": True})) # Order as in the model
-
-model : Model = Model()
+model: Model = Model()
 columns = model.add_group("columns")
 column_heads = model.add_group("column_heads")
 beams = model.add_group("beams")
 floors = model.add_group("floors")
 
-
 # Initialize Viewer
 viewer: Viewer = Viewer(show_grid=False)
 
-map_column_head_to_cell_network_vertex : Dict[ElementNode, int] = {}
-for idx, edge in enumerate(cell_network_columns):
-    axis: Line = cell_network.edge_line(edge) 
-    # We do not know what comes out of CellNetwork since edge are sorted by vertices u and v...
-    
+map_column_head_to_cell_network_vertex: Dict[ElementNode, int] = {}
+
+def add_column(edge):
+    axis: Line = cell_network.edge_line(edge)
     column_head_vertex = edge[1]
     if axis[0][2] > axis[1][2]:
         axis = Line(axis[1], axis[0])
         column_head_vertex = edge[0]
-    width: float = 75
-    depth: float = 75
-    element_column : ColumnElement = ColumnElement.from_square_section(width=150, depth=150, height=axis.length)
-    element_column.frame = Frame(axis.start, [1,0,0], [0,1,0])
-    element_column_node : ElementNode = model.add_element(element=element_column, parent=columns)
-    width: float = 150
-    depth: float = 150
-    height: float = 150
-    element_column_head : ColumnHeadElement = ColumnHeadElement.from_box(width=width, depth=depth, height=height)
-    element_column_head.frame = Frame(cell_network.vertex_point(column_head_vertex), [1,0,0], [0,1,0])
-    elmenent_column_head_node : ElementNode = model.add_element(element=element_column_head, parent=column_heads)
+    element_column: ColumnElement = ColumnElement.from_square_section(width=150, depth=150, height=axis.length)
+    element_column.frame = Frame(axis.start, [1, 0, 0], [0, 1, 0])
+    model.add_element(element=element_column, parent=columns)
+    
+    element_column_head: ColumnHeadElement = ColumnHeadElement.from_box(width=150, depth=150, height=150)
+    element_column_head.frame = Frame(cell_network.vertex_point(column_head_vertex), [1, 0, 0], [0, 1, 0])
+    model.add_element(element=element_column_head, parent=column_heads)
+    
     map_column_head_to_cell_network_vertex[column_head_vertex] = element_column_head
-    
-    # Interaction
     model.add_interaction(element_column, element_column_head, interaction=CutterInterface(frame=Frame.worldXY(), name="column_head_column"))
-    
-    
 
-    
-for edge in cell_network_beams:
+def add_beam(edge):
     axis: Line = cell_network.edge_line(edge)
-    width: float = 300
-    depth: float = 150
-    element : BeamElement = BeamElement.from_square_section(width=width, depth=depth, height=axis.length)
-    element.frame = Frame(axis.start, [0,0,1], Vector.cross(axis.direction, [0,0,1]))
-    elmenent_node : ElementNode = model.add_element(element=element, parent=columns)
+    element: BeamElement = BeamElement.from_square_section(width=300, depth=150, height=axis.length)
+    element.frame = Frame(axis.start, [0, 0, 1], Vector.cross(axis.direction, [0, 0, 1]))
+    model.add_element(element=element, parent=columns)
     
-    # Interaction - not all beams are connected to column heads, e.g. foundations and other things...
     if edge[0] in map_column_head_to_cell_network_vertex:
         model.add_interaction(map_column_head_to_cell_network_vertex[edge[0]], element, interaction=CutterInterface(frame=Frame.worldXY(), name="column_head_and_beam"))
-    
     if edge[1] in map_column_head_to_cell_network_vertex:
         model.add_interaction(map_column_head_to_cell_network_vertex[edge[1]], element, interaction=CutterInterface(frame=Frame.worldXY(), name="column_head_and_beam"))
 
-
-for face in cell_network_floors:
-    width: float = 3000
-    depth: float = 3000
-    polygon: Polygon = Polygon([[-width,-depth,0], [-width,depth,0], [width,depth,0], [width,-depth,0]])
-    thickness: float = 200
-    element : PlateElement = PlateElement.from_polygon_and_thickness(polygon, thickness)
-    element.frame = Frame(cell_network.face_polygon(face).centroid, [1,0,0], [0,1,0])
-    elmenent_node : ElementNode = model.add_element(element=element, parent=columns)
+def add_floor(face):
+    width, depth, thickness = 3000, 3000, 200
+    polygon: Polygon = Polygon([[-width, -depth, 0], [-width, depth, 0], [width, depth, 0], [width, -depth, 0]])
+    element: PlateElement = PlateElement.from_polygon_and_thickness(polygon, thickness)
+    element.frame = Frame(cell_network.face_polygon(face).centroid, [1, 0, 0], [0, 1, 0])
+    model.add_element(element=element, parent=columns)
     
-    # Interaction - not all faces are connected to column heads, e.g. ground floor...
     for vertex in cell_network.face_vertices(face):
         if vertex in map_column_head_to_cell_network_vertex:
             model.add_interaction(map_column_head_to_cell_network_vertex[vertex], element, interaction=CutterInterface(frame=Frame.worldXY(), name="column_head_and_plate"))
-  
+
+for edge in cell_network_columns:
+    add_column(edge)
+
+for edge in cell_network_beams:
+    add_beam(edge)
+
+for face in cell_network_floors:
+    add_floor(face)
 
 #######################################################################################################
 # VIEWER
