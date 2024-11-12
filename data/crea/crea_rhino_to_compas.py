@@ -68,4 +68,4 @@ serialization_dictionary["Mesh::Core"] = select_meshes("Mesh::Core")
 # scene.draw()
 
 # from compas import json_dump
-json_dump(serialization_dictionary, "C:/brg/2_code/compas_grid/data/crea/crea.json")
+json_dump(serialization_dictionary, "C:/brg/2_code/compas_grid/data/crea/crea_4x4.json")

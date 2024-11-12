@@ -21,7 +21,7 @@ from compas.colors import Color
 PRECISION: int = 3
 
 # Load the JSON data
-rhino_geometry: Dict[str, List[Any]] = json_load('data/crea/crea.json')
+rhino_geometry: Dict[str, List[Any]] = json_load('data/crea/crea_4x4.json')
 
 #######################################################################################################
 # GRAPH
@@ -59,6 +59,8 @@ def create_ordered_line(point1: Point, point2: Point) -> Line:
 # Create Graph from lines and mesh face edges
 lines_from_user_input : List[Line] = []
 for key, geometries in rhino_geometry.items():
+    if len(geometries) == 0:
+        continue
     if isinstance(geometries[0], Line):
         for line in geometries:
             lines_from_user_input.append(create_ordered_line(line[0], line[1]))         
@@ -240,7 +242,7 @@ for face in cell_network_floors:
     width: float = 3000
     depth: float = 3000
     polygon: Polygon = Polygon([[-width,-depth,0], [-width,depth,0], [width,depth,0], [width,-depth,0]])
-    thickness: float = 100
+    thickness: float = 200
     element : PlateElement = PlateElement.from_polygon_and_thickness(polygon, thickness)
     element.frame = Frame(cell_network.face_polygon(face).centroid, [1,0,0], [0,1,0])
     elmenent_node : ElementNode = model.add_element(element=element, parent=columns)
@@ -257,9 +259,9 @@ for face in cell_network_floors:
 
 
 # Add all edge to the viewer to see the directed graph
-for edge in cell_network.edges():
-    line: Line = cell_network.edge_line(edge)
-    viewer.scene.add(line.vector, anchor=line.start, linecolor=Color.black())
+# for edge in cell_network.edges():
+#     line: Line = cell_network.edge_line(edge)
+#     viewer.scene.add(line.vector, anchor=line.start, linecolor=Color.black())
 
 # Add column edges to the scene
 # lines = [cell_network.edge_line(edge) for edge in cell_network.edges_where({"is_column": True})]
@@ -289,4 +291,6 @@ for edge in cell_network.edges():
 #     viewer.scene.add(Box(xsize=attributes["u"]*100, frame=Frame([attributes["x"]+1000, attributes["y"], attributes["z"]])))
 
 # Show the viewer
+for element in model.elements():
+    viewer.scene.add(element.compute_geometry())
 viewer.show()
