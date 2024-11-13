@@ -269,5 +269,8 @@ class BeamElement(Element):
         polygon: Polygon = Polygon([p0, p1, p2, p3])
         axis: Line = Line([0, 0, 0], [0, 0, height])
 
+        polygon.translate([-width*0.5, 0, 0])
+        axis.translate([-width*0.5, 0, 0]) 
+
         beam: BeamElement = cls(axis=axis, section=polygon, frame_bottom=frame_bottom, frame_top=frame_top, features=features, name=name)
         return beam

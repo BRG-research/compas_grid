@@ -66,6 +66,35 @@ class ColumnHeadElement(Element):
     def face_polygons(self) -> List[Polygon]:
         return [self.geometry.face_polygon(face) for face in self.geometry.faces()]  # type: ignore
 
+    @property
+    def face_lowest(self) -> List[Polygon]:
+        lowest_polygon : Polygon = self.face_polygons
+        height : float = float('inf')
+        for polygon in self.face_polygons:
+            if polygon.centroid[2] < height:
+                height = polygon.centroid[2]
+                lowest_polygon = polygon
+        return lowest_polygon
+    
+    @property
+    def face_highest(self) -> List[Polygon]:
+        highest_polygon : Polygon = self.face_polygons
+        height : float = float('-inf')
+        for polygon in self.face_polygons:
+            if polygon.centroid[2] > height:
+                height = polygon.centroid[2]
+                highest_polygon = polygon
+        return highest_polygon
+    
+    def face_nearest(self, point: List[float]) -> List[Polygon]:
+        nearest_polygon : Polygon = self.face_polygons
+        distance : float = float('inf')
+        for polygon in self.face_polygons:
+            if polygon.centroid.distance_to_point(point) < distance:
+                distance = polygon.centroid.distance_to_point(point)
+                nearest_polygon = polygon
+        return nearest_polygon
+
     def compute_shape(self) -> Mesh:
         """Compute the shape of the column head.
 
@@ -190,8 +219,30 @@ class ColumnHeadElement(Element):
         """
 
         box: Box = Box(xsize=width, ysize=depth, zsize=height, frame=Frame.worldXY())
-        box.translate([0, 0, height * 0.5])
+        box.translate([0, 0, -height * 0.5])
         mesh: Mesh = Mesh.from_vertices_and_faces(box.vertices, box.faces)
+
+        column_head_element: ColumnHeadElement = cls(mesh=mesh, features=features, name=name)
+        return column_head_element
+
+    @classmethod
+    def from_mesh(cls, mesh: Mesh, features: Optional[List[ColumnHeadFeature]] = None, name: str = "None") -> "ColumnHeadElement":
+        """Create a column head element from a mesh.
+
+        Parameters
+        ----------
+        mesh : :class:`compas.datastructures.Mesh`
+            The mesh of the column head.
+        features : list[:class:`ColumnHeadFeature`], optional
+            Additional block features.
+        name : str, optional
+            The name of the element.
+
+        Returns
+        -------
+        :class:`ColumnHeadElement`
+            Column head instance.
+        """
 
         column_head_element: ColumnHeadElement = cls(mesh=mesh, features=features, name=name)
         return column_head_element
