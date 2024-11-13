@@ -11,11 +11,96 @@ from compas.geometry import bounding_box
 from compas.geometry import oriented_bounding_box
 from compas_model.elements import Element
 from compas_model.elements import Feature
+from enum import Enum
 
+class ColumnHeadType(int, Enum):
+    """
+    Enumeration of column head types.
 
+    Attributes
+    ----------
+    HALF : int
+        Represents a column head with half mesh faces.
+    QUARTER : int
+        Represents a column head with quarter mesh faces.
+    THREE_QUARTERS : int
+        Represents a column head with three quarter mesh faces.
+    FULL : int
+        Represents a column head with full mesh faces.
+    """
+    
+    QUARTER = 1
+    HALF = 2
+    THREE_QUARTERS = 3
+    FULL = 4
+    
+class ColumnHeadMeshFactory:
+    """ Singleton class for creating column head meshes only once.
+    
+    Example
+    -------
+    mesh = ColumnHeadMeshFactory().get_mesh(ColumnHeadType.HALF)
+    """
+    _instance = None
+    _meshes = {}
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(ColumnHeadMeshFactory, cls).__new__(cls)
+            cls._initialize_meshes(cls._instance)
+        return cls._instance
+    @staticmethod
+    def _initialize_meshes(instance):
+        instance._meshes[ColumnHeadType.HALF] = ColumnHeadMeshFactory._create_mesh(1)
+        instance._meshes[ColumnHeadType.QUARTER] = ColumnHeadMeshFactory._create_mesh(2)
+        instance._meshes[ColumnHeadType.THREE_QUARTERS] = ColumnHeadMeshFactory._create_mesh(3)
+        instance._meshes[ColumnHeadType.FULL] = ColumnHeadMeshFactory._create_mesh(4)
+
+    @staticmethod
+    def _create_mesh(faces: int) -> Mesh:
+        width, depth, height = 1.0, 1.0, 1.0
+        box = Box(Frame.worldXY(), width, depth, height)
+        mesh = Mesh.from_vertices_and_faces(box.vertices, box.faces[:faces])
+        return mesh
+
+    @classmethod
+    def get_mesh(cls, mesh_type: ColumnHeadType) -> Optional[Mesh]:
+        return cls._instance._meshes.get(mesh_type)
+
+class ColumnHeadDirection(int, Enum):
+    """
+    Enumeration of directions where the number corresponds to the column head mesh face index.
+
+    Attributes
+    ----------
+    NORTH : int
+        Represents the first mesh face of the column_head.
+    EAST : int
+        Represents the second mesh face of the column_head.
+    SOUTH : int
+        Represents the third mesh face of the column_head.
+    WEST : int
+        Represents the fourth mesh face of the column_head.
+    NORTH_EAST : int
+        Represents the fifth mesh face of the column_head.
+    SOUTH_EAST : int
+        Represents the sixth mesh face of the column_head.
+    SOUTH_WEST : int
+        Represents the seventh mesh face of the column_head.
+    NORTH_WEST : int
+        Represents the eighth mesh face of the column_head.
+    """
+    NORTH = 0
+    EAST = 1
+    SOUTH = 2
+    WEST = 3
+    NORTH_EAST = 4
+    SOUTH_EAST = 5
+    SOUTH_WEST = 6
+    NORTH_WEST = 7
+    
 class ColumnHeadFeature(Feature):
     pass
-
 
 class ColumnHeadElement(Element):
     """Class representing a column head element.
@@ -351,3 +436,56 @@ class ColumnHeadElement(Element):
         ########################################################################################
         column_head_element: ColumnHeadElement = cls(mesh=mesh, features=features, name=name)
         return column_head_element
+
+    @classmethod
+    def from_quadrant(cls, start_direction : ColumnHeadDirection, end_direction : ColumnHeadDirection, width : float, depth : float, features: Optional[List[ColumnHeadFeature]] = None, name: str = "None") -> "ColumnHeadElement":
+        """Create a column head element from a quadrant. 
+        
+        Subtraction of the directions provides what type of mesh is generated:
+        - HALF: 1 face
+        - QUARTER: 2 faces
+        - THREE_QUARTERS: 3 faces
+        - FULL: 4 faces
+        
+        Parameters
+        ----------
+        start_direction : :class:`ColumnHeadDirection`
+            The start direction of the quadrant.
+        end_direction : :class:`ColumnHeadDirection`
+            The end direction of the quadrant.
+        width : float
+            The width of the column head.
+        depth : float
+            The depth of the column head.
+        features : list[:class:`ColumnHeadFeature`], optional
+            Additional block features.
+        name : str, optional
+            The name of the element.
+            
+        Returns
+        -------
+        :class:`ColumnHeadElement`
+            Column head instance
+            
+        Example
+        -------
+        start_direction = ColumnHeadDirection.NORTH
+        end_direction = ColumnHeadDirection.EAST
+        column_head_element = ColumnHeadElement.from_quadrant(start_direction, end_direction, width=1.0, depth=1.0)
+    """
+        
+        # Subtraction of the directions provides what type of mesh is generated:
+        start : int = int(start_direction)
+        end : int = int(end_direction)
+        subtraction : int = end - start if start < end else start - end
+        
+
+        try:
+            # Cast the number to ColumnHeadType
+            column_head_type = ColumnHeadType(subtraction)
+        except ValueError:
+            raise ValueError(f"Invalid subtraction value: {subtraction}. It does not correspond to any ColumnHeadType.")
+
+        # Get the mesh from the factory
+        mesh = ColumnHeadMeshFactory().get_mesh(column_head_type)
+        return cls(mesh=mesh, features=features, name=name)

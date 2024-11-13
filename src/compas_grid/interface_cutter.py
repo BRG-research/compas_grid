@@ -34,18 +34,18 @@ class CutterInterface(Interaction):
         super(CutterInterface, self).__init__(name=name)
 
         self._frame = polygon.frame
-        self._polygon = polygon           
+        self._polygon = polygon
 
     @property
     def frame(self):
         return self._frame
-    
+
     @property
     def polygon(self):
         return self._polygon
-    
+
     # Temporary method to display the frame of the interface
     def frame_polygon(self, size=500):
-        polygon : Polygon = Polygon.from_rectangle([-size*0.5,-size*0.5,0], size,size)
+        polygon: Polygon = Polygon.from_rectangle([-size * 0.5, -size * 0.5, 0], size, size)
         polygon.transform(Transformation.from_frame_to_frame(Frame.worldXY(), self._frame))
         return polygon
