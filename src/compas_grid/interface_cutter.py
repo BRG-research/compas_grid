@@ -1,5 +1,7 @@
+from compas.geometry import Frame
+from compas.geometry import Polygon
+from compas.geometry import Transformation
 from compas_model.interactions import Interaction
-from compas.geometry import Frame, Polygon, Transformation
 
 
 class CutterInterface(Interaction):

@@ -1,28 +1,19 @@
-from compas.datastructures import CellNetwork, Mesh
-from collections import OrderedDict
-from collections import deque
-
-import compas
-
 from typing import Optional
 
+import compas
 import compas.datastructures  # noqa: F401
 import compas.geometry  # noqa: F401
-from compas.datastructures import Datastructure, Mesh
-from compas.geometry import Frame, Line
-
-from compas_model.models import Model  # noqa: F401
+from compas.datastructures import Mesh
+from compas.geometry import Line
 from compas_model.elements import Element  # noqa: F401
 from compas_model.interactions import Interaction  # noqa: F401
 from compas_model.materials import Material  # noqa: F401
-
+from compas_model.models import Model  # noqa: F401
 from compas_model.models.elementnode import ElementNode
-from compas_model.models.elementtree import ElementTree
 from compas_model.models.groupnode import GroupNode
 from compas_model.models.interactiongraph import InteractionGraph
 
 from compas_grid import CutterInterface
-from compas.tolerance import TOL
 
 
 class GridModel(Model):
