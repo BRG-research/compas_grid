@@ -295,21 +295,6 @@ class ColumnHeadSquarePyramids:
         return meshes
 
 
-if __name__ == "__main__":
-    column_head_mesh_factory: ColumnHeadSquarePyramids = ColumnHeadSquarePyramids()
-    (column_head_mesh_factory.get_mesh(ColumnHeadDirection.NORTH, ColumnHeadDirection.WEST))
-
-    from compas_viewer import Viewer
-
-    viewer: Viewer = Viewer(show_grid=False)
-    viewer.renderer.rendermode = "ghosted"
-    viewer.renderer.view = "top"
-
-    for mesh in column_head_mesh_factory.meshes_aligned():
-        viewer.scene.add(mesh)
-    # viewer.show()
-
-
 class ColumnHeadFeature(Feature):
     pass
 
@@ -549,7 +534,7 @@ class ColumnHeadElement(Element):
         cls, polygons: List[Polygon], top_holes: List[Polygon] = [], bottom_holes: List[Polygon] = [], features: Optional[List[ColumnHeadFeature]] = None, name: str = "None"
     ) -> "ColumnHeadElement":
         """Loft a list of polygons.
-        When top and bottom holes are provided, inner loft is created toself.
+        When top and bottom holes are provided, inner loft is created to itself.
 
         Parameters
         ----------
@@ -696,6 +681,21 @@ class ColumnHeadElement(Element):
         column_head_element = ColumnHeadElement.from_quadrant(start_direction, end_direction, width=1.0, depth=1.0)
         """
         column_head_mesh_factory: ColumnHeadSquarePyramids = ColumnHeadSquarePyramids(width=width, depth=depth, height=height, column_head_offset=offset)
-        mesh: Mesh = column_head_mesh_factory.get_mesh(ColumnHeadDirection.NORTH, ColumnHeadDirection.WEST)
+        mesh: Mesh = column_head_mesh_factory.get_mesh(start_direction=start_direction, end_direction=end_direction)
         column_head_element: ColumnHeadElement = cls(mesh=mesh, features=features, name=name)
         return column_head_element
+
+
+if __name__ == "__main__":
+    column_head_mesh_factory: ColumnHeadSquarePyramids = ColumnHeadSquarePyramids()
+    (column_head_mesh_factory.get_mesh(ColumnHeadDirection.NORTH, ColumnHeadDirection.WEST))
+
+    from compas_viewer import Viewer
+
+    viewer: Viewer = Viewer(show_grid=False)
+    viewer.renderer.rendermode = "ghosted"
+    viewer.renderer.view = "top"
+
+    for mesh in column_head_mesh_factory.meshes_aligned():
+        viewer.scene.add(mesh)
+    # viewer.show()
