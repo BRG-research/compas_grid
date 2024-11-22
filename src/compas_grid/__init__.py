@@ -1,8 +1,13 @@
 from __future__ import print_function
 
 import os
+from .element_beam import BeamElement
+from .element_column_head import ColumnHeadElement
+from .element_column import ColumnElement
+from .element_plate import PlateElement
 from .interface_cutter import CutterInterface
-
+from .model import GridModel
+from .datastructures.cell_network import CellNetwork
 
 __author__ = ["Petras Vestartas"]
 __copyright__ = "Petras Vestartas"
@@ -19,4 +24,17 @@ DOCS = os.path.abspath(os.path.join(HOME, "docs"))
 TEMP = os.path.abspath(os.path.join(HOME, "temp"))
 
 
-__all__ = ["HOME", "DATA", "DOCS", "TEMP", "CutterInterface"]
+__all__ = [
+    "HOME",
+    "DATA",
+    "DOCS",
+    "TEMP",
+    "BeamElement",
+    "ColumnHeadElement",
+    "ColumnElement",
+    "PlateElement",
+    "GridModel",
+    "CutterInterface",
+    "GridModel",
+    "CellNetwork",
+]
