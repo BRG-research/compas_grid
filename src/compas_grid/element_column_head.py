@@ -341,6 +341,7 @@ class ColumnHeadElement(Element):
     def __init__(self, mesh: Mesh, frame: Frame = Frame.worldXY(), features: Optional[List[ColumnHeadFeature]] = None, name: Optional[str] = None):
         super(ColumnHeadElement, self).__init__(frame=frame, name=name)
         self.features: List[ColumnHeadFeature] = features or []
+        self.type = None
         self.shape: Mesh = mesh
         self.name = self.__class__.__name__
 

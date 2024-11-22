@@ -111,30 +111,6 @@ class GridModel(Model):
         self._cutter_interfaces: list[CutterInterface] = []
         self.PRECISION = 3
 
-    @staticmethod
-    def rhino_ui(layer_names: list[str] = None) -> tuple[list[Line], list[Mesh]]:
-        """Select lines and meshes from Rhino from layers.
-        Layer names are added as attributes to each geometry object for further processing.
-        If no layer name is provided, user can directly select the geometry objects.
-        NOTE: This method is a placeholder for the actual Rhino UI logic.
-
-        Parameters
-        ----------
-
-        layer_names : list[str], optional
-
-        Returns
-        -------
-        tuple[list[Line], list[Mesh]]
-            The lines and meshes.
-        """
-
-        lines: list[Line] = []
-        surfaces: list[Mesh] = []
-
-        # Add your Rhino UI logic here
-        return lines, surfaces
-
     @classmethod
     def from_lines_and_surfaces(cls, line: list[Line], surfaces: list[Mesh], tolerance: int = 3) -> "GridModel":
         """Create a grid model from a list of Line and surfaces.
