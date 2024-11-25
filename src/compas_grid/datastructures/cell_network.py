@@ -2,12 +2,15 @@ from compas.datastructures import CellNetwork as BaseCellNetwork
 from compas.datastructures import Graph
 from compas.datastructures import Mesh
 from compas.geometry import Line
+from compas.geometry import Vector
+from compas.geometry import Point
 from compas.tolerance import TOL
+from compas_grid.element_column_head import ColumnHeadDirection
 
 
 class CellNetwork(BaseCellNetwork):
     @classmethod
-    def from_lines_and_surfaces(cls, column_and_beams: list[Line], floor_surfaces: list[Mesh], tolerance: int = 3) -> "BaseCellNetwork":
+    def from_lines_and_surfaces(cls, column_and_beams: list[Line], floor_surfaces: list[Mesh], tolerance: int = 3) -> "CellNetwork":
         """Create a grid model from a list of Line and surfaces.
         You can extend user input to include facade and core surfaces.
 
@@ -45,7 +48,7 @@ class CellNetwork(BaseCellNetwork):
         #######################################################################################################
         # Create a CellNetwork from the Graph and meshes.
         #######################################################################################################
-        cell_network: CellNetwork = CellNetwork()
+        cell_network: CellNetwork = cls()
         cell_network_vertex_keys: dict[str, int] = {}  # Store vertex geometric keys to map faces to vertices
 
         # Add vertices to CellNetwork and store geometric keys
@@ -59,6 +62,20 @@ class CellNetwork(BaseCellNetwork):
             cell_network.add_edge(*edge)
 
         #######################################################################################################
+        # Add vertex neighbors from the Graph to the CellNetwork.
+        #######################################################################################################
+
+        for vertex in cell_network.vertices():
+            z0: float = graph.node_attributes(vertex, "xyz")[2]
+            # Get horizontal neighbors
+            neighbor_beams: list[int] = []
+
+            for neighbor in graph.neighbors(vertex):
+                if abs(z0 - graph.node_attributes(neighbor, "xyz")[2]) < 1 / max(1, tolerance):
+                    neighbor_beams.append(neighbor)
+            cell_network.vertex_attribute(vertex, "neighbors", neighbor_beams)
+
+        #######################################################################################################
         # Add geometric attributes: is_column, is_beam, is_floor, is_facade, is_core and so on.
         #######################################################################################################
 
@@ -70,10 +87,9 @@ class CellNetwork(BaseCellNetwork):
 
         # Faces - Floors
         for mesh in floor_surfaces:
-            for face in mesh.faces():
-                gkeys: dict[int, str] = mesh.face_gkey(face, precision=tolerance)
-                v: list[int] = [cell_network_vertex_keys[key] for key in gkeys.values() if key in cell_network_vertex_keys]
-                cell_network.add_face(v, attr_dict={"is_floor": True})
+            gkeys: dict[int, str] = mesh.vertex_gkey(precision=tolerance)
+            v: list[int] = [cell_network_vertex_keys[key] for key in gkeys.values() if key in cell_network_vertex_keys]
+            cell_network.add_face(v, attr_dict={"is_floor": True})
 
         return cell_network
 

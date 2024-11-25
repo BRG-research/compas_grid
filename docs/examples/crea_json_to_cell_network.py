@@ -16,19 +16,19 @@ from compas_model.models import Model
 from compas_model.elements import Element
 from compas.colors import Color
 
-# Classes as Datastructures, 
+# Classes as Datastructures,
 # CellNetwork - from from_mesh, from_graph, from_lines
 # Model
-
 
 
 #######################################################################################################
 # INPUT | VIEWER FOR DEBUGGING
 #######################################################################################################
 PRECISION: int = 3
-rhino_geometry: dict[str, list[Any]] = json_load('data/crea/crea_4x4.json')
+rhino_geometry: dict[str, list[Any]] = json_load("data/crea/crea_4x4.json")
 viewer: Viewer = Viewer(show_grid=False)
 viewer.renderer.rendermode = "ghosted"
+
 
 #######################################################################################################
 # GRAPH
@@ -64,25 +64,25 @@ def create_ordered_line(point1: Point, point2: Point) -> Line:
     else:
         return Line(point2, point1)
 
+
 # Create Graph from lines and mesh face edges
-lines_from_user_input : list[Line] = []
+lines_from_user_input: list[Line] = []
 for key, geometries in rhino_geometry.items():
     if len(geometries) == 0:
         continue
     if isinstance(geometries[0], Line):
         for line in geometries:
-            lines_from_user_input.append(create_ordered_line(line[0], line[1]))         
+            lines_from_user_input.append(create_ordered_line(line[0], line[1]))
     elif isinstance(geometries[0], Mesh):
         for mesh in geometries:
             for line in mesh.to_lines():
-                lines_from_user_input.append(create_ordered_line(line[0], line[1]))     
+                lines_from_user_input.append(create_ordered_line(line[0], line[1]))
 
 graph: Graph = Graph.from_lines(lines_from_user_input, precision=PRECISION)
 
 #######################################################################################################
 # CELL NETWORK
 #######################################################################################################
-
 
 
 # Convert Graph to CellNetwork using vertices and edges
@@ -100,8 +100,8 @@ for node in graph.nodes():
 for edge in graph.edges():
     uv: Tuple[int, int] = edge
     cell_network.add_edge(*uv)
-    cell_network_edge_keys[TOL.geometric_key(graph.edge_midpoint(uv), precision=PRECISION)] = uv # remoce, use vertex keys instead 
-    
+    cell_network_edge_keys[TOL.geometric_key(graph.edge_midpoint(uv), precision=PRECISION)] = uv  # remoce, use vertex keys instead
+
 #######################################################################################################
 # GEOMETRIC ATTRIBUTES: is_column, is_beam, is_floor, is_facade, is_core
 # Attribute can also be known by checking z coordinate.
@@ -116,9 +116,9 @@ for key, geometries in rhino_geometry.items():
         if isinstance(g, Line):
             # Edges - midpoint key
             cell_network.edge_attribute(
-                cell_network_edge_keys[TOL.geometric_key(midpoint_line(g), precision=PRECISION)], # two end points
+                cell_network_edge_keys[TOL.geometric_key(midpoint_line(g), precision=PRECISION)],  # two end points
                 attribute_key,
-                True
+                True,
             )
         elif isinstance(g, Mesh):
             # Faces - four vertices
@@ -127,11 +127,12 @@ for key, geometries in rhino_geometry.items():
 
             if len(v) == 4:
                 cell_network.add_face(v, attr_dict={attribute_key: True})
-                
+
 
 #######################################################################################################
 # SPATIAL ATTRIBUTES: u (x-axis), v (y-axis), w (level)
 #######################################################################################################
+
 
 def partition_and_assign_attributes(graph: Graph, cell_network: CellNetwork, coord: str, attr_name: str) -> None:
     """
@@ -149,7 +150,7 @@ def partition_and_assign_attributes(graph: Graph, cell_network: CellNetwork, coo
     attr_name : str
         The name of the attribute to assign ('u', 'v', or 'w').
     """
-    coord_dict: Dict[float, list[int]] = {}
+    coord_dict: dict[float, list[int]] = {}
     for node in graph.nodes():
         value: float = round(graph.node_attributes(node, coord)[0], 3)
         if value not in coord_dict:
@@ -161,21 +162,22 @@ def partition_and_assign_attributes(graph: Graph, cell_network: CellNetwork, coo
     for level, (value, nodes) in enumerate(sorted_coord_dict.items()):
         for j, node in enumerate(nodes):
             cell_network.vertex_attribute(node, attr_name, level)
-            
+
     # Edge UVW, by taking the minimum of the two vertices
     for edge in cell_network.edges():
         u: int = cell_network.vertex_attribute(edge[0], attr_name)
         v: int = cell_network.vertex_attribute(edge[1], attr_name)
         cell_network.edge_attribute(edge, attr_name, min(u, v))
-    
+
     # Face UVW, by taking the minimum of all the vertices
     for face in cell_network.faces():
         face_nodes: list[int] = cell_network.face_vertices(face)
         face_values: list[int] = [cell_network.vertex_attribute(node, attr_name) for node in face_nodes]
         cell_network.face_attribute(face, attr_name, min(face_values))
-    
-    cell_network.attributes["max_"+attr_name] = len(sorted_coord_dict)
-            
+
+    cell_network.attributes["max_" + attr_name] = len(sorted_coord_dict)
+
+
 # Run the method for x, y, and z coordinates
 partition_and_assign_attributes(graph, cell_network, "x", "u")
 partition_and_assign_attributes(graph, cell_network, "y", "v")
@@ -212,132 +214,121 @@ map_beam_to_cell_network_edge: dict[Element, Tuple[int, int]] = {}
 # for vertex in cell_network.vertices():
 #     node = model.add_element(...)
 #     vertex_node[vertex] = node
-    
+
 # for edge in cell_network.edges():
 #     node = model.add_element(...)
 #     edge_node[edge] = node
-    
 
 
 width, depth, height, column_head_offset = 150, 150, 300, 210
 
+
 def add_column_head(edge):
     axis: Line = cell_network.edge_line(edge)
-    column_head_vertex : int = edge[1]
+    column_head_vertex: int = edge[1]
     if axis[0][2] > axis[1][2]:
         axis = Line(axis[1], axis[0])
         column_head_vertex = edge[0]
-       
+
     # top rectangle
-    polygon0 : Polyline = Polyline([
-        Point(-width, -depth, -height) + Vector(0, -column_head_offset, 0),
-        Point(width, -depth, -height) + Vector(0, -column_head_offset, 0),
-        Point(width, -depth, -height) + Vector(column_head_offset, 0, 0),
-        Point(width, depth, -height) + Vector(column_head_offset, 0, 0),
-        Point(width, depth, -height) + Vector(0, column_head_offset, 0),
-        Point(-width, depth, -height) + Vector(0, column_head_offset, 0),
-        Point(-width, depth, -height) + Vector(-column_head_offset, 0, 0),
-        Point(-width, -depth, -height) + Vector(-column_head_offset, 0, 0)
-    ])
-    
-    polygon1 : Polyline = Polyline([
-        Point(-width, -depth, 0),
-        Point(width, -depth, 0),
-        Point(width, depth, 0),
-        Point(-width, depth, 0)
-    ])
-    
-    v : list[Point] = []
-    f : list[list[int]] = []
+    polygon0: Polyline = Polyline(
+        [
+            Point(-width, -depth, -height) + Vector(0, -column_head_offset, 0),
+            Point(width, -depth, -height) + Vector(0, -column_head_offset, 0),
+            Point(width, -depth, -height) + Vector(column_head_offset, 0, 0),
+            Point(width, depth, -height) + Vector(column_head_offset, 0, 0),
+            Point(width, depth, -height) + Vector(0, column_head_offset, 0),
+            Point(-width, depth, -height) + Vector(0, column_head_offset, 0),
+            Point(-width, depth, -height) + Vector(-column_head_offset, 0, 0),
+            Point(-width, -depth, -height) + Vector(-column_head_offset, 0, 0),
+        ]
+    )
+
+    polygon1: Polyline = Polyline([Point(-width, -depth, 0), Point(width, -depth, 0), Point(width, depth, 0), Point(-width, depth, 0)])
+
+    v: list[Point] = []
+    f: list[list[int]] = []
     v.extend(polygon0.points)
     v.extend(polygon1.points)
     f.append([0, 1, 2, 3, 4, 5, 6, 7])
-    f.append([3+8, 2+8, 1+8, 0+8])
-    
+    f.append([3 + 8, 2 + 8, 1 + 8, 0 + 8])
+
     for i in range(4):
-        f.append([i*2, (i*2+1)%8, 8+(i+1)%4, 8+i])
-        f.append([(i*2+1)%8, (i*2+2)%8, 8+(i+1)%4])
-    
-    mesh : Mesh = Mesh.from_vertices_and_faces(v, f)
-    
+        f.append([i * 2, (i * 2 + 1) % 8, 8 + (i + 1) % 4, 8 + i])
+        f.append([(i * 2 + 1) % 8, (i * 2 + 2) % 8, 8 + (i + 1) % 4])
+
+    mesh: Mesh = Mesh.from_vertices_and_faces(v, f)
+
     element_column_head: ColumnHeadElement = ColumnHeadElement.from_mesh(mesh)
     # element_column_head: ColumnHeadElement = ColumnHeadElement.from_box(width=300, depth=300, height=300)
     element_column_head.frame = Frame(cell_network.vertex_point(column_head_vertex), [1, 0, 0], [0, 1, 0])
     model.add_element(element=element_column_head, parent=column_heads)
-    
+
     map_column_head_to_cell_network_vertex[column_head_vertex] = element_column_head
 
+
 def add_column(edge):
-    
     axis: Line = cell_network.edge_line(edge)
-    column_head_vertex : int = edge[1]
+    column_head_vertex: int = edge[1]
     if axis[0][2] > axis[1][2]:
         axis = Line(axis[1], axis[0])
         column_head_vertex = edge[0]
 
-    element_column: ColumnElement = ColumnElement.from_square_section(width=width*2, depth=depth*2, height=axis.length)
+    element_column: ColumnElement = ColumnElement.from_square_section(width=width * 2, depth=depth * 2, height=axis.length)
     element_column.frame = Frame(axis.start, [1, 0, 0], [0, 1, 0])
     model.add_element(element=element_column, parent=columns)
-    
-    map_column_to_cell_network_edge[edge] = element_column 
-    
+
+    map_column_to_cell_network_edge[edge] = element_column
+
+
 def add_interaction_column_and_column_head(edge):
-    
     axis: Line = cell_network.edge_line(edge)
-    column_head_vertex : int = edge[1]
-    column_base_vertex : int = edge[0]
+    column_head_vertex: int = edge[1]
+    column_base_vertex: int = edge[0]
     if axis[0][2] > axis[1][2]:
         axis = Line(axis[1], axis[0])
         column_head_vertex = edge[0]
         column_base_vertex = edge[1]
-        
+
     if column_head_vertex in map_column_head_to_cell_network_vertex:
         model.add_interaction(
-            map_column_head_to_cell_network_vertex[column_head_vertex], 
-            map_column_to_cell_network_edge[edge], 
-            interaction=CutterInterface(
-                polygon=map_column_head_to_cell_network_vertex[column_head_vertex].face_lowest, 
-                name="column_head_column_to_column"))
-        
+            map_column_head_to_cell_network_vertex[column_head_vertex],
+            map_column_to_cell_network_edge[edge],
+            interaction=CutterInterface(polygon=map_column_head_to_cell_network_vertex[column_head_vertex].face_lowest, name="column_head_column_to_column"),
+        )
+
     if column_base_vertex in map_column_head_to_cell_network_vertex:
         model.add_interaction(
-            map_column_head_to_cell_network_vertex[column_base_vertex], 
-            map_column_to_cell_network_edge[edge], 
-            interaction=CutterInterface(
-                polygon=map_column_head_to_cell_network_vertex[column_base_vertex].face_highest, 
-                name="column_head_column_to_column"))
+            map_column_head_to_cell_network_vertex[column_base_vertex],
+            map_column_to_cell_network_edge[edge],
+            interaction=CutterInterface(polygon=map_column_head_to_cell_network_vertex[column_base_vertex].face_highest, name="column_head_column_to_column"),
+        )
+
 
 def add_beam(edge):
     axis: Line = cell_network.edge_line(edge)
-    element: BeamElement = BeamElement.from_square_section(width=height, depth=depth*2, height=axis.length)
+    element: BeamElement = BeamElement.from_square_section(width=height, depth=depth * 2, height=axis.length)
     element.frame = Frame(axis.start, [0, 0, 1], Vector.cross(axis.direction, [0, 0, 1]))
     model.add_element(element=element, parent=columns)
-    
+
     map_beam_to_cell_network_edge[edge] = element
-    
+
+
 def add_interaction_beam_and_column_head(edge):
-    
     beam_element: BeamElement = map_beam_to_cell_network_edge[edge]
 
     if edge[0] in map_column_head_to_cell_network_vertex:
-        
-        column_head_element =  map_column_head_to_cell_network_vertex[edge[0]]
+        column_head_element = map_column_head_to_cell_network_vertex[edge[0]]
         model.add_interaction(
-            column_head_element, 
-            beam_element, 
-            interaction=CutterInterface(
-                polygon=column_head_element.face_nearest(beam_element.obb.frame.point), 
-                name="column_head_and_beam"))
+            column_head_element, beam_element, interaction=CutterInterface(polygon=column_head_element.face_nearest(beam_element.obb.frame.point), name="column_head_and_beam")
+        )
 
     if edge[1] in map_column_head_to_cell_network_vertex:
-        
-        column_head_element =  map_column_head_to_cell_network_vertex[edge[1]]       
+        column_head_element = map_column_head_to_cell_network_vertex[edge[1]]
         model.add_interaction(
-            column_head_element, 
-            beam_element, 
-            interaction=CutterInterface(
-                polygon=column_head_element.face_nearest(beam_element.obb.frame.point), 
-                name="column_head_and_beam"))
+            column_head_element, beam_element, interaction=CutterInterface(polygon=column_head_element.face_nearest(beam_element.obb.frame.point), name="column_head_and_beam")
+        )
+
 
 def add_floor(face):
     width, depth, thickness = 3000, 3000, 200
@@ -345,28 +336,27 @@ def add_floor(face):
     plate_element: PlateElement = PlateElement.from_polygon_and_thickness(polygon, thickness)
     plate_element.frame = Frame(cell_network.face_polygon(face).centroid, [1, 0, 0], [0, 1, 0])
     model.add_element(element=plate_element, parent=columns)
-    
+
     for vertex in cell_network.face_vertices(face):
         if vertex in map_column_head_to_cell_network_vertex:
-            
-            column_head_element =  map_column_head_to_cell_network_vertex[vertex]
-            
+            column_head_element = map_column_head_to_cell_network_vertex[vertex]
+
             model.add_interaction(
-                map_column_head_to_cell_network_vertex[vertex], 
+                map_column_head_to_cell_network_vertex[vertex],
                 plate_element,
-                interaction=CutterInterface(
-                    polygon=column_head_element.face_nearest(plate_element.obb.frame.point), 
-                    name="column_head_and_plate"))
+                interaction=CutterInterface(polygon=column_head_element.face_nearest(plate_element.obb.frame.point), name="column_head_and_plate"),
+            )
+
 
 for edge in cell_network_columns:
     add_column_head(edge)
 
 for edge in cell_network_columns:
     add_column(edge)
-    
+
 for edge in cell_network_columns:
     add_interaction_column_and_column_head(edge)
-    
+
 for edge in cell_network_beams:
     add_beam(edge)
 
@@ -418,7 +408,7 @@ for element in model.elements():
     geometry = element.geometry
     geometry.name = element.name
     viewer.scene.add(geometry)
-    
+
 for interaction in model.interactions():
     print(interaction)
     viewer.scene.add(interaction.frame_polygon(500), color=(255, 0, 0), linewidth=5)

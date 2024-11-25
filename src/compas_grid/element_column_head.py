@@ -33,9 +33,10 @@ class ColumnHeadDirection(int, Enum):
     """
 
     NORTH = 0
-    EAST = 1
-    SOUTH = 2
-    WEST = 3
+    NONE = 1
+    EAST = 2
+    SOUTH = 3
+    WEST = 4
 
 
 class ColumnHeadSquarePyramids:
@@ -170,10 +171,11 @@ class ColumnHeadSquarePyramids:
             top_points: List[Point] = self._shift_right(top_points_rectangle, i)
 
             # Generate keys for the 4, 3, 2, and 1 sided quadrants.
-            key_4_quadrants = self._get_key(ColumnHeadDirection(i), ColumnHeadDirection((i + 3) % 4))  # N-E-S-W, E-S-W-N, S-W-N-E, W-N-E-S
-            key_3_quadrants = self._get_key(ColumnHeadDirection(i), ColumnHeadDirection((i + 2) % 4))  # N-E-S, E-S-W, S-W-N, W-N-E
-            key_2_quadrants = self._get_key(ColumnHeadDirection(i), ColumnHeadDirection((i + 1) % 4))  # N-E, E-S, S-W, W-N
-            key_1_quadrants = self._get_key(ColumnHeadDirection(i), ColumnHeadDirection(i))  # N-N, E-E, S-S, W-W
+            ids: list[int] = [0, 2, 3, 4]
+            key_4_quadrants = self._get_key(ColumnHeadDirection(ids[i]), ColumnHeadDirection(ids[(i + 3) % 4]))  # N-E-S-W, E-S-W-N, S-W-N-E, W-N-E-S
+            key_3_quadrants = self._get_key(ColumnHeadDirection(ids[i]), ColumnHeadDirection(ids[(i + 2) % 4]))  # N-E-S, E-S-W, S-W-N, W-N-E
+            key_2_quadrants = self._get_key(ColumnHeadDirection(ids[i]), ColumnHeadDirection(ids[(i + 1) % 4]))  # N-E, E-S, S-W, W-N
+            key_1_quadrants = self._get_key(ColumnHeadDirection(ids[i]), ColumnHeadDirection(ids[i]))  # N-N, E-E, S-S, W-W
 
             # Create the mesh for the 4-sided quadrant.
             v: list[Point] = []
@@ -239,6 +241,10 @@ class ColumnHeadSquarePyramids:
             self._meshes[key_3_quadrants] = mesh_3_quadrants
             self._meshes[key_2_quadrants] = mesh_2_quadrants
             self._meshes[key_1_quadrants] = mesh_1_quadrants
+            print(key_4_quadrants, mesh_4_quadrants)
+            print(key_3_quadrants, mesh_3_quadrants)
+            print(key_2_quadrants, mesh_2_quadrants)
+            print(key_1_quadrants, mesh_1_quadrants)
 
     def get_mesh(self, start_direction: ColumnHeadDirection, end_direction: ColumnHeadDirection) -> Optional[Mesh]:
         """Get mesh by column head type.
@@ -261,8 +267,8 @@ class ColumnHeadSquarePyramids:
         start_direction_checked: ColumnHeadDirection = start_direction
         end_direction_checked: ColumnHeadDirection = end_direction
 
-        if int(end_direction) < int(start_direction):
-            start_direction_checked, end_direction_checked = end_direction, start_direction
+        # if int(end_direction) < int(start_direction):
+        #     start_direction_checked, end_direction_checked = end_direction, start_direction
 
         # Generate a unique key using directions and axes.
         name: str = self._get_key(start_direction_checked, end_direction_checked)
@@ -343,7 +349,8 @@ class ColumnHeadElement(Element):
         self.features: List[ColumnHeadFeature] = features or []
         self.type = None
         self.shape: Mesh = mesh
-        self.name = self.__class__.__name__
+        self.name = name
+        print(name)
 
     @property
     def face_polygons(self) -> List[Polygon]:
@@ -682,7 +689,7 @@ class ColumnHeadElement(Element):
         column_head_element = ColumnHeadElement.from_quadrant(start_direction, end_direction, width=1.0, depth=1.0)
         """
         column_head_mesh_factory: ColumnHeadSquarePyramids = ColumnHeadSquarePyramids(width=width, depth=depth, height=height, column_head_offset=offset)
-        mesh: Mesh = column_head_mesh_factory.get_mesh(start_direction=start_direction, end_direction=end_direction)
+        mesh: Mesh = column_head_mesh_factory.get_mesh(start_direction=start_direction, end_direction=end_direction).copy()
         column_head_element: ColumnHeadElement = cls(mesh=mesh, features=features, name=name)
         return column_head_element
 
