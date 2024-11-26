@@ -2,10 +2,7 @@ from compas.datastructures import CellNetwork as BaseCellNetwork
 from compas.datastructures import Graph
 from compas.datastructures import Mesh
 from compas.geometry import Line
-from compas.geometry import Vector
-from compas.geometry import Point
 from compas.tolerance import TOL
-from compas_grid.element_column_head import ColumnHeadDirection
 
 
 class CellNetwork(BaseCellNetwork):

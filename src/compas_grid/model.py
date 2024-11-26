@@ -7,8 +7,6 @@ from compas.datastructures import Mesh
 from compas.geometry import Frame
 from compas.geometry import Line
 from compas.geometry import Point
-from compas.geometry import Polygon
-from compas.geometry import Polyline
 from compas.geometry import Vector
 from compas_model.elements import Element  # noqa: F401
 from compas_model.interactions import Interaction  # noqa: F401
@@ -18,12 +16,11 @@ from compas_model.models.elementnode import ElementNode
 from compas_model.models.groupnode import GroupNode
 from compas_model.models.interactiongraph import InteractionGraph
 
-from compas_grid import BeamElement
-from compas_grid.datastructures import CellNetwork
 from compas_grid import ColumnElement
-from compas_grid import ColumnHeadElement, ColumnHeadDirection
+from compas_grid import ColumnHeadDirection
+from compas_grid import ColumnHeadElement
 from compas_grid import CutterInterface
-from compas_grid import PlateElement
+from compas_grid.datastructures import CellNetwork
 
 
 class GridModel(Model):
@@ -221,6 +218,9 @@ class GridModel(Model):
                 axis = Line(axis[1], axis[0])
                 column_head_vertex = edge[0]
 
+            # Get the vertex neighbors of the column head.
+            vertex_faces: list[int] = list(set(cell_network.vertex_faces(column_head_vertex)))
+            print("vertex_faces", vertex_faces)
             # Get directions of the vertex neighbors.
             directions: list[ColumnHeadDirection] = []
             for neighbor in cell_network.vertex_attribute(column_head_vertex, "neighbors"):
@@ -231,12 +231,10 @@ class GridModel(Model):
 
                 direction: ColumnHeadDirection = GridModel.closest_direction(vector)
                 directions.append(direction)
-                print(vector, point0, point1)
                 model.all_geo.append(Line(point0, point1))
                 model.all_geo.append(point0)
 
             sum_of_directions: int = sum([direction.value for direction in directions])
-            print(sum_of_directions)
             sorted_directions: dict[int, dict(list[ColumnHeadDirection])] = {}
             sorted_directions[4] = {}
             sorted_directions[4][9] = [ColumnHeadDirection.NORTH, ColumnHeadDirection.EAST, ColumnHeadDirection.SOUTH, ColumnHeadDirection.WEST]
@@ -256,8 +254,8 @@ class GridModel(Model):
             sorted_directions[1][6] = [ColumnHeadDirection.SOUTH, ColumnHeadDirection.SOUTH]
             sorted_directions[1][8] = [ColumnHeadDirection.WEST, ColumnHeadDirection.WEST]
 
-            print(directions)
-            print("_")
+            # print(directions)
+            # print("_")
 
             # Create a column head element and assign a frame.
             # my_dict = {}
@@ -265,7 +263,7 @@ class GridModel(Model):
             # my_dict[3] = (ColumnHeadDirection.NORTH, ColumnHeadDirection.SOUTH)
             # my_dict[2] = (ColumnHeadDirection.NORTH, ColumnHeadDirection.EAST)
             # my_dict[1] = (ColumnHeadDirection.NORTH, ColumnHeadDirection.NORTH)
-            print(len(directions), sum_of_directions)
+            # print(len(directions), sum_of_directions)
             element_column_head: ColumnHeadElement = ColumnHeadElement.from_quadrant(
                 sorted_directions[len(directions)][sum_of_directions][0],
                 sorted_directions[len(directions)][sum_of_directions][-1],
@@ -391,22 +389,26 @@ class GridModel(Model):
         #             interaction=CutterInterface(polygon=column_head_element.face_nearest(beam_element.obb.frame.point), name="column_head_and_beam"),
         #         )
 
-        # def add_floor(face):
-        #     width, depth, thickness = 3000, 3000, 200
-        #     polygon: Polygon = Polygon([[-width, -depth, -thickness], [-width, depth, -thickness], [width, depth, -thickness], [width, -depth, -thickness]])
-        #     plate_element: PlateElement = PlateElement.from_polygon_and_thickness(polygon, thickness)
-        #     plate_element.frame = Frame(cell_network.face_polygon(face).centroid, [1, 0, 0], [0, 1, 0])
-        #     model.add_element(element=plate_element, parent=floors)
+        def add_floor(face):
+            temp = cell_network.face_polygon(face)
+            temp.name = str(face)
+            model.all_geo.append(temp)
+            # print(temp)
+            # width, depth, thickness = 3000, 3000, 200
+            # polygon: Polygon = Polygon([[-width, -depth, -thickness], [-width, depth, -thickness], [width, depth, -thickness], [width, -depth, -thickness]])
+            # plate_element: PlateElement = PlateElement.from_polygon_and_thickness(polygon, thickness)
+            # plate_element.frame = Frame(cell_network.face_polygon(face).centroid, [1, 0, 0], [0, 1, 0])
+            # model.add_element(element=plate_element, parent=floors)
 
-        #     for vertex in cell_network.face_vertices(face):
-        #         if vertex in column_head_to_vertex:
-        #             column_head_element = column_head_to_vertex[vertex]
+            # for vertex in cell_network.face_vertices(face):
+            #     if vertex in column_head_to_vertex:
+            #         column_head_element = column_head_to_vertex[vertex]
 
-        #             model.add_interaction(
-        #                 column_head_to_vertex[vertex],
-        #                 plate_element,
-        #                 interaction=CutterInterface(polygon=column_head_element.face_nearest(plate_element.obb.frame.point), name="column_head_and_plate"),
-        #             )
+            #         model.add_interaction(
+            #             column_head_to_vertex[vertex],
+            #             plate_element,
+            #             interaction=CutterInterface(polygon=column_head_element.face_nearest(plate_element.obb.frame.point), name="column_head_and_plate"),
+            #         )
 
         for edge in cell_network_columns:
             add_column_head(edge)
@@ -423,8 +425,8 @@ class GridModel(Model):
         # for edge in cell_network_beams:
         #     add_interaction_beam_and_column_head(edge)
 
-        # for face in cell_network_floors:
-        #     add_floor(face)
+        for face in cell_network_floors:
+            add_floor(face)
 
         return model
 
@@ -434,11 +436,12 @@ class GridModel(Model):
 
 
 if __name__ == "__main__":
-    import compas
-    from compas.scene import Scene
-    from compas_grid.model import GridModel
     from compas import json_load
-    from compas_viewer import Viewer
+    from compas_snippets.viewer_live import ViewerLive
+
+    from compas_grid.model import GridModel
+
+    viewer_live = ViewerLive()
 
     # Geometry from Rhino
     rhino_geometry: dict[str, list[any]] = json_load("data/crea/crea_4x4.json")
@@ -449,14 +452,20 @@ if __name__ == "__main__":
     model = GridModel.from_lines_and_surfaces(lines, surfaces)
 
     # Show the viewer
-    viewer = Viewer()
+    # viewer = Viewer()
+
     for element in model.elements():
         geometry = element.geometry
         geometry.name = element.name
-        viewer.scene.add(geometry.scaled(0.001))
+        viewer_live.add(geometry.scaled(0.001))
+        # viewer.scene.add(geometry.scaled(0.001))
 
     for geo in model.all_geo:
-        viewer.scene.add(geo.scaled(0.001))
+        # viewer.scene.add(geo.scaled(0.001))
+        viewer_live.add(geo.scaled(0.001))
+
+    viewer_live.serialize()
+    # viewer_live.run()
 
     # for interaction in model.interactions():
     #     print(interaction)
@@ -464,7 +473,7 @@ if __name__ == "__main__":
     # for edge in model.graph.edges():
     #     print(edge)
     # viewer.scene.add(model.graph.edge_line(edge), color=(0, 0, 0), linewidth=5)
-    viewer.show()
+    # viewer.show()
     # model.cut()
 
     # # Visualize the model.

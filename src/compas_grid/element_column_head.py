@@ -241,10 +241,6 @@ class ColumnHeadSquarePyramids:
             self._meshes[key_3_quadrants] = mesh_3_quadrants
             self._meshes[key_2_quadrants] = mesh_2_quadrants
             self._meshes[key_1_quadrants] = mesh_1_quadrants
-            print(key_4_quadrants, mesh_4_quadrants)
-            print(key_3_quadrants, mesh_3_quadrants)
-            print(key_2_quadrants, mesh_2_quadrants)
-            print(key_1_quadrants, mesh_1_quadrants)
 
     def get_mesh(self, start_direction: ColumnHeadDirection, end_direction: ColumnHeadDirection) -> Optional[Mesh]:
         """Get mesh by column head type.
@@ -350,7 +346,6 @@ class ColumnHeadElement(Element):
         self.type = None
         self.shape: Mesh = mesh
         self.name = name
-        print(name)
 
     @property
     def face_polygons(self) -> List[Polygon]:
