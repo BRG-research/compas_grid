@@ -2,52 +2,21 @@
 
 Model of simple grid structures for multi-storey buildings.
 
-## Workflow
 
-```mermaid
-flowchart TB
-  %% Define custom classes https://mermaid.live
-  classDef defaultStyle fill:000,stroke:#333,stroke-width:2px;
-  classDef subgraphStyle fill:#f2f2f2,stroke:#333,stroke-width:0px;
+## Git Branch
 
-  subgraph Geometry
-      Selection[Rhino3D Layers: Line::Columns, Line::Beams, Mesh::Floor, Mesh::Facade, Mesh::Core] --> json_dump;
-  end
+For new features use other github branches.
 
-  subgraph Graph
-      rhino_geometry --> Graph.from_lines;
-  end
-  
-  subgraph CellNetwork
-      cell_network --> cell_network.add_vertex;
-      cell_network --> cell_network.add_face;
-      cell_network --> cell_network.add_cell;
-      cell_network --> attribute_is_beam;
-      cell_network --> attribute_is_column;
-      cell_network --> attribute_level;
-      cell_network --> attribute_surface_type;
-  end
-
-  subgraph Model
-      model --> add_element;
-      model --> add_group;
-      model --> add_interaction;
-  end
-  
-  %% Define relationships
-  Geometry --> Graph;
-  Graph --> CellNetwork;
-  CellNetwork --> Model;
-  
-  %% Apply subgraph-specific styles if needed
-  class Geometry,Graph,CellNetwork,Model subgraphStyle;
-
+To pull latest branch
+```bash
+git pull origin crea
 ```
 
 
 ## Commit style
 
 ```bash
+git commit -m "DOC <description>"         <--- documentation related messages including readme
 git commit -m "ADD <description>"         <--- for adding new elements
 git commit -m "FIX <description>"         <--- for fixing (errors, typos)
 git commit -m "FLASH <description>"       <--- quick checkpoint before refactoring
