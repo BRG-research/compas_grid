@@ -14,287 +14,7 @@ from compas.geometry import bounding_box
 from compas.geometry import oriented_bounding_box
 from compas_model.elements import Element
 from compas_model.elements import Feature
-
-
-class ColumnHeadDirection(int, Enum):
-    """
-    Enumeration of directions where the number corresponds to the column head mesh face index.
-
-    Attributes
-    ----------
-    NORTH : int
-        Represents the first mesh face of the column_head.
-    EAST : int
-        Represents the second mesh face of the column_head.
-    SOUTH : int
-        Represents the third mesh face of the column_head.
-    WEST : int
-        Represents the fourth mesh face of the column_head.
-    """
-
-    NORTH = 0
-    NONE = 1
-    EAST = 2
-    SOUTH = 3
-    WEST = 4
-
-
-class ColumnHeadSquarePyramids:
-    """Singleton class for creating column head meshes only once.
-    Currently orthogonal column heads are supported.
-    TODO: a separate class for non-orthogonal column heads.
-
-    Parameters
-    ----------
-    _instance : ColumnHeadSquarePyramids
-        The instance of the class.
-    _meshes : dict
-        A dictionary of meshes.
-    _width : float
-        The width of the column head.
-    _depth : float
-        The depth of the column head.
-    _height : float
-        The height of the column head.
-    _offset : float
-        The offset of the column head.
-
-    Example
-    -------
-    # Class can be initialized multiple times, while meshes are built only once.
-    column_head_mesh_factory: ColumnHeadSquarePyramids = ColumnHeadSquarePyramids()
-    (column_head_mesh_factory.get_mesh(ColumnHeadDirection.NORTH, ColumnHeadDirection.WEST))
-    """
-
-    _instance = None
-    _meshes = {}
-    _width, _depth, _height, _offset = 150, 150, 300, 210
-
-    def __new__(cls, width=150, depth=150, height=300, column_head_offset=210):
-        if cls._instance is None:
-            cls._instance = super(ColumnHeadSquarePyramids, cls).__new__(cls)
-            cls._width = width
-            cls._depth = depth
-            cls._height = height
-            cls._offset = column_head_offset
-            cls._instance._initialize_meshes()
-        return cls._instance
-
-    def _create_mesh(self, faces: int) -> Mesh:
-        """Create a column head mesh.
-
-        Parameters
-        ----------
-        faces : int
-            The number of faces of the column head.
-
-        Returns
-        -------
-        :class:`compas.datastructures.Mesh`
-            The mesh of the column head.
-
-        """
-        width, depth, height = 1.0, 1.0, 1.0
-        box = Box(Frame.worldXY(), width, depth, height)
-        mesh = Mesh.from_vertices_and_faces(box.vertices, box.faces[:faces])
-        return mesh
-
-    def _get_key(self, start_direction: ColumnHeadDirection, end_direction: ColumnHeadDirection) -> str:
-        """Generate a unique key using directions and axes.
-
-        Attributes
-        ----------
-        start_direction : :class:`ColumnHeadDirection`
-            The start direction of the quadrant.
-
-        end_direction : :class:`ColumnHeadDirection`
-            The end direction of the quadrant.
-
-        Returns
-        -------
-        str
-            The unique key.
-        """
-        return f"{start_direction.name}_{end_direction.name}"
-
-    def _shift_right(self, my_list: list, n: int = 1) -> list:
-        """
-        Shift a list of points to the right by a specified number of positions.
-
-        Parameters
-        ----------
-        points : list
-            The list of points to shift.
-        positions : int, optional
-            The number of positions to shift the list. Default is 1.
-
-        Returns
-        -------
-        list
-            The shifted list of points.
-        """
-        if not my_list:
-            return my_list
-        n = n % len(my_list)  # Ensure positions is within the length of the list
-        return my_list[-n:] + my_list[:-n]
-
-    def _initialize_meshes(self) -> None:
-        """Generate a quadrant mesh based on the start and end directions.
-
-        Returns
-        -------
-        None
-            No return value.
-        """
-
-        bottom_points_octagon: List[Point] = [
-            Point(self._width, -self._depth, -self._height) + Vector(self._offset, 0, 0),
-            Point(self._width, self._depth, -self._height) + Vector(self._offset, 0, 0),
-            Point(self._width, self._depth, -self._height) + Vector(0, self._offset, 0),
-            Point(-self._width, self._depth, -self._height) + Vector(0, self._offset, 0),
-            Point(-self._width, self._depth, -self._height) + Vector(-self._offset, 0, 0),
-            Point(-self._width, -self._depth, -self._height) + Vector(-self._offset, 0, 0),
-            Point(-self._width, -self._depth, -self._height) + Vector(0, -self._offset, 0),
-            Point(self._width, -self._depth, -self._height) + Vector(0, -self._offset, 0),
-        ]
-
-        top_points_rectangle: List[Point] = [
-            Point(self._width, -self._depth, 0),
-            Point(self._width, self._depth, 0),
-            Point(-self._width, self._depth, 0),
-            Point(-self._width, -self._depth, 0),
-        ]
-
-        for i in range(4):
-            # Apply shift.
-            bottom_points: List[Point] = self._shift_right(bottom_points_octagon, i * 2)
-            top_points: List[Point] = self._shift_right(top_points_rectangle, i)
-
-            # Generate keys for the 4, 3, 2, and 1 sided quadrants.
-            ids: list[int] = [0, 2, 3, 4]
-            key_4_quadrants = self._get_key(ColumnHeadDirection(ids[i]), ColumnHeadDirection(ids[(i + 3) % 4]))  # N-E-S-W, E-S-W-N, S-W-N-E, W-N-E-S
-            key_3_quadrants = self._get_key(ColumnHeadDirection(ids[i]), ColumnHeadDirection(ids[(i + 2) % 4]))  # N-E-S, E-S-W, S-W-N, W-N-E
-            key_2_quadrants = self._get_key(ColumnHeadDirection(ids[i]), ColumnHeadDirection(ids[(i + 1) % 4]))  # N-E, E-S, S-W, W-N
-            key_1_quadrants = self._get_key(ColumnHeadDirection(ids[i]), ColumnHeadDirection(ids[i]))  # N-N, E-E, S-S, W-W
-
-            # Create the mesh for the 4-sided quadrant.
-            v: list[Point] = []
-            v.extend(bottom_points)
-            v.extend(top_points)
-
-            f: list[list[int]] = [
-                [0, 8, 9, 1],
-                [1, 9, 2],
-                [2, 9, 10, 3],
-                [3, 10, 4],
-                [4, 10, 11, 5],
-                [5, 11, 6],
-                [6, 11, 8, 7],
-                [7, 8, 0],
-                [0, 1, 2, 3, 4, 5, 6, 7],
-                [8, 11, 10, 9],
-            ]
-
-            mesh_4_quadrants: Mesh = Mesh.from_vertices_and_faces(v, f)
-
-            # Create the mesh for the 3-sided quadrant.
-
-            step: int = 6
-            v.clear()
-            v.extend(bottom_points[0:step])
-            v.extend(top_points)
-
-            f = [[0, 6, 7, 1], [1, 7, 2], [2, 7, 8, 3], [3, 8, 4], [4, 8, 9, 5], [5, 9, 6, 0], [0, 1, 2, 3, 4, 5], [6, 9, 8, 7]]
-
-            mesh_3_quadrants: Mesh = Mesh.from_vertices_and_faces(v, f)
-
-            # Create the mesh for the 2-sided quadrant.
-            step: int = 4
-            v.clear()
-            v.extend(bottom_points[0:step])
-            v.append(top_points[3] - Vector(0, 0, self._height))
-            v.extend(top_points)
-
-            f = [[0, 5, 6, 1], [1, 6, 2], [2, 6, 7, 3], [3, 7, 8, 4], [4, 8, 5, 0], [0, 1, 2, 3, 4], [5, 8, 7, 6]]
-
-            mesh_2_quadrants: Mesh = Mesh.from_vertices_and_faces(v, f)
-
-            # Create the mesh for the 1-sided quadrant.
-            step: int = 2
-            v.clear()
-            v.extend(bottom_points[0:step])
-            v.append(top_points[2] - Vector(0, 0, self._height))
-            v.append(top_points[3] - Vector(0, 0, self._height))
-            v.extend(top_points)
-
-            f = [[0, 4, 5, 1], [1, 5, 6, 2], [2, 6, 7, 3], [3, 7, 4, 0], [0, 1, 2, 3], [4, 7, 6, 5]]
-
-            mesh_1_quadrants: Mesh = Mesh.from_vertices_and_faces(v, f)
-
-            mesh_4_quadrants.name = key_4_quadrants
-            mesh_3_quadrants.name = key_3_quadrants
-            mesh_2_quadrants.name = key_2_quadrants
-            mesh_1_quadrants.name = key_1_quadrants
-
-            # Store the mesh in the factory.
-            self._meshes[key_4_quadrants] = mesh_4_quadrants
-            self._meshes[key_3_quadrants] = mesh_3_quadrants
-            self._meshes[key_2_quadrants] = mesh_2_quadrants
-            self._meshes[key_1_quadrants] = mesh_1_quadrants
-
-    def get_mesh(self, start_direction: ColumnHeadDirection, end_direction: ColumnHeadDirection) -> Optional[Mesh]:
-        """Get mesh by column head type.
-
-        Parameters
-        ----------
-        start_direction : :class:`ColumnHeadDirection`
-            The start direction of the quadrant.
-
-        end_direction : :class:`ColumnHeadDirection`
-            The end direction of the quadrant.
-
-        Returns
-        -------
-        :class:`compas.datastructures.Mesh`
-            The mesh of the column head.
-        """
-
-        # If the order of the directions is not correct, swap them.
-        start_direction_checked: ColumnHeadDirection = start_direction
-        end_direction_checked: ColumnHeadDirection = end_direction
-
-        # if int(end_direction) < int(start_direction):
-        #     start_direction_checked, end_direction_checked = end_direction, start_direction
-
-        # Generate a unique key using directions and axes.
-        name: str = self._get_key(start_direction_checked, end_direction_checked)
-
-        # Get the mesh from the factory.
-        if name not in self._meshes.keys():
-            self._initialize_meshes()
-
-        return self._meshes.get(name)
-
-    def meshes_aligned(self) -> list[Mesh]:
-        """Get all meshes aligned to the world XY plane for visualization purposes.
-
-        Returns
-        -------
-        list[:class:`compas.datastructures.Mesh`]
-            List of meshes aligned to the world XY plane.
-        """
-
-        meshes: List[Mesh] = []
-        x_width = 0
-        for _, value in self._meshes.items():
-            x_width_local: float = abs(value.aabb().width)
-            min_point: Point = value.aabb().points[0]
-            mesh: Mesh = value.translated([-min_point[0], 0, 0])
-            mesh.translate([x_width, 0, 0])
-            x_width: float = x_width + x_width_local * 1.1
-            meshes.append(mesh)
-
-        return meshes
+from compas_grid.shapes import ColumnHeadCrossShape
 
 
 class ColumnHeadFeature(Feature):
@@ -638,10 +358,11 @@ class ColumnHeadElement(Element):
         return column_head_element
 
     @classmethod
-    def from_quadrant(
+    def from_column_head_shape(
         cls,
-        start_direction: ColumnHeadDirection,
-        end_direction: ColumnHeadDirection,
+        v : list[Point],
+        e : list[tuple[int, int]],
+        f : List[List[int]],
         width=150,
         depth=150,
         height=300,
@@ -683,22 +404,22 @@ class ColumnHeadElement(Element):
         end_direction = ColumnHeadDirection.EAST
         column_head_element = ColumnHeadElement.from_quadrant(start_direction, end_direction, width=1.0, depth=1.0)
         """
-        column_head_mesh_factory: ColumnHeadSquarePyramids = ColumnHeadSquarePyramids(width=width, depth=depth, height=height, column_head_offset=offset)
-        mesh: Mesh = column_head_mesh_factory.get_mesh(start_direction=start_direction, end_direction=end_direction).copy()
+        column_head_shape : ColumnHeadCrossShape  = ColumnHeadCrossShape(v, e, f, width, depth, height, offset)
+        mesh: Mesh = column_head_shape.mesh.copy() # Copy because the meshes are created only once.
         column_head_element: ColumnHeadElement = cls(mesh=mesh, features=features, name=name)
         return column_head_element
 
 
-if __name__ == "__main__":
-    column_head_mesh_factory: ColumnHeadSquarePyramids = ColumnHeadSquarePyramids()
-    (column_head_mesh_factory.get_mesh(ColumnHeadDirection.NORTH, ColumnHeadDirection.WEST))
+# if __name__ == "__main__":
+#     column_head_mesh_factory: ColumnHeadSquarePyramids = ColumnHeadSquarePyramids()
+#     (column_head_mesh_factory.get_mesh(ColumnHeadDirection.NORTH, ColumnHeadDirection.WEST))
 
-    from compas_viewer import Viewer
+#     from compas_viewer import Viewer
 
-    viewer: Viewer = Viewer(show_grid=False)
-    viewer.renderer.rendermode = "ghosted"
-    viewer.renderer.view = "top"
+#     viewer: Viewer = Viewer(show_grid=False)
+#     viewer.renderer.rendermode = "ghosted"
+#     viewer.renderer.view = "top"
 
-    for mesh in column_head_mesh_factory.meshes_aligned():
-        viewer.scene.add(mesh)
-    # viewer.show()
+#     for mesh in column_head_mesh_factory.meshes_aligned():
+#         viewer.scene.add(mesh)
+#     # viewer.show()
