@@ -77,10 +77,15 @@ class CellNetwork(BaseCellNetwork):
         #######################################################################################################
 
         # Edges - Beams and Columns
+        # FIXME: For beams, ignore the lowest lines (maybe it make sense to skip such lines all together?).
+        lowest_z: float = min([graph.node_attributes(node, "xyz")[2] for node in graph.nodes()])
         for u, v in graph.edges():
             xyz_u: list[float] = graph.node_attributes(u, "xyz")
             xyz_v: list[float] = graph.node_attributes(v, "xyz")
-            cell_network.edge_attribute((u, v), "is_beam" if abs(xyz_u[2] - xyz_v[2]) < 1 / max(1, tolerance) else "is_column", True)
+            if not abs(xyz_u[2] - xyz_v[2]) < 1 / max(1, tolerance):
+                cell_network.edge_attribute((u, v), "is_column", True)
+            elif xyz_u[2] > lowest_z and xyz_v[2] > lowest_z:
+                cell_network.edge_attribute((u, v), "is_beam", True)
 
         # Faces - Floors
         for mesh in floor_surfaces:

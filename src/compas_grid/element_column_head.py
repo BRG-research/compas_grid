@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import Any
 from typing import Dict
 from typing import List
@@ -9,11 +8,11 @@ from compas.geometry import Box
 from compas.geometry import Frame
 from compas.geometry import Point
 from compas.geometry import Polygon
-from compas.geometry import Vector
 from compas.geometry import bounding_box
 from compas.geometry import oriented_bounding_box
 from compas_model.elements import Element
 from compas_model.elements import Feature
+
 from compas_grid.shapes import ColumnHeadCrossShape
 
 
@@ -65,7 +64,7 @@ class ColumnHeadElement(Element):
         self.features: List[ColumnHeadFeature] = features or []
         self.type = None
         self.shape: Mesh = mesh
-        self.name = name
+        self.name = self.__class__.__name__ if name is None or name == "None" else name
 
     @property
     def face_polygons(self) -> List[Polygon]:
@@ -358,11 +357,11 @@ class ColumnHeadElement(Element):
         return column_head_element
 
     @classmethod
-    def from_column_head_shape(
+    def from_column_head_cross_shape(
         cls,
-        v : list[Point],
-        e : list[tuple[int, int]],
-        f : List[List[int]],
+        v: list[Point],
+        e: list[tuple[int, int]],
+        f: List[List[int]],
         width=150,
         depth=150,
         height=300,
@@ -404,8 +403,8 @@ class ColumnHeadElement(Element):
         end_direction = ColumnHeadDirection.EAST
         column_head_element = ColumnHeadElement.from_quadrant(start_direction, end_direction, width=1.0, depth=1.0)
         """
-        column_head_shape : ColumnHeadCrossShape  = ColumnHeadCrossShape(v, e, f, width, depth, height, offset)
-        mesh: Mesh = column_head_shape.mesh.copy() # Copy because the meshes are created only once.
+        column_head_cross_shape: ColumnHeadCrossShape = ColumnHeadCrossShape(v, e, f, width, depth, height, offset)
+        mesh: Mesh = column_head_cross_shape.mesh.copy()  # Copy because the meshes are created only once.
         column_head_element: ColumnHeadElement = cls(mesh=mesh, features=features, name=name)
         return column_head_element
 

@@ -51,3 +51,6 @@ class CutterInterface(Interaction):
         polygon: Polygon = Polygon.from_rectangle([-size * 0.5, -size * 0.5, 0], size, size)
         polygon.transform(Transformation.from_frame_to_frame(Frame.worldXY(), self._frame))
         return polygon
+
+    def cut(self):
+        pass

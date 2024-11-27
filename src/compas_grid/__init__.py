@@ -3,7 +3,6 @@ from __future__ import print_function
 import os
 from .element_beam import BeamElement
 from .element_column_head import ColumnHeadElement
-from .element_column_head import ColumnHeadDirection
 from .element_column import ColumnElement
 from .element_plate import PlateElement
 from .interface_cutter import CutterInterface

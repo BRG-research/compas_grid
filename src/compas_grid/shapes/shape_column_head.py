@@ -68,7 +68,7 @@ class ColumnHeadDirection(int, Enum):
         return direction_combinations[(direction1, direction2)]
 
 
-class ColumnHeadShape:
+class ColumnHeadCrossShape:
     """Generate Column Head shapes based on vertex and edge and face adjacency.
     The class is singleton, considering the dimension of the column head is fixed and created once.
 
@@ -113,8 +113,8 @@ class ColumnHeadShape:
 
     f: list[list[int]] = [[5, 7, 6, 10]]
 
-    columnHeadShape: ColumnHeadShape = ColumnHeadShape(v, e, f, width, depth, height, offset)
-    mesh = columnHeadShape.mesh.scaled(0.001)
+    ColumnHeadCrossShape: ColumnHeadCrossShape = ColumnHeadCrossShape(v, e, f, width, depth, height, offset)
+    mesh = ColumnHeadCrossShape.mesh.scaled(0.001)
 
     """
 
@@ -124,7 +124,7 @@ class ColumnHeadShape:
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
-            cls._instance = super(ColumnHeadShape, cls).__new__(cls)
+            cls._instance = super(ColumnHeadCrossShape, cls).__new__(cls)
         return cls._instance
 
     def __init__(
@@ -147,8 +147,8 @@ class ColumnHeadShape:
         self._last_mesh = self._generated_meshes[rules]
         self._initialized = True
 
-    def _closest_direction(
-        self,
+    @staticmethod
+    def closest_direction(
         vector: Vector,
         directions: dict[ColumnHeadDirection, Vector] = {
             ColumnHeadDirection.NORTH: Vector(0, 1, 0),
@@ -219,7 +219,7 @@ class ColumnHeadShape:
             p0 = v[edge[0]]
             p1 = v[edge[1]]
             vector = p1 - p0
-            direction = self._closest_direction(vector)
+            direction = ColumnHeadCrossShape.closest_direction(vector)
             rules[direction] = True
 
             # track direction for face edge search
@@ -303,37 +303,39 @@ class ColumnHeadShape:
             [12, 13, 14, 15],
         ]
 
+        mesh: Mesh = Mesh.from_vertices_and_faces(vertices, faces)
+
         if rules[0]:
-            faces.append([0, 1, 9, 8])
-            faces.append([0, 1, 13, 12])
+            mesh.add_face([0, 1, 9, 8])
+            mesh.add_face([0, 1, 13, 12], attr_dict={"direction": ColumnHeadDirection.NORTH})
 
         if rules[1]:
-            faces.append([1, 2, 9])
-            faces.append([1, 2, 13])
+            mesh.add_face([1, 2, 9])
+            mesh.add_face([1, 2, 13], attr_dict={"direction": ColumnHeadDirection.NORTH_WEST})
 
         if rules[2]:
-            faces.append([2, 3, 10, 9])
-            faces.append([2, 3, 14, 13])
+            mesh.add_face([2, 3, 10, 9])
+            mesh.add_face([2, 3, 14, 13], attr_dict={"direction": ColumnHeadDirection.WEST})
 
         if rules[3]:
-            faces.append([3, 4, 10])
-            faces.append([3, 4, 14])
+            mesh.add_face([3, 4, 10])
+            mesh.add_face([3, 4, 14], attr_dict={"direction": ColumnHeadDirection.SOUTH_WEST})
 
         if rules[4]:
-            faces.append([4, 5, 11, 10])
-            faces.append([4, 5, 15, 14])
+            mesh.add_face([4, 5, 11, 10])
+            mesh.add_face([4, 5, 15, 14], attr_dict={"direction": ColumnHeadDirection.SOUTH})
 
         if rules[5]:
-            faces.append([5, 6, 11])
-            faces.append([5, 6, 15])
+            mesh.add_face([5, 6, 11])
+            mesh.add_face([5, 6, 15], attr_dict={"direction": ColumnHeadDirection.SOUTH_EAST})
 
         if rules[6]:
-            faces.append([6, 7, 8, 11])
-            faces.append([6, 7, 12, 15])
+            mesh.add_face([6, 7, 8, 11])
+            mesh.add_face([6, 7, 12, 15], attr_dict={"direction": ColumnHeadDirection.EAST})
 
         if rules[7]:
-            faces.append([7, 0, 8])
-            faces.append([7, 0, 12])
+            mesh.add_face([7, 0, 8])
+            mesh.add_face([7, 0, 12], attr_dict={"direction": ColumnHeadDirection.NORTH_EAST})
 
         # Outer ring vertical triangle faces
         from math import ceil
@@ -347,14 +349,14 @@ class ColumnHeadShape:
                 inner_v = int(ceil(((i + 0) % 8) * 0.5)) % 4 + 8
                 v1 = inner_v
                 v2 = inner_v + 4
-                faces.append([v0, v1, v2])
+                mesh.add_face([v0, v1, v2])
 
             if rules[(i + 1) % 8]:
                 v0 = (i + 1) % 8
                 inner_v = int(ceil(((i + 1) % 8) * 0.5)) % 4 + 8
                 v1 = inner_v
                 v2 = inner_v + 4
-                faces.append([v0, v1, v2])
+                mesh.add_face([v0, v1, v2])
 
         # Inner quad vertical triangle faces
         for i in range(4):
@@ -363,9 +365,8 @@ class ColumnHeadShape:
                 v1 = (i + 1) % 4 + 8
                 v2 = v1 + 4
                 v3 = v0 + 4
-                faces.append([v0, v1, v2, v3])
+                mesh.add_face([v0, v1, v2, v3])
 
-        mesh: Mesh = Mesh.from_vertices_and_faces(vertices, faces)
         mesh.remove_unused_vertices()
         return mesh
 
@@ -400,13 +401,13 @@ if __name__ == "__main__":
 
     viewer = ViewerLive()
 
-    columnHeadShape: ColumnHeadShape = ColumnHeadShape(v, e, f, width, depth, height, offset)
-    print(columnHeadShape._generated_meshes)
-    viewer.add(columnHeadShape.mesh.scaled(0.001))
+    column_head_cross_shape: ColumnHeadCrossShape = ColumnHeadCrossShape(v, e, f, width, depth, height, offset)
+    print(column_head_cross_shape._generated_meshes)
+    viewer.add(column_head_cross_shape.mesh.scaled(0.001))
 
-    columnHeadShape: ColumnHeadShape = ColumnHeadShape(v, e, [], width, depth, height, offset)
-    print(columnHeadShape._generated_meshes)
-    viewer.add(columnHeadShape.mesh.scaled(0.001))
+    column_head_cross_shape: ColumnHeadCrossShape = ColumnHeadCrossShape(v, e, [], width, depth, height, offset)
+    print(column_head_cross_shape._generated_meshes)
+    viewer.add(column_head_cross_shape.mesh.scaled(0.001))
 
     viewer.serialize()
     # viewer.run()

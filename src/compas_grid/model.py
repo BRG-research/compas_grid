@@ -7,6 +7,7 @@ from compas.datastructures import Mesh
 from compas.geometry import Frame
 from compas.geometry import Line
 from compas.geometry import Point
+from compas.geometry import Polygon
 from compas.geometry import Vector
 from compas_model.elements import Element  # noqa: F401
 from compas_model.interactions import Interaction  # noqa: F401
@@ -16,11 +17,14 @@ from compas_model.models.elementnode import ElementNode
 from compas_model.models.groupnode import GroupNode
 from compas_model.models.interactiongraph import InteractionGraph
 
+from compas_grid import BeamElement
 from compas_grid import ColumnElement
-from compas_grid import ColumnHeadDirection
 from compas_grid import ColumnHeadElement
 from compas_grid import CutterInterface
+from compas_grid import PlateElement
 from compas_grid.datastructures import CellNetwork
+from compas_grid.shapes import ColumnHeadCrossShape
+from compas_grid.shapes import ColumnHeadDirection
 
 
 class GridModel(Model):
@@ -119,45 +123,6 @@ class GridModel(Model):
         self.PRECISION = 3
         self.all_geo = []
 
-    @staticmethod
-    def closest_direction(
-        vector: Vector,
-        directions: dict[ColumnHeadDirection, Vector] = {
-            ColumnHeadDirection.NORTH: Vector(0, 1, 0),
-            ColumnHeadDirection.EAST: Vector(1, 0, 0),
-            ColumnHeadDirection.SOUTH: Vector(0, -1, 0),
-            ColumnHeadDirection.WEST: Vector(-1, 0, 0),
-        },
-    ) -> ColumnHeadDirection:
-        """
-        Find the closest cardinal direction for a given vector.
-
-        Parameters
-        -------
-        vector : Vector
-            The vector to compare.
-
-        directions : dict
-            A dictionary of cardinal directions and their corresponding unit vectors.
-
-        Returns
-        -------
-        ColumnHeadDirection
-            The closest cardinal direction.
-        """
-        # Unitize the given vector
-        vector.unitize()
-
-        # Compute dot products with cardinal direction vectors
-        dot_products: dict[ColumnHeadDirection, float] = {}
-        for direction, unit_vector in directions.items():
-            dot_product = vector.dot(unit_vector)
-            dot_products[direction] = dot_product
-
-        # Find the direction with the maximum dot product
-        closest: ColumnHeadDirection = max(dot_products, key=dot_products.get)
-        return closest
-
     @classmethod
     def from_lines_and_surfaces(cls, column_and_beams: list[Line], floor_surfaces: list[Mesh], tolerance: int = 3) -> "GridModel":
         """Create a grid model from a list of Line and surfaces.
@@ -207,6 +172,7 @@ class GridModel(Model):
         column_head_to_vertex: dict[Element, int] = {}
         column_to_edge: dict[Element, tuple[int, int]] = {}
         beam_to_edge: dict[Element, tuple[int, int]] = {}
+        vertex_to_plates_and_faces: dict[int, list[tuple[Element, list[int]]]] = {}
 
         width, depth, height, column_head_offset = 150, 150, 300, 210
 
@@ -218,60 +184,31 @@ class GridModel(Model):
                 axis = Line(axis[1], axis[0])
                 column_head_vertex = edge[0]
 
-            # Get the vertex neighbors of the column head.
-            vertex_faces: list[int] = list(set(cell_network.vertex_faces(column_head_vertex)))
-            print("vertex_faces", vertex_faces)
-            # Get directions of the vertex neighbors.
-            directions: list[ColumnHeadDirection] = []
+            # Input for the ColumnHead class
+            v: dict[int, Point] = {}
+            e: list[tuple[int, int]] = []
+            f: list[list[int]] = []
+
+            v[column_head_vertex] = cell_network.vertex_point(column_head_vertex)
+
             for neighbor in cell_network.vertex_attribute(column_head_vertex, "neighbors"):
-                point0: Point = cell_network.vertex_point(column_head_vertex)
-                point1: Point = cell_network.vertex_point(neighbor)
+                e.append([column_head_vertex, neighbor])
+                v[neighbor] = cell_network.vertex_point(neighbor)
 
-                vector: Vector = point1 - point0
+            for floor in list(set(cell_network.vertex_faces(column_head_vertex))):
+                if "is_floor" in cell_network.face_attributes(floor):
+                    f.append(cell_network.face_vertices(floor))  # This would fail when faces would include vertical walls.
 
-                direction: ColumnHeadDirection = GridModel.closest_direction(vector)
-                directions.append(direction)
-                model.all_geo.append(Line(point0, point1))
-                model.all_geo.append(point0)
-
-            sum_of_directions: int = sum([direction.value for direction in directions])
-            sorted_directions: dict[int, dict(list[ColumnHeadDirection])] = {}
-            sorted_directions[4] = {}
-            sorted_directions[4][9] = [ColumnHeadDirection.NORTH, ColumnHeadDirection.EAST, ColumnHeadDirection.SOUTH, ColumnHeadDirection.WEST]
-            sorted_directions[3] = {}
-            sorted_directions[3][6] = [ColumnHeadDirection.NORTH, ColumnHeadDirection.EAST, ColumnHeadDirection.SOUTH]
-            sorted_directions[3][5] = [ColumnHeadDirection.EAST, ColumnHeadDirection.SOUTH, ColumnHeadDirection.WEST]
-            sorted_directions[3][9] = [ColumnHeadDirection.SOUTH, ColumnHeadDirection.WEST, ColumnHeadDirection.NORTH]
-            sorted_directions[3][7] = [ColumnHeadDirection.WEST, ColumnHeadDirection.NORTH, ColumnHeadDirection.EAST]
-            sorted_directions[2] = {}
-            sorted_directions[2][2] = [ColumnHeadDirection.NORTH, ColumnHeadDirection.EAST]
-            sorted_directions[2][5] = [ColumnHeadDirection.EAST, ColumnHeadDirection.SOUTH]
-            sorted_directions[2][7] = [ColumnHeadDirection.SOUTH, ColumnHeadDirection.WEST]
-            sorted_directions[2][4] = [ColumnHeadDirection.WEST, ColumnHeadDirection.NORTH]
-            sorted_directions[1] = {}
-            sorted_directions[1][0] = [ColumnHeadDirection.NORTH, ColumnHeadDirection.NORTH]
-            sorted_directions[1][4] = [ColumnHeadDirection.EAST, ColumnHeadDirection.EAST]
-            sorted_directions[1][6] = [ColumnHeadDirection.SOUTH, ColumnHeadDirection.SOUTH]
-            sorted_directions[1][8] = [ColumnHeadDirection.WEST, ColumnHeadDirection.WEST]
-
-            # print(directions)
-            # print("_")
-
-            # Create a column head element and assign a frame.
-            # my_dict = {}
-            # my_dict[4] = (ColumnHeadDirection.NORTH, ColumnHeadDirection.WEST)
-            # my_dict[3] = (ColumnHeadDirection.NORTH, ColumnHeadDirection.SOUTH)
-            # my_dict[2] = (ColumnHeadDirection.NORTH, ColumnHeadDirection.EAST)
-            # my_dict[1] = (ColumnHeadDirection.NORTH, ColumnHeadDirection.NORTH)
-            # print(len(directions), sum_of_directions)
-            element_column_head: ColumnHeadElement = ColumnHeadElement.from_quadrant(
-                sorted_directions[len(directions)][sum_of_directions][0],
-                sorted_directions[len(directions)][sum_of_directions][-1],
+            # Create column head and it to the model.
+            element_column_head: ColumnHeadElement = ColumnHeadElement.from_column_head_cross_shape(
+                v,
+                e,
+                f,
                 width=width,
                 depth=depth,
                 height=height,
                 offset=column_head_offset,
-                name=directions[-1].name + "_" + directions[0].name + "_" + str(len(directions)),
+                # name=directions[-1].name + "_" + directions[0].name + "_" + str(len(directions)),
             )
             element_column_head.frame = Frame(cell_network.vertex_point(column_head_vertex), [1, 0, 0], [0, 1, 0])
 
@@ -281,158 +218,131 @@ class GridModel(Model):
             # Store the column head element in a dictionary.
             column_head_to_vertex[column_head_vertex] = element_column_head
 
-            # print(column_head_vertex)
-            # print(cell_network.vertex_attribute(column_head_vertex, "neighbors", True))
-
-            # # top rectangle
-            # polygon0: Polyline = Polyline(
-            #     [
-            #         Point(-width, -depth, -height) + Vector(0, -column_head_offset, 0),
-            #         Point(width, -depth, -height) + Vector(0, -column_head_offset, 0),
-            #         Point(width, -depth, -height) + Vector(column_head_offset, 0, 0),
-            #         Point(width, depth, -height) + Vector(column_head_offset, 0, 0),
-            #         Point(width, depth, -height) + Vector(0, column_head_offset, 0),
-            #         Point(-width, depth, -height) + Vector(0, column_head_offset, 0),
-            #         Point(-width, depth, -height) + Vector(-column_head_offset, 0, 0),
-            #         Point(-width, -depth, -height) + Vector(-column_head_offset, 0, 0),
-            #     ]
-            # )
-
-            # polygon1: Polyline = Polyline([Point(-width, -depth, 0), Point(width, -depth, 0), Point(width, depth, 0), Point(-width, depth, 0)])
-
-            # v: list[Point] = []
-            # f: list[list[int]] = []
-            # v.extend(polygon0.points)
-            # v.extend(polygon1.points)
-            # f.append([0, 1, 2, 3, 4, 5, 6, 7])
-            # f.append([3 + 8, 2 + 8, 1 + 8, 0 + 8])
-
-            # for i in range(4):
-            #     f.append([i * 2, (i * 2 + 1) % 8, 8 + (i + 1) % 4, 8 + i])
-            #     f.append([(i * 2 + 1) % 8, (i * 2 + 2) % 8, 8 + (i + 1) % 4])
-
-            # cell_network.vertex_attribute(column_head_vertex, "neighbors", True)
-            # mesh: Mesh = Mesh.from_vertices_and_faces(v, f)
-            # print(cell_network.vertex_degree(column_head_vertex))
-            # print(cell_network.vertex_neighborhood(column_head_vertex))
-            # print(cell_network.vertex_neighbors(column_head_vertex))
-
-            #
-
-            # element_column_head: ColumnHeadElement = ColumnHeadElement.from_mesh(mesh)
-            # # element_column_head: ColumnHeadElement = ColumnHeadElement.from_box(width=300, depth=300, height=300)
-            # element_column_head.frame = Frame(cell_network.vertex_point(column_head_vertex), [1, 0, 0], [0, 1, 0])
-            # model.add_element(element=element_column_head, parent=column_heads)
-
-            #
-
         def add_column(edge):
             axis: Line = cell_network.edge_line(edge)
-            # column_head_vertex: int = edge[1]
             if axis[0][2] > axis[1][2]:
                 axis = Line(axis[1], axis[0])
-                # column_head_vertex = edge[0]
 
             element_column: ColumnElement = ColumnElement.from_square_section(width=width * 2, depth=depth * 2, height=axis.length)
             element_column.frame = Frame(axis.start, [1, 0, 0], [0, 1, 0])
             model.add_element(element=element_column, parent=columns)
-
             column_to_edge[edge] = element_column
 
-        # def add_interaction_column_and_column_head(edge):
-        #     axis: Line = cell_network.edge_line(edge)
-        #     column_head_vertex: int = edge[1]
-        #     column_base_vertex: int = edge[0]
-        #     if axis[0][2] > axis[1][2]:
-        #         axis = Line(axis[1], axis[0])
-        #         column_head_vertex = edge[0]
-        #         column_base_vertex = edge[1]
+        def add_beam(edge):
+            axis: Line = cell_network.edge_line(edge)
+            element: BeamElement = BeamElement.from_square_section(width=height, depth=depth * 2, height=axis.length)
+            element.frame = Frame(axis.start, [0, 0, 1], Vector.cross(axis.direction, [0, 0, 1]))
+            model.add_element(element=element, parent=beams)
+            beam_to_edge[edge] = element
 
-        #     if column_head_vertex in column_head_to_vertex:
-        #         model.add_interaction(
-        #             column_head_to_vertex[column_head_vertex],
-        #             column_to_edge[edge],
-        #             interaction=CutterInterface(polygon=column_head_to_vertex[column_head_vertex].face_lowest, name="column_head_column_to_column"),
-        #         )
+        def add_floor(face, width=3000, depth=3000, thickness=200):
+            polygon: Polygon = Polygon([[-width, -depth, -thickness], [-width, depth, -thickness], [width, depth, -thickness], [width, -depth, -thickness]])
+            plate_element: PlateElement = PlateElement.from_polygon_and_thickness(polygon, thickness)
+            plate_element.frame = Frame(cell_network.face_polygon(face).centroid, [1, 0, 0], [0, 1, 0])
+            model.add_element(element=plate_element, parent=floors)
 
-        #     if column_base_vertex in column_head_to_vertex:
-        #         model.add_interaction(
-        #             column_head_to_vertex[column_base_vertex],
-        #             column_to_edge[edge],
-        #             interaction=CutterInterface(polygon=column_head_to_vertex[column_base_vertex].face_highest, name="column_head_column_to_column"),
-        #         )
+            for vertex in cell_network.face_vertices(face):
+                if vertex in vertex_to_plates_and_faces:
+                    vertex_to_plates_and_faces[vertex].append((plate_element, cell_network.face_vertices(face)))
+                else:
+                    vertex_to_plates_and_faces[vertex] = [(plate_element, cell_network.face_vertices(face))]
 
-        # def add_beam(edge):
-        #     axis: Line = cell_network.edge_line(edge)
-        #     element: BeamElement = BeamElement.from_square_section(width=height, depth=depth * 2, height=axis.length)
-        #     element.frame = Frame(axis.start, [0, 0, 1], Vector.cross(axis.direction, [0, 0, 1]))
-        #     model.add_element(element=element, parent=beams)
+        def add_interaction_column_and_column_head(edge):
+            axis: Line = cell_network.edge_line(edge)
+            column_head_vertex: int = edge[1]
+            column_base_vertex: int = edge[0]
+            if axis[0][2] > axis[1][2]:
+                axis = Line(axis[1], axis[0])
+                column_head_vertex = edge[0]
+                column_base_vertex = edge[1]
 
-        #     beam_to_edge[edge] = element
+            if column_head_vertex in column_head_to_vertex:
+                model.add_interaction(
+                    column_head_to_vertex[column_head_vertex],
+                    column_to_edge[edge],
+                    interaction=CutterInterface(polygon=column_head_to_vertex[column_head_vertex].geometry.face_polygon(0), name="column_head_column_to_column"),
+                )
 
-        # def add_interaction_beam_and_column_head(edge):
-        #     beam_element: BeamElement = beam_to_edge[edge]
+            if column_base_vertex in column_head_to_vertex:
+                model.add_interaction(
+                    column_head_to_vertex[column_base_vertex],
+                    column_to_edge[edge],
+                    interaction=CutterInterface(polygon=column_head_to_vertex[column_base_vertex].geometry.face_polygon(1), name="column_head_column_to_column"),
+                )
 
-        #     if edge[0] in column_head_to_vertex:
-        #         column_head_element = column_head_to_vertex[edge[0]]
-        #         model.add_interaction(
-        #             column_head_element,
-        #             beam_element,
-        #             interaction=CutterInterface(polygon=column_head_element.face_nearest(beam_element.obb.frame.point), name="column_head_and_beam"),
-        #         )
+        def add_interaction_beam_and_column_head(edge):
+            beam_element: BeamElement = beam_to_edge[edge]
 
-        #     if edge[1] in column_head_to_vertex:
-        #         column_head_element = column_head_to_vertex[edge[1]]
-        #         model.add_interaction(
-        #             column_head_element,
-        #             beam_element,
-        #             interaction=CutterInterface(polygon=column_head_element.face_nearest(beam_element.obb.frame.point), name="column_head_and_beam"),
-        #         )
+            if edge[0] in column_head_to_vertex:
+                column_head_element = column_head_to_vertex[edge[0]]
+                direction: ColumnHeadDirection = ColumnHeadCrossShape.closest_direction(cell_network.vertex_point(edge[1]) - cell_network.vertex_point(edge[0]))
+                polygon: Polygon = column_head_element.geometry.face_polygon(list(column_head_element.geometry.faces_where(conditions={"direction": direction}))[0])
 
-        def add_floor(face):
-            temp = cell_network.face_polygon(face)
-            temp.name = str(face)
-            model.all_geo.append(temp)
-            # print(temp)
-            # width, depth, thickness = 3000, 3000, 200
-            # polygon: Polygon = Polygon([[-width, -depth, -thickness], [-width, depth, -thickness], [width, depth, -thickness], [width, -depth, -thickness]])
-            # plate_element: PlateElement = PlateElement.from_polygon_and_thickness(polygon, thickness)
-            # plate_element.frame = Frame(cell_network.face_polygon(face).centroid, [1, 0, 0], [0, 1, 0])
-            # model.add_element(element=plate_element, parent=floors)
+                model.add_interaction(
+                    column_head_element,
+                    beam_element,
+                    interaction=CutterInterface(polygon=polygon, name="column_head_and_beam"),
+                )
 
-            # for vertex in cell_network.face_vertices(face):
-            #     if vertex in column_head_to_vertex:
-            #         column_head_element = column_head_to_vertex[vertex]
+            if edge[1] in column_head_to_vertex:
+                column_head_element = column_head_to_vertex[edge[1]]
+                direction: ColumnHeadDirection = ColumnHeadCrossShape.closest_direction(cell_network.vertex_point(edge[0]) - cell_network.vertex_point(edge[1]))
+                polygon: Polygon = column_head_element.geometry.face_polygon(list(column_head_element.geometry.faces_where(conditions={"direction": direction}))[0])
 
-            #         model.add_interaction(
-            #             column_head_to_vertex[vertex],
-            #             plate_element,
-            #             interaction=CutterInterface(polygon=column_head_element.face_nearest(plate_element.obb.frame.point), name="column_head_and_plate"),
-            #         )
+                model.add_interaction(
+                    column_head_element,
+                    beam_element,
+                    interaction=CutterInterface(polygon=polygon, name="column_head_and_beam"),
+                )
 
+        def add_interaction_floor_and_column_head(vertex, plates_and_faces):
+            if vertex not in column_head_to_vertex:
+                return
+
+            column_head_element = column_head_to_vertex[vertex]
+
+            for plate_element, face in plates_and_faces:
+                i: int = face.index(vertex)
+                prev: int = (i - 1) % len(face)
+                next: int = (i + 1) % len(face)
+                v0 = face[i]
+                v0_prev = face[prev]
+                v0_next = face[next]
+                direction0: ColumnHeadDirection = ColumnHeadCrossShape.closest_direction(cell_network.vertex_point(v0_prev) - cell_network.vertex_point(v0))
+                direction1: ColumnHeadDirection = ColumnHeadCrossShape.closest_direction(cell_network.vertex_point(v0_next) - cell_network.vertex_point(v0))
+                direction_angled: ColumnHeadDirection = ColumnHeadDirection.get_direction_combination(direction0, direction1)
+                polygon: Polygon = column_head_element.geometry.face_polygon(list(column_head_element.geometry.faces_where(conditions={"direction": direction_angled}))[0])
+
+                model.add_interaction(
+                    column_head_element,
+                    plate_element,
+                    interaction=CutterInterface(polygon=polygon, name="column_head_and_plate"),
+                )
+
+        # Elements
         for edge in cell_network_columns:
             add_column_head(edge)
 
         for edge in cell_network_columns:
             add_column(edge)
 
-        # for edge in cell_network_columns:
-        #     add_interaction_column_and_column_head(edge)
-
-        # for edge in cell_network_beams:
-        #     add_beam(edge)
-
-        # for edge in cell_network_beams:
-        #     add_interaction_beam_and_column_head(edge)
+        for edge in cell_network_beams:
+            add_beam(edge)
 
         for face in cell_network_floors:
-            add_floor(face)
+            add_floor(face, width=3000 - width, depth=3000 - depth, thickness=200)
+
+        # Interactions
+        for edge in cell_network_columns:
+            add_interaction_column_and_column_head(edge)
+
+        for edge in cell_network_beams:
+            add_interaction_beam_and_column_head(edge)
+
+        for vertex, plates_and_faces in vertex_to_plates_and_faces.items():
+            add_interaction_floor_and_column_head(vertex, plates_and_faces)
 
         return model
-
-    def cut(self):
-        # Add your cutting logic here
-        pass
 
 
 if __name__ == "__main__":
@@ -453,6 +363,20 @@ if __name__ == "__main__":
 
     # Show the viewer
     # viewer = Viewer()
+    elements = list(model.elements())
+    for edge in model.graph.edges():
+        column_head: Element = elements[edge[0]]
+        element_to_cut: Element = elements[edge[1]]
+        # Mesh.slice
+        # element_to_cut.geometry.slice
+        interactions: list[Interaction] = model.graph.edge_attribute(edge, "interactions")
+        for interaction in interactions:
+            if not isinstance(interaction, CutterInterface):
+                continue
+            split_meshes: list[Mesh] = element_to_cut.geometry.slice(interaction.polygon.plane)
+            if split_meshes:
+                larger_mesh: Mesh = split_meshes[0] if split_meshes[0].aabb().volume > split_meshes[1].aabb().volume else split_meshes[1]
+                element_to_cut._geometry = larger_mesh
 
     for element in model.elements():
         geometry = element.geometry
@@ -464,17 +388,27 @@ if __name__ == "__main__":
         # viewer.scene.add(geo.scaled(0.001))
         viewer_live.add(geo.scaled(0.001))
 
-    viewer_live.serialize()
-    # viewer_live.run()
+        # print(split_meshes)
+        #
+        # print(column_head, element_to_cut)
+        # print(model.graph.edge_attribute(edge, "interactions")[0])
 
     # for interaction in model.interactions():
-    #     print(interaction)
-    #     viewer.scene.add(interaction.frame_polygon(500), color=(255, 0, 0), linewidth=5)
+    #     if not isinstance(interaction, CutterInterface):
+    #         continue
+    #     interaction.cut()
+
+    # for interaction in model.interactions():
+    #     viewer_live.add(interaction.frame_polygon(500).scaled(0.001))
+
     # for edge in model.graph.edges():
     #     print(edge)
     # viewer.scene.add(model.graph.edge_line(edge), color=(0, 0, 0), linewidth=5)
     # viewer.show()
     # model.cut()
+
+    viewer_live.serialize()
+    # viewer_live.run()
 
     # # Visualize the model.
     # scene = Scene()
