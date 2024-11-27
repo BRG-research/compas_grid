@@ -45,6 +45,35 @@ class ColumnHeadDirection(int, Enum):
     SOUTH_EAST = 5 
     EAST = 6
     NORTH_EAST = 7
+    
+    @classmethod
+    def get_direction_combination(cls, direction1: 'ColumnHeadDirection', direction2: 'ColumnHeadDirection') -> 'ColumnHeadDirection':
+        """
+        Get the direction combination of two directions.
+
+        Parameters
+        -------
+        direction1 : ColumnHeadDirection
+            The first direction.
+        direction2 : ColumnHeadDirection
+            The second direction.
+
+        Returns
+        -------
+        ColumnHeadDirection
+            The direction combination.
+        """
+        direction_combinations: dict[tuple[int, int], 'ColumnHeadDirection'] = {
+            (ColumnHeadDirection.NORTH, ColumnHeadDirection.WEST): ColumnHeadDirection.NORTH_WEST,
+            (ColumnHeadDirection.WEST, ColumnHeadDirection.NORTH): ColumnHeadDirection.NORTH_WEST,
+            (ColumnHeadDirection.WEST, ColumnHeadDirection.SOUTH): ColumnHeadDirection.SOUTH_WEST,
+            (ColumnHeadDirection.SOUTH, ColumnHeadDirection.WEST): ColumnHeadDirection.SOUTH_WEST,
+            (ColumnHeadDirection.SOUTH, ColumnHeadDirection.EAST): ColumnHeadDirection.SOUTH_EAST,
+            (ColumnHeadDirection.EAST, ColumnHeadDirection.SOUTH): ColumnHeadDirection.SOUTH_EAST,
+            (ColumnHeadDirection.NORTH,ColumnHeadDirection.EAST): ColumnHeadDirection.NORTH_EAST,
+            (ColumnHeadDirection.EAST, ColumnHeadDirection.NORTH): ColumnHeadDirection.NORTH_EAST,
+        }
+        return direction_combinations[(direction1, direction2)]
 
 
 def closest_direction(
@@ -96,19 +125,22 @@ v : dict[Point] = {
 }
 
 e : list[tuple[int, int]] = [
-    (7, 5),
-    (7, 6),
+    # (7, 5),
+    # (7, 6),
     (7, 8),
     (7, 2),
 ]
 
 f : list[list[int]] = [
-    [5, 7, 6, 10]
+    # [5, 7, 6, 10],
+    # [2, 7, 6, 10]
+    [2, 7, 8, 10]
 ]
 
 def generate_rules(v: dict[Point], e: list[tuple[int, int]], f: list[list[int]]) -> list[bool]:
     """
-    Generate rules from the local graph using v, e, f.
+    Generate rules for generating the mesh of the column head.
+    ATTENTION: edge first vertex is considered the column head origin, otherwise direction are flipped.
 
     Parameters
     -------
@@ -130,11 +162,18 @@ def generate_rules(v: dict[Point], e: list[tuple[int, int]], f: list[list[int]])
 
     # Find the directions of the edges
     for edge in e:
+        
+        if not edge[0] in v:
+            raise ValueError(f"Vertex {edge[0]} not found in the vertices.")
+        if not edge[1] in v:
+            raise ValueError(f"Vertex {edge[1]} not found in the vertices.")
+        
         p0 = v[edge[0]]
         p1 = v[edge[1]]
         vector = p1 - p0
         direction = closest_direction(vector)
         rules[direction] = True
+        
         # track direction for face edge search
         edge_directions[(edge[0], edge[1])] = direction
         edge_directions[(edge[1], edge[0])] = direction
@@ -153,18 +192,15 @@ def generate_rules(v: dict[Point], e: list[tuple[int, int]], f: list[list[int]])
         
         # Face must have two directions
         if not len(face_edge_directions) == 2:
-            continue
-        face_edge_directions.sort()
-        print(face_edge_directions)
-        face_direction : ColumnHeadDirection = ColumnHeadDirection(int(face_edge_directions[0])+1)
-        print(face_direction)
+            raise ValueError(f"Face {face} does not share two edges.")
+        
+        face_direction : ColumnHeadDirection = ColumnHeadDirection.get_direction_combination(face_edge_directions[0], face_edge_directions[1])
         rules[face_direction] = True
             
 
     return rules
 
 rules = generate_rules(v, e, f)
-print(rules)
 
 
 ###########################################################################################
@@ -284,50 +320,3 @@ for i, v in enumerate(vertices):
 viewer.add(mesh.scaled(0.001))
 viewer.serialize()
 # viewer.run()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# # directions[0] = True
-# directions[1] = True
-# directions[2] = True
-
-
-
-
-
-# # Find first false statement
-# id : int = -1
-# for i in range(len(directions)):
-#     if not directions[i]:
-#         id = i
-#         break
-
-# # We start from the first false statement to find connected components
-# connected_components = []
-# current_component = []
-# print(id, id+len(directions))
-# for i in range(id, id+len(directions)):
-#     print(i)
-#     if directions[i%len(directions)]:
-#         current_component.append(i%len(directions))
-#     else:
-#         if len(current_component) > 0:
-#             connected_components.append(current_component)
-#             current_component = []
-
-# if len(current_component) > 0:
-#     connected_components.append(current_component)
-
-# print(connected_components)
