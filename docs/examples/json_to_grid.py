@@ -1,7 +1,6 @@
 from compas.geometry import Line
 from compas.datastructures import Mesh
 from compas import json_load
-from compas_snippets.viewer_live import ViewerLive
 from compas_grid.model import GridModel
 
 
@@ -21,16 +20,19 @@ model.cut()
 #######################################################################################################
 # Visualize the model.
 #######################################################################################################
-viewer_live = ViewerLive()
+try :
+    from compas_snippets.viewer_live import ViewerLive
+    viewer_live = ViewerLive()
 
-for element in model.elements():
-    geometry = element.geometry
-    geometry.name = element.name
-    viewer_live.add(geometry.scaled(0.001))
-    print(element)
+    for element in model.elements():
+        geometry = element.geometry
+        geometry.name = element.name
+        viewer_live.add(geometry.scaled(0.001))
 
-for geo in model.all_geo:
-    viewer_live.add(geo.scaled(0.001))
+    for geo in model.all_geo:
+        viewer_live.add(geo.scaled(0.001))
 
-# viewer_live.serialize()
-# viewer_live.run()
+    viewer_live.serialize()
+    viewer_live.run()
+except ImportError:
+    print("Could not import ViewerLive. Please install compas_snippets to visualize the model from https://github.com/petrasvestartas/compas_snippets")

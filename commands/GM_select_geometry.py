@@ -35,24 +35,26 @@ def serialize_rhino_data(
         guids: list[Guid] = find_objects_on_layer(name)
         lines: list[Line] = []
         for guid in guids:
-            obj: Rhino.DocObjects.CurveObject = find_object(guid)
-            line: Line = curve_to_compas_line(obj.Geometry)
-            lines.append(line)
+            obj: Rhino.DocObjects.CurveObject = Rhino.RhinoDoc.ActiveDoc.Objects.FindId(guid)
+            if(obj):
+                line: Line = curve_to_compas_line(obj.Geometry)
+                lines.append(line)
         return lines
 
     def select_meshes(name):
         guids: list[Guid] = find_objects_on_layer(name)
         meshes: list[Rhino.Geometry.Mesh] = []
         for guid in guids:
-            obj: Rhino.DocObjects.MeshObject = find_object(guid)
-            mesh: Mesh = mesh_to_compas(obj.Geometry)
-            v, f = mesh.to_vertices_and_faces()
-            if len(v) == 4:
-                if distance_point_point(v[0], v[3]) > distance_point_point(v[0], v[2]):
-                    f = [[0, 1, 2, 3]]
-                    v = [v[0], v[1], v[3], v[2]]
-            mesh = Mesh.from_vertices_and_faces(v, f)
-            meshes.append(mesh)
+            obj: Rhino.DocObjects.MeshObject = Rhino.RhinoDoc.ActiveDoc.Objects.FindId(guid)
+            if(obj):
+                mesh: Mesh = mesh_to_compas(obj.Geometry)
+                v, f = mesh.to_vertices_and_faces()
+                if len(v) == 4:
+                    if distance_point_point(v[0], v[3]) > distance_point_point(v[0], v[2]):
+                        f = [[0, 1, 2, 3]]
+                        v = [v[0], v[1], v[3], v[2]]
+                mesh = Mesh.from_vertices_and_faces(v, f)
+                meshes.append(mesh)
         return meshes
 
     serialization_dictionary: dict = {}
@@ -72,6 +74,7 @@ def serialize_rhino_data(
     # scene.draw()
 
     # from compas import json_dump
+    print(serialization_dictionary)
     json_dump(serialization_dictionary, path)
 
 path : str ="C:/brg/2_code/compas_grid/data/crea/crea_4_4.json"
