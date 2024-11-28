@@ -146,7 +146,15 @@ class PlateElement(Element):
         polygon : :class:`compas.geometry.Polygon`
             The base polygon of the plate.
         thickness : float
-            The total offset thickness above and blow the polygon.
+            The total offset thickness above and blow the polygon
+        features : list[:class:`PlateFeature`], optional
+            Additional block features.
+        frame : :class:`compas.geometry.Frame`, optional
+            The coordinate frame of the block.
+        name : str, optional
+            The name of the element.
+        shape : :class:`compas.datastructures.Mesh`, optional
+            The base shape of the element.
 
         Returns
         -------
@@ -178,7 +186,15 @@ class PlateElement(Element):
         depth : float
             The depth of the plate.
         thickness : float
-            The total offset thickness above and blow the polygon.
+            The total offset thickness above and blow the polygon
+        features : list[:class:`PlateFeature`], optional
+            Additional block features.
+        frame : :class:`compas.geometry.Frame`, optional
+            The coordinate frame of the block.
+        name : str, optional
+            The name of the element.
+        shape : :class:`compas.datastructures.Mesh`, optional
+            The base shape of the element.
 
         Returns
         -------

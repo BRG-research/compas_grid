@@ -154,11 +154,6 @@ class GridModel(Model):
 
         #######################################################################################################
         # Convert the CellNetwork to a GridModel.
-        # Annotate ColumnHeadElement faces types, design of column head very specific including faces.
-        # TODO:
-        # Column head quadrants + frame.
-        # ColumnHead class, based on the valency of the node you have cases:  corner, boundary, internal vertices.
-        # Align column head with the overall frame system
         #######################################################################################################
         cell_network_columns: list[tuple[int, int]] = list(cell_network.edges_where({"is_column": True}))  # Order as in the model
         cell_network_beams: list[tuple[int, int]] = list(cell_network.edges_where({"is_beam": True}))  # Order as in the model
@@ -344,6 +339,20 @@ class GridModel(Model):
 
         return model
 
+    def cut(self):
+        """Cut the model with the cutter interfaces."""
+        elements = list(self.elements())
+        for edge in self.graph.edges():
+            element_to_cut: Element = elements[edge[1]]
+            interactions: list[Interaction] = self.graph.edge_attribute(edge, "interactions")
+            for interaction in interactions:
+                if not isinstance(interaction, CutterInterface):
+                    continue
+                split_meshes: list[Mesh] = element_to_cut.geometry.slice(interaction.polygon.plane)
+                if split_meshes:
+                    larger_mesh: Mesh = split_meshes[0] if split_meshes[0].aabb().volume > split_meshes[1].aabb().volume else split_meshes[1]
+                    element_to_cut._geometry = larger_mesh
+
 
 if __name__ == "__main__":
     from compas import json_load
@@ -351,67 +360,31 @@ if __name__ == "__main__":
 
     from compas_grid.model import GridModel
 
-    viewer_live = ViewerLive()
-
+    #######################################################################################################
     # Geometry from Rhino
+    #######################################################################################################
     rhino_geometry: dict[str, list[any]] = json_load("data/crea/crea_4x4.json")
     lines: list[Line] = rhino_geometry["Model::Line::Segments"]
     surfaces: list[Mesh] = rhino_geometry["Model::Mesh::Floor"]
 
+    #######################################################################################################
     # Create the model.
+    #######################################################################################################
     model = GridModel.from_lines_and_surfaces(lines, surfaces)
+    model.cut()
 
-    # Show the viewer
-    # viewer = Viewer()
-    elements = list(model.elements())
-    for edge in model.graph.edges():
-        column_head: Element = elements[edge[0]]
-        element_to_cut: Element = elements[edge[1]]
-        # Mesh.slice
-        # element_to_cut.geometry.slice
-        interactions: list[Interaction] = model.graph.edge_attribute(edge, "interactions")
-        for interaction in interactions:
-            if not isinstance(interaction, CutterInterface):
-                continue
-            split_meshes: list[Mesh] = element_to_cut.geometry.slice(interaction.polygon.plane)
-            if split_meshes:
-                larger_mesh: Mesh = split_meshes[0] if split_meshes[0].aabb().volume > split_meshes[1].aabb().volume else split_meshes[1]
-                element_to_cut._geometry = larger_mesh
+    #######################################################################################################
+    # Visualize the model.
+    #######################################################################################################
+    viewer_live = ViewerLive()
 
     for element in model.elements():
         geometry = element.geometry
         geometry.name = element.name
         viewer_live.add(geometry.scaled(0.001))
-        # viewer.scene.add(geometry.scaled(0.001))
 
     for geo in model.all_geo:
-        # viewer.scene.add(geo.scaled(0.001))
         viewer_live.add(geo.scaled(0.001))
-
-        # print(split_meshes)
-        #
-        # print(column_head, element_to_cut)
-        # print(model.graph.edge_attribute(edge, "interactions")[0])
-
-    # for interaction in model.interactions():
-    #     if not isinstance(interaction, CutterInterface):
-    #         continue
-    #     interaction.cut()
-
-    # for interaction in model.interactions():
-    #     viewer_live.add(interaction.frame_polygon(500).scaled(0.001))
-
-    # for edge in model.graph.edges():
-    #     print(edge)
-    # viewer.scene.add(model.graph.edge_line(edge), color=(0, 0, 0), linewidth=5)
-    # viewer.show()
-    # model.cut()
 
     viewer_live.serialize()
     # viewer_live.run()
-
-    # # Visualize the model.
-    # scene = Scene()
-    # scene.clear()
-    # scene.add(model)
-    # scene.draw()
