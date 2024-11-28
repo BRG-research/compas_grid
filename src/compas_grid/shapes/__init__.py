@@ -1,6 +1,6 @@
-from .shape_column_head import ColumnHeadDirection, ColumnHeadCrossShape
+from .shape_cross_block import CardinalDirections, CrossBlockShape
 
 __all__ = [
-    "ColumnHeadDirection",
-    "ColumnHeadCrossShape",
+    "CardinalDirections",
+    "CrossBlockShape",
 ]

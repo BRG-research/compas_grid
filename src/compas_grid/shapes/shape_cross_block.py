@@ -5,7 +5,7 @@ from compas.geometry import Point
 from compas.geometry import Vector
 
 
-class ColumnHeadDirection(int, Enum):
+class CardinalDirections(int, Enum):
     """
     Enumeration of directions where the number corresponds to the column head mesh face index.
 
@@ -39,36 +39,36 @@ class ColumnHeadDirection(int, Enum):
     NORTH_EAST = 7
 
     @classmethod
-    def get_direction_combination(cls, direction1: "ColumnHeadDirection", direction2: "ColumnHeadDirection") -> "ColumnHeadDirection":
+    def get_direction_combination(cls, direction1: "CardinalDirections", direction2: "CardinalDirections") -> "CardinalDirections":
         """
         Get the direction combination of two directions.
 
         Parameters
         -------
-        direction1 : ColumnHeadDirection
+        direction1 : CardinalDirections
             The first direction.
-        direction2 : ColumnHeadDirection
+        direction2 : CardinalDirections
             The second direction.
 
         Returns
         -------
-        ColumnHeadDirection
+        CardinalDirections
             The direction combination.
         """
-        direction_combinations: dict[tuple[int, int], "ColumnHeadDirection"] = {
-            (ColumnHeadDirection.NORTH, ColumnHeadDirection.WEST): ColumnHeadDirection.NORTH_WEST,
-            (ColumnHeadDirection.WEST, ColumnHeadDirection.NORTH): ColumnHeadDirection.NORTH_WEST,
-            (ColumnHeadDirection.WEST, ColumnHeadDirection.SOUTH): ColumnHeadDirection.SOUTH_WEST,
-            (ColumnHeadDirection.SOUTH, ColumnHeadDirection.WEST): ColumnHeadDirection.SOUTH_WEST,
-            (ColumnHeadDirection.SOUTH, ColumnHeadDirection.EAST): ColumnHeadDirection.SOUTH_EAST,
-            (ColumnHeadDirection.EAST, ColumnHeadDirection.SOUTH): ColumnHeadDirection.SOUTH_EAST,
-            (ColumnHeadDirection.NORTH, ColumnHeadDirection.EAST): ColumnHeadDirection.NORTH_EAST,
-            (ColumnHeadDirection.EAST, ColumnHeadDirection.NORTH): ColumnHeadDirection.NORTH_EAST,
+        direction_combinations: dict[tuple[int, int], "CardinalDirections"] = {
+            (CardinalDirections.NORTH, CardinalDirections.WEST): CardinalDirections.NORTH_WEST,
+            (CardinalDirections.WEST, CardinalDirections.NORTH): CardinalDirections.NORTH_WEST,
+            (CardinalDirections.WEST, CardinalDirections.SOUTH): CardinalDirections.SOUTH_WEST,
+            (CardinalDirections.SOUTH, CardinalDirections.WEST): CardinalDirections.SOUTH_WEST,
+            (CardinalDirections.SOUTH, CardinalDirections.EAST): CardinalDirections.SOUTH_EAST,
+            (CardinalDirections.EAST, CardinalDirections.SOUTH): CardinalDirections.SOUTH_EAST,
+            (CardinalDirections.NORTH, CardinalDirections.EAST): CardinalDirections.NORTH_EAST,
+            (CardinalDirections.EAST, CardinalDirections.NORTH): CardinalDirections.NORTH_EAST,
         }
         return direction_combinations[(direction1, direction2)]
 
 
-class ColumnHeadCrossShape:
+class CrossBlockShape:
     """Generate Column Head shapes based on vertex and edge and face adjacency.
     The class is singleton, considering the dimension of the column head is fixed and created once.
 
@@ -113,8 +113,8 @@ class ColumnHeadCrossShape:
 
     f: list[list[int]] = [[5, 7, 6, 10]]
 
-    ColumnHeadCrossShape: ColumnHeadCrossShape = ColumnHeadCrossShape(v, e, f, width, depth, height, offset)
-    mesh = ColumnHeadCrossShape.mesh.scaled(0.001)
+    CrossBlockShape: CrossBlockShape = CrossBlockShape(v, e, f, width, depth, height, offset)
+    mesh = CrossBlockShape.mesh.scaled(0.001)
 
     """
 
@@ -124,7 +124,7 @@ class ColumnHeadCrossShape:
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
-            cls._instance = super(ColumnHeadCrossShape, cls).__new__(cls)
+            cls._instance = super(CrossBlockShape, cls).__new__(cls)
         return cls._instance
 
     def __init__(
@@ -150,13 +150,13 @@ class ColumnHeadCrossShape:
     @staticmethod
     def closest_direction(
         vector: Vector,
-        directions: dict[ColumnHeadDirection, Vector] = {
-            ColumnHeadDirection.NORTH: Vector(0, 1, 0),
-            ColumnHeadDirection.EAST: Vector(1, 0, 0),
-            ColumnHeadDirection.SOUTH: Vector(0, -1, 0),
-            ColumnHeadDirection.WEST: Vector(-1, 0, 0),
+        directions: dict[CardinalDirections, Vector] = {
+            CardinalDirections.NORTH: Vector(0, 1, 0),
+            CardinalDirections.EAST: Vector(1, 0, 0),
+            CardinalDirections.SOUTH: Vector(0, -1, 0),
+            CardinalDirections.WEST: Vector(-1, 0, 0),
         },
-    ) -> ColumnHeadDirection:
+    ) -> CardinalDirections:
         """
         Find the closest cardinal direction for a given vector.
 
@@ -170,20 +170,20 @@ class ColumnHeadCrossShape:
 
         Returns
         -------
-        ColumnHeadDirection
+        CardinalDirections
             The closest cardinal direction.
         """
         # Unitize the given vector
         vector.unitize()
 
         # Compute dot products with cardinal direction vectors
-        dot_products: dict[ColumnHeadDirection, float] = {}
+        dot_products: dict[CardinalDirections, float] = {}
         for direction, unit_vector in directions.items():
             dot_product = vector.dot(unit_vector)
             dot_products[direction] = dot_product
 
         # Find the direction with the maximum dot product
-        closest: ColumnHeadDirection = max(dot_products, key=dot_products.get)
+        closest: CardinalDirections = max(dot_products, key=dot_products.get)
         return closest
 
     def _generate_rules(self, v: dict[Point], e: list[tuple[int, int]], f: list[list[int]]) -> list[bool]:
@@ -207,7 +207,7 @@ class ColumnHeadCrossShape:
         """
 
         rules = [False, False, False, False, False, False, False, False]
-        edge_directions: dict[tuple[int, int], ColumnHeadDirection] = {}
+        edge_directions: dict[tuple[int, int], CardinalDirections] = {}
 
         # Find the directions of the edges
         for edge in e:
@@ -219,7 +219,7 @@ class ColumnHeadCrossShape:
             p0 = v[edge[0]]
             p1 = v[edge[1]]
             vector = p1 - p0
-            direction = ColumnHeadCrossShape.closest_direction(vector)
+            direction = CrossBlockShape.closest_direction(vector)
             rules[direction] = True
 
             # track direction for face edge search
@@ -241,7 +241,7 @@ class ColumnHeadCrossShape:
             if not len(face_edge_directions) == 2:
                 raise ValueError(f"Face {face} does not share two edges.")
 
-            face_direction: ColumnHeadDirection = ColumnHeadDirection.get_direction_combination(face_edge_directions[0], face_edge_directions[1])
+            face_direction: CardinalDirections = CardinalDirections.get_direction_combination(face_edge_directions[0], face_edge_directions[1])
             rules[face_direction] = True
 
         return tuple(rules)
@@ -254,7 +254,7 @@ class ColumnHeadCrossShape:
         ----------
 
         rules : tuple
-            The generated rules that corresponds to world direction using ColumnHeadDirection enumerator.
+            The generated rules that corresponds to world direction using CardinalDirections enumerator.
 
         Returns
         -------
@@ -307,35 +307,35 @@ class ColumnHeadCrossShape:
 
         if rules[0]:
             mesh.add_face([0, 1, 9, 8])
-            mesh.add_face([0, 1, 13, 12], attr_dict={"direction": ColumnHeadDirection.NORTH})
+            mesh.add_face([0, 1, 13, 12], attr_dict={"direction": CardinalDirections.NORTH})
 
         if rules[1]:
             mesh.add_face([1, 2, 9])
-            mesh.add_face([1, 2, 13], attr_dict={"direction": ColumnHeadDirection.NORTH_WEST})
+            mesh.add_face([1, 2, 13], attr_dict={"direction": CardinalDirections.NORTH_WEST})
 
         if rules[2]:
             mesh.add_face([2, 3, 10, 9])
-            mesh.add_face([2, 3, 14, 13], attr_dict={"direction": ColumnHeadDirection.WEST})
+            mesh.add_face([2, 3, 14, 13], attr_dict={"direction": CardinalDirections.WEST})
 
         if rules[3]:
             mesh.add_face([3, 4, 10])
-            mesh.add_face([3, 4, 14], attr_dict={"direction": ColumnHeadDirection.SOUTH_WEST})
+            mesh.add_face([3, 4, 14], attr_dict={"direction": CardinalDirections.SOUTH_WEST})
 
         if rules[4]:
             mesh.add_face([4, 5, 11, 10])
-            mesh.add_face([4, 5, 15, 14], attr_dict={"direction": ColumnHeadDirection.SOUTH})
+            mesh.add_face([4, 5, 15, 14], attr_dict={"direction": CardinalDirections.SOUTH})
 
         if rules[5]:
             mesh.add_face([5, 6, 11])
-            mesh.add_face([5, 6, 15], attr_dict={"direction": ColumnHeadDirection.SOUTH_EAST})
+            mesh.add_face([5, 6, 15], attr_dict={"direction": CardinalDirections.SOUTH_EAST})
 
         if rules[6]:
             mesh.add_face([6, 7, 8, 11])
-            mesh.add_face([6, 7, 12, 15], attr_dict={"direction": ColumnHeadDirection.EAST})
+            mesh.add_face([6, 7, 12, 15], attr_dict={"direction": CardinalDirections.EAST})
 
         if rules[7]:
             mesh.add_face([7, 0, 8])
-            mesh.add_face([7, 0, 12], attr_dict={"direction": ColumnHeadDirection.NORTH_EAST})
+            mesh.add_face([7, 0, 12], attr_dict={"direction": CardinalDirections.NORTH_EAST})
 
         # Outer ring vertical triangle faces
         from math import ceil
@@ -401,11 +401,11 @@ if __name__ == "__main__":
 
     viewer = ViewerLive()
 
-    column_head_cross_shape: ColumnHeadCrossShape = ColumnHeadCrossShape(v, e, f, width, depth, height, offset)
+    column_head_cross_shape: CrossBlockShape = CrossBlockShape(v, e, f, width, depth, height, offset)
     print(column_head_cross_shape._generated_meshes)
     viewer.add(column_head_cross_shape.mesh.scaled(0.001))
 
-    column_head_cross_shape: ColumnHeadCrossShape = ColumnHeadCrossShape(v, e, [], width, depth, height, offset)
+    column_head_cross_shape: CrossBlockShape = CrossBlockShape(v, e, [], width, depth, height, offset)
     print(column_head_cross_shape._generated_meshes)
     viewer.add(column_head_cross_shape.mesh.scaled(0.001))
 

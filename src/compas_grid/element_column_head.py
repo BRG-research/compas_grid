@@ -13,7 +13,7 @@ from compas.geometry import oriented_bounding_box
 from compas_model.elements import Element
 from compas_model.elements import Feature
 
-from compas_grid.shapes import ColumnHeadCrossShape
+from compas_grid.shapes import CrossBlockShape
 
 
 class ColumnHeadFeature(Feature):
@@ -245,9 +245,9 @@ class ColumnHeadElement(Element):
 
         Parameters
         ----------
-        start_direction : :class:`ColumnHeadDirection`
+        start_direction : :class:`CardinalDirections`
             The start direction of the quadrant.
-        end_direction : :class:`ColumnHeadDirection`
+        end_direction : :class:`CardinalDirections`
             The end direction of the quadrant.
         width : float
             The width of the column head.
@@ -265,11 +265,11 @@ class ColumnHeadElement(Element):
 
         Example
         -------
-        start_direction = ColumnHeadDirection.NORTH
-        end_direction = ColumnHeadDirection.EAST
+        start_direction = CardinalDirections.NORTH
+        end_direction = CardinalDirections.EAST
         column_head_element = ColumnHeadElement.from_quadrant(start_direction, end_direction, width=1.0, depth=1.0)
         """
-        column_head_cross_shape: ColumnHeadCrossShape = ColumnHeadCrossShape(v, e, f, width, depth, height, offset)
+        column_head_cross_shape: CrossBlockShape = CrossBlockShape(v, e, f, width, depth, height, offset)
         mesh: Mesh = column_head_cross_shape.mesh.copy()  # Copy because the meshes are created only once.
         column_head_element: ColumnHeadElement = cls(mesh=mesh, features=features, name=name)
         return column_head_element

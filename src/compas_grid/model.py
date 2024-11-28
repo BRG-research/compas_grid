@@ -23,8 +23,8 @@ from compas_grid import ColumnHeadElement
 from compas_grid import CutterInterface
 from compas_grid import PlateElement
 from compas_grid.datastructures import CellNetwork
-from compas_grid.shapes import ColumnHeadCrossShape
-from compas_grid.shapes import ColumnHeadDirection
+from compas_grid.shapes import CrossBlockShape
+from compas_grid.shapes import CardinalDirections
 
 
 class GridModel(Model):
@@ -270,7 +270,7 @@ class GridModel(Model):
 
             if edge[0] in column_head_to_vertex:
                 column_head_element = column_head_to_vertex[edge[0]]
-                direction: ColumnHeadDirection = ColumnHeadCrossShape.closest_direction(cell_network.vertex_point(edge[1]) - cell_network.vertex_point(edge[0]))
+                direction: CardinalDirections = CrossBlockShape.closest_direction(cell_network.vertex_point(edge[1]) - cell_network.vertex_point(edge[0]))
                 polygon: Polygon = column_head_element.geometry.face_polygon(list(column_head_element.geometry.faces_where(conditions={"direction": direction}))[0])
 
                 model.add_interaction(
@@ -281,7 +281,7 @@ class GridModel(Model):
 
             if edge[1] in column_head_to_vertex:
                 column_head_element = column_head_to_vertex[edge[1]]
-                direction: ColumnHeadDirection = ColumnHeadCrossShape.closest_direction(cell_network.vertex_point(edge[0]) - cell_network.vertex_point(edge[1]))
+                direction: CardinalDirections = CrossBlockShape.closest_direction(cell_network.vertex_point(edge[0]) - cell_network.vertex_point(edge[1]))
                 polygon: Polygon = column_head_element.geometry.face_polygon(list(column_head_element.geometry.faces_where(conditions={"direction": direction}))[0])
 
                 model.add_interaction(
@@ -303,9 +303,9 @@ class GridModel(Model):
                 v0 = face[i]
                 v0_prev = face[prev]
                 v0_next = face[next]
-                direction0: ColumnHeadDirection = ColumnHeadCrossShape.closest_direction(cell_network.vertex_point(v0_prev) - cell_network.vertex_point(v0))
-                direction1: ColumnHeadDirection = ColumnHeadCrossShape.closest_direction(cell_network.vertex_point(v0_next) - cell_network.vertex_point(v0))
-                direction_angled: ColumnHeadDirection = ColumnHeadDirection.get_direction_combination(direction0, direction1)
+                direction0: CardinalDirections = CrossBlockShape.closest_direction(cell_network.vertex_point(v0_prev) - cell_network.vertex_point(v0))
+                direction1: CardinalDirections = CrossBlockShape.closest_direction(cell_network.vertex_point(v0_next) - cell_network.vertex_point(v0))
+                direction_angled: CardinalDirections = CardinalDirections.get_direction_combination(direction0, direction1)
                 polygon: Polygon = column_head_element.geometry.face_polygon(list(column_head_element.geometry.faces_where(conditions={"direction": direction_angled}))[0])
 
                 model.add_interaction(

@@ -28,7 +28,7 @@ __all__ = [
     "TEMP",
     "BeamElement",
     "ColumnHeadElement",
-    "ColumnHeadDirection",
+    "CardinalDirections",
     "ColumnElement",
     "PlateElement",
     "GridModel",
