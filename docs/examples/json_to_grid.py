@@ -27,9 +27,10 @@ for element in model.elements():
     geometry = element.geometry
     geometry.name = element.name
     viewer_live.add(geometry.scaled(0.001))
+    print(element)
 
 for geo in model.all_geo:
     viewer_live.add(geo.scaled(0.001))
 
-viewer_live.serialize()
+# viewer_live.serialize()
 # viewer_live.run()
