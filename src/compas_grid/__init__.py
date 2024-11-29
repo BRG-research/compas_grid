@@ -6,6 +6,7 @@ from .element_column_head import ColumnHeadElement
 from .element_column import ColumnElement
 from .element_plate import PlateElement
 from .interface_cutter import CutterInterface
+from .element_interface_cutter import InterfaceCutterElement
 from .model import GridModel
 
 __author__ = ["Petras Vestartas"]
@@ -33,4 +34,5 @@ __all__ = [
     "PlateElement",
     "GridModel",
     "CutterInterface",
+    "InterfaceCutterElement",
 ]

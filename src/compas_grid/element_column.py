@@ -4,6 +4,9 @@ from typing import List
 from typing import Optional
 from typing import Tuple
 
+from compas_model.elements import Element
+from compas_model.elements import Feature
+
 from compas.datastructures import Mesh
 from compas.geometry import Box
 from compas.geometry import Frame
@@ -15,8 +18,6 @@ from compas.geometry import bounding_box
 from compas.geometry import intersection_line_plane
 from compas.geometry import oriented_bounding_box
 from compas.itertools import pairwise
-from compas_model.elements import Element
-from compas_model.elements import Feature
 
 
 class ColumnFeature(Feature):
@@ -93,6 +94,7 @@ class ColumnElement(Element):
         self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()
         self.shape: Mesh = self.compute_shape()
         self.name = self.__class__.__name__
+        self.is_transformed = False
 
     @property
     def face_polygons(self) -> List[Polygon]:
@@ -164,7 +166,9 @@ class ColumnElement(Element):
             if self.features:
                 for feature in self.features:
                     geometry = feature.apply(geometry)
-        geometry.transform(self.worldtransformation)
+        if not self.is_transformed:
+            geometry.transform(self.worldtransformation)
+            self.is_transformed = True
         return geometry
 
     def compute_aabb(self, inflate: float = 0.0) -> Box:

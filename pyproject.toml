@@ -10,9 +10,7 @@ build-backend = "setuptools.build_meta"
 name = "compas_grid"
 description = "Model of simple grid structures for multi-storey buildings."
 keywords = []
-authors = [
-    { name = "Petras Vestartas", email = "petrasvestartas@gmail.com" },
-]
+authors = [{ name = "Petras Vestartas", email = "petrasvestartas@gmail.com" }]
 license = { file = "LICENSE" }
 readme = "README.md"
 requires-python = ">=3.9"
@@ -114,9 +112,7 @@ select = ["E", "F", "I"]
 
 [tool.ruff.lint.isort]
 force-single-line = true
-known-first-party = [
-    "compas_grid",
-]
+known-first-party = ["compas", "compas_rhino", "compas_grid"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"

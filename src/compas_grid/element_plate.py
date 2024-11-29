@@ -3,6 +3,10 @@ from typing import Dict
 from typing import List
 
 import numpy as np
+from compas_model.elements import Element
+from compas_model.elements import Feature
+from numpy.typing import NDArray
+
 from compas.datastructures import Mesh
 from compas.geometry import Box
 from compas.geometry import Frame
@@ -12,9 +16,6 @@ from compas.geometry import Vector
 from compas.geometry import bounding_box
 from compas.geometry import oriented_bounding_box
 from compas.itertools import pairwise
-from compas_model.elements import Element
-from compas_model.elements import Feature
-from numpy.typing import NDArray
 
 
 class PlateFeature(Feature):
@@ -72,6 +73,7 @@ class PlateElement(Element):
         self.features: List[Feature] = features or []  # type: list[PlateFeature]
         if not self.name:
             self.name = self.__class__.__name__
+        self.is_transformed = False
 
     @property
     def face_polygons(self) -> List[Polygon]:
@@ -106,7 +108,9 @@ class PlateElement(Element):
             if self.features:
                 for feature in self.features:
                     geometry = feature.apply(geometry)
-        geometry.transform(self.worldtransformation)
+        if not self.is_transformed:
+            geometry.transform(self.worldtransformation)
+            self.is_transformed = True
         return geometry
 
     def compute_aabb(self, inflate: float = 0.0) -> Box:

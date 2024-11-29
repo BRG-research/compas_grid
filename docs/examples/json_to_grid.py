@@ -1,13 +1,13 @@
-from compas.geometry import Line
-from compas.datastructures import Mesh
 from compas import json_load
+from compas.datastructures import Mesh
+from compas.geometry import Line
 from compas_grid.model import GridModel
-
+from compas_grid import BeamElement
 
 #######################################################################################################
 # Geometry from Rhino.
 #######################################################################################################
-rhino_geometry: dict[str, list[any]] = json_load("data/crea/crea_4x4.json")
+rhino_geometry: dict[str, list[any]] = json_load("data/crea/crea_4x4_ground.json")
 lines: list[Line] = rhino_geometry["Model::Line::Segments"]
 surfaces: list[Mesh] = rhino_geometry["Model::Mesh::Floor"]
 
@@ -15,17 +15,27 @@ surfaces: list[Mesh] = rhino_geometry["Model::Mesh::Floor"]
 # Create the model.
 #######################################################################################################
 model = GridModel.from_lines_and_surfaces(lines, surfaces)
-model.cut()
+# model.cut()
 
+
+element = list(model.elements())[0]
+# print(element)
+# print(element.tree_node)
+# print(type(element.tree_node.tree))
+# print(element.tree_node.tree.model)
 #######################################################################################################
 # Visualize the model.
 #######################################################################################################
-try :
+try:
     from compas_snippets.viewer_live import ViewerLive
+
     viewer_live = ViewerLive()
 
     for element in model.elements():
+        # if isinstance(element, BeamElement):
+        #     element.apply_interactions()
         geometry = element.geometry
+
         geometry.name = element.name
         viewer_live.add(geometry.scaled(0.001))
 

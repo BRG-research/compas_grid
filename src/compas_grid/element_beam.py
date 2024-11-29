@@ -4,6 +4,9 @@ from typing import List
 from typing import Optional
 from typing import Tuple
 
+from compas_model.elements import Element
+from compas_model.elements import Feature
+
 from compas.datastructures import Mesh
 from compas.geometry import Box
 from compas.geometry import Frame
@@ -15,8 +18,6 @@ from compas.geometry import bounding_box
 from compas.geometry import intersection_line_plane
 from compas.geometry import oriented_bounding_box
 from compas.itertools import pairwise
-from compas_model.elements import Element
-from compas_model.elements import Feature
 
 
 class BeamFeature(Feature):
@@ -93,6 +94,7 @@ class BeamElement(Element):
         self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()
         self.shape: Mesh = self.compute_shape()
         self.name = self.__class__.__name__
+        self.is_transformed = False
 
     @property
     def face_polygons(self) -> List[Polygon]:
@@ -143,6 +145,43 @@ class BeamElement(Element):
     # =============================================================================
     # Implementations of abstract methods
     # =============================================================================
+    # detailed,
+    # def compute_blank(self) -> Mesh:
+    #     """Compute the blank geometry of the element.
+    #     The blank geometry is transformed by the world transformation.
+
+    #     Returns
+    #     -------
+    #     :class:`compas.datastructures.Mesh`
+    #         Blank geometry.
+    #     """
+    #     return self.compute_geometry()
+    #     pass
+
+    def apply_interactions(
+        self,
+    ) -> None:
+        from compas_model.interactions import Interaction
+
+        from compas_grid import CutterInterface
+
+        edges: list[tuple[int, int]] = self.tree_node.tree.model.graph.node_edges(self.graph_node)
+        print("Edges", edges)
+
+        if self._geometry is None:
+            self.compute_geometry()
+
+        for edge in edges:
+            interactions: list[Interaction] = self.tree_node.tree.model.graph.edge_attribute(edge, "interactions")
+
+            for interaction in interactions:
+                if not isinstance(interaction, CutterInterface):
+                    continue
+                split_meshes: list[Mesh] = self._geometry.slice(interaction.polygon.plane)
+                if split_meshes:
+                    larger_mesh: Mesh = split_meshes[0] if split_meshes[0].aabb().volume > split_meshes[1].aabb().volume else split_meshes[1]
+                    self._geometry = larger_mesh
+                    print("Cutting the beam")
 
     def compute_geometry(self, include_features: bool = False) -> Mesh:
         """Compute the geometry of the element.
@@ -159,12 +198,23 @@ class BeamElement(Element):
             Geometry with applied features.
         """
 
+        # Looks at the two interactions and apply cuts
+        # Includes features
+        # Elements knows where it is in the graph
+        # self.graph_node = None  # type: int | None
+        # self.tree_node = None  # type: int | None
+        # if no interactions are here then raise the error
+
+        # Shape to detail:
         geometry: Mesh = self.shape
+
         if include_features:
             if self.features:
                 for feature in self.features:
                     geometry = feature.apply(geometry)
+
         geometry.transform(self.worldtransformation)
+
         return geometry
 
     def compute_aabb(self, inflate: float = 0.0) -> Box:

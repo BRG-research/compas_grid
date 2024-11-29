@@ -3,6 +3,9 @@ from typing import Dict
 from typing import List
 from typing import Optional
 
+from compas_model.elements import Element
+from compas_model.elements import Feature
+
 from compas.datastructures import Mesh
 from compas.geometry import Box
 from compas.geometry import Frame
@@ -10,9 +13,6 @@ from compas.geometry import Point
 from compas.geometry import Polygon
 from compas.geometry import bounding_box
 from compas.geometry import oriented_bounding_box
-from compas_model.elements import Element
-from compas_model.elements import Feature
-
 from compas_grid.shapes import CrossBlockShape
 
 
@@ -65,6 +65,7 @@ class ColumnHeadElement(Element):
         self.type = None
         self.shape: Mesh = mesh
         self.name = self.__class__.__name__ if name is None or name == "None" else name
+        self.is_transformed = False
 
     @property
     def face_polygons(self) -> List[Polygon]:
@@ -105,7 +106,9 @@ class ColumnHeadElement(Element):
             if self.features:
                 for feature in self.features:
                     geometry = feature.apply(geometry)
-        geometry.transform(self.worldtransformation)
+        if not self.is_transformed:
+            geometry.transform(self.worldtransformation)
+            self.is_transformed = True
         return geometry
 
     def compute_aabb(self, inflate: float = 0.0) -> Box:
