@@ -137,6 +137,14 @@ class PlateElement(Element):
         vertices: List[Point] = [points[index] for index in range(len(points))]
         return Mesh.from_vertices_and_faces(vertices, faces)
 
+    def compute_geometry_world(self):
+        """Compute the interfaces of the element in 3D world space."""
+        print(self.tree_node.tree.model.graph.neighbors(self.graph_node))
+
+    def compute_geometry_local(self):
+        """Compute the interfaces of the element in local object space."""
+        print(self.tree_node.tree.model.graph.neighbors(self.graph_node))
+
     # =============================================================================
     # Constructors
     # =============================================================================

@@ -34,15 +34,29 @@ try:
     for element in model.elements():
         # if isinstance(element, BeamElement):
         #     element.apply_interactions()
-        geometry = element.geometry
+        # geometry = element.geometry
 
-        geometry.name = element.name
-        viewer_live.add(geometry.scaled(0.001))
+        geometry = element.geometry
+        geometries = element.compute_geometry_world()
+
+        if geometries:
+            for geo in geometries:
+                geo.scale(0.001)
+            # for geometry in geometries:
+            print(len(geometries))
+            viewer_live.add(geometries)
 
     for geo in model.all_geo:
         viewer_live.add(geo.scaled(0.001))
+    #
+
+    #     geometry.name = element.name
+    #     viewer_live.add(geometry.scaled(0.001))
+
+    # for geo in model.all_geo:
+    #     viewer_live.add(geo.scaled(0.001))
 
     viewer_live.serialize()
-    viewer_live.run()
+    # viewer_live.run()
 except ImportError:
     print("Could not import ViewerLive. Please install compas_snippets to visualize the model from https://github.com/petrasvestartas/compas_snippets")

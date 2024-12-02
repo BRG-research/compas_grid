@@ -14,6 +14,7 @@ from compas.geometry import Line
 from compas.geometry import Plane
 from compas.geometry import Point
 from compas.geometry import Polygon
+from compas.geometry.transformation import Transformation
 from compas.geometry import bounding_box
 from compas.geometry import intersection_line_plane
 from compas.geometry import oriented_bounding_box
@@ -271,6 +272,53 @@ class BeamElement(Element):
         vertices, faces = convex_hull_numpy(points)
         vertices = [points[index] for index in vertices]  # type: ignore
         return Mesh.from_vertices_and_faces(vertices, faces)
+
+    def compute_geometry_world(self, interaction_name: str = "cut", TOL=3) -> List[Mesh]:
+        """Compute the interfaces of the element in 3D world space."""
+
+        graph = self.tree_node.tree.model.graph
+
+        neighbors: List[int] = graph.neighbors(self.graph_node)
+        elements = list(self.tree_node.tree.model.elements())
+
+        geometries: List[Mesh] = [self.geometry.copy()]
+        ids: List[int] = [self.graph_node]
+
+        for neighbor in neighbors:
+            edge: tuple[int, int] = (self.graph_node, neighbor) if graph.has_edge((self.graph_node, neighbor)) else (neighbor, self.graph_node)
+            interactions: list["Interaction"] = graph.edge_attribute(edge, "interactions")
+
+            for interaction in interactions:
+                if interaction.name == interaction_name:
+                    geometries.append(elements[neighbor].geometry.copy())
+                    ids.append(neighbor)
+
+                    # Get Plane of the element and orient it to 3D using world transformation.
+                    element_that_slices: Element = elements[neighbor]
+                    slice_plane: Plane = Plane.from_frame(element_that_slices.frame)
+                    xform: Transformation = elements[neighbor].compute_worldtransformation()
+                    slice_plane.transform(xform)
+
+                    # Slice meshes and take the one opposite to the plane normal.
+                    split_meshes: list[Mesh] = geometries[0].slice(slice_plane)
+                    if split_meshes:
+                        geometries[0] = split_meshes[0]
+
+        # temp for view to name elements is a clearer way
+        for idx, geometry in enumerate(geometries):
+            geometry.name = str(self.graph_node) + "_" + self.name + "_" + elements[ids[idx]].name
+        return geometries
+
+    def compute_geometry_local(self):
+        """Compute the interfaces of the element in local object space."""
+
+        geometries: List[Mesh] = self.compute_geometry_world()
+        xform: Transformation = self.compute_worldtransformation().inverse()
+
+        for geometry in geometries:
+            geometry.transform(xform)
+
+        return geometries
 
     # =============================================================================
     # Constructors

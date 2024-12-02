@@ -5,7 +5,6 @@ from compas_model.interactions import Interaction  # noqa: F401
 from compas_model.materials import Material  # noqa: F401
 from compas_model.models import Model  # noqa: F401
 from compas_model.models.elementnode import ElementNode
-from compas_model.models.groupnode import GroupNode
 from compas_model.models.interactiongraph import InteractionGraph
 from compas_model.interactions import Interaction
 import compas
@@ -52,6 +51,8 @@ class GridModel(Model):
 
     """
 
+    all_geo = []
+
     @property
     def __data__(self):
         # in their data representation,
@@ -95,10 +96,6 @@ class GridModel(Model):
                     if "element" in childdata:
                         raise Exception("A node containing other nodes cannot have an element.")
 
-                    childnode = GroupNode(
-                        name=childdata["name"],
-                        attr=childdata["attributes"],
-                    )
                     parentnode.add(childnode)
                     add(childdata, childnode)
 
@@ -161,12 +158,6 @@ class GridModel(Model):
         cell_network_beams: list[tuple[int, int]] = list(cell_network.edges_where({"is_beam": True}))  # Order as in the model
         cell_network_floors: list[int] = list(cell_network.faces_where({"is_floor": True}))  # Order as in the model
 
-        columns = model.add_group("columns")
-        column_heads = model.add_group("column_heads")
-        beams = model.add_group("beams")
-        floors = model.add_group("floors")
-        interfaces = model.add_group("interfaces")
-
         column_head_to_vertex: dict[Element, int] = {}
         column_to_edge: dict[Element, tuple[int, int]] = {}
         beam_to_edge: dict[Element, tuple[int, int]] = {}
@@ -214,7 +205,7 @@ class GridModel(Model):
             element_column_head.transformation = orientation
 
             # Add the column head element to the model.
-            model.add_element(element=element_column_head, parent=column_heads)
+            model.add_element(element=element_column_head)
 
             # Store the column head element in a dictionary.
             column_head_to_vertex[column_head_vertex] = element_column_head
@@ -229,7 +220,7 @@ class GridModel(Model):
             orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(axis.start, [1, 0, 0], [0, 1, 0]))
             element_column.transformation = orientation
 
-            model.add_element(element=element_column, parent=columns)
+            model.add_element(element=element_column)
             column_to_edge[edge] = element_column
 
         def add_beam(edge):
@@ -238,7 +229,7 @@ class GridModel(Model):
             # element.frame = Frame(axis.start, [0, 0, 1], Vector.cross(axis.direction, [0, 0, 1]))
             orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(axis.start, [0, 0, 1], Vector.cross(axis.direction, [0, 0, 1])))
             element.transformation = orientation
-            model.add_element(element=element, parent=beams)
+            model.add_element(element=element)
             beam_to_edge[edge] = element
 
         def add_floor(face, width=3000, depth=3000, thickness=200):
@@ -247,7 +238,7 @@ class GridModel(Model):
             # plate_element.frame = Frame(cell_network.face_polygon(face).centroid, [1, 0, 0], [0, 1, 0])
             orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(cell_network.face_polygon(face).centroid, [1, 0, 0], [0, 1, 0]))
             plate_element.transformation = orientation
-            model.add_element(element=plate_element, parent=floors)
+            model.add_element(element=plate_element)
 
             for vertex in cell_network.face_vertices(face):
                 if vertex in vertex_to_plates_and_faces:
@@ -269,15 +260,15 @@ class GridModel(Model):
                 orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), column_head_to_vertex[column_head_vertex].geometry.face_polygon(0).frame)
                 interface_cutter_element.transformation = orientation
 
-                model.add_element(element=interface_cutter_element, parent=interfaces)
+                model.add_element(element=interface_cutter_element)
                 model.add_interaction(interface_cutter_element, column_to_edge[edge], Interaction(name="cut"))
-                model.add_interaction(interface_cutter_element, column_head_to_vertex[column_head_vertex], Interaction(name="empty"))
+                model.add_interaction(interface_cutter_element, column_head_to_vertex[column_head_vertex], Interaction(name="cut"))
                 model.add_interaction(column_head_to_vertex[column_head_vertex], column_to_edge[edge], interaction=Interaction(name="empty"))
 
                 # model.add_interaction(
                 #     column_head_to_vertex[column_head_vertex],
                 #     column_to_edge[edge],
-                #     interaction=CutterInterface(polygon=column_head_to_vertex[column_head_vertex].geometry.face_polygon(0), name="column_head_column_to_column"),
+                #     interaction=CutterInterface(polygon=column_head_to_vertex[column_head_vertex].shape.face_polygon(0), name="column_head_column_to_column"),
                 # )
 
             if column_base_vertex in column_head_to_vertex:
@@ -285,14 +276,14 @@ class GridModel(Model):
                 orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), column_head_to_vertex[column_base_vertex].geometry.face_polygon(1).frame)
                 interface_cutter_element.transformation = orientation
 
-                model.add_element(element=interface_cutter_element, parent=interfaces)
+                model.add_element(element=interface_cutter_element)
                 model.add_interaction(interface_cutter_element, column_to_edge[edge], Interaction(name="cut"))
-                model.add_interaction(interface_cutter_element, column_head_to_vertex[column_base_vertex], Interaction(name="empty"))
+                model.add_interaction(interface_cutter_element, column_head_to_vertex[column_base_vertex], Interaction(name="cut"))
                 model.add_interaction(column_head_to_vertex[column_base_vertex], column_to_edge[edge], interaction=Interaction(name="empty"))
                 # model.add_interaction(
                 #     column_head_to_vertex[column_base_vertex],
                 #     column_to_edge[edge],
-                #     interaction=CutterInterface(polygon=column_head_to_vertex[column_base_vertex].geometry.face_polygon(1), name="column_head_column_to_column"),
+                #     interaction=CutterInterface(polygon=column_head_to_vertex[column_base_vertex].shape.face_polygon(1), name="column_head_column_to_column"),
                 # )
 
         def add_interaction_beam_and_column_head(edge):
@@ -301,15 +292,16 @@ class GridModel(Model):
             if edge[0] in column_head_to_vertex:
                 column_head_element = column_head_to_vertex[edge[0]]
                 direction: CardinalDirections = CrossBlockShape.closest_direction(cell_network.vertex_point(edge[1]) - cell_network.vertex_point(edge[0]))
-                polygon: Polygon = column_head_element.geometry.face_polygon(list(column_head_element.geometry.faces_where(conditions={"direction": direction}))[0])
+                polygon: Polygon = column_head_element.shape.face_polygon(list(column_head_element.shape.faces_where(conditions={"direction": direction}))[0])
 
                 interface_cutter_element: InterfaceCutterElement = InterfaceCutterElement(500)
-                orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), polygon.frame)
+                polygon_frame: Frame = Frame(polygon.centroid, polygon[1] - polygon[0], polygon[2] - polygon[1])
+                orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), polygon_frame)
                 interface_cutter_element.transformation = orientation
 
-                model.add_element(element=interface_cutter_element, parent=interfaces)
+                model.add_element(element=interface_cutter_element)
                 model.add_interaction(interface_cutter_element, column_head_element, Interaction(name="cut"))
-                model.add_interaction(interface_cutter_element, beam_element, Interaction(name="empty"))
+                model.add_interaction(interface_cutter_element, beam_element, Interaction(name="cut"))
                 model.add_interaction(column_head_element, beam_element, interaction=Interaction(name="column_head_and_beam"))
 
                 # model.add_interaction(
@@ -321,15 +313,16 @@ class GridModel(Model):
             if edge[1] in column_head_to_vertex:
                 column_head_element = column_head_to_vertex[edge[1]]
                 direction: CardinalDirections = CrossBlockShape.closest_direction(cell_network.vertex_point(edge[0]) - cell_network.vertex_point(edge[1]))
-                polygon: Polygon = column_head_element.geometry.face_polygon(list(column_head_element.geometry.faces_where(conditions={"direction": direction}))[0])
+                polygon: Polygon = column_head_element.shape.face_polygon(list(column_head_element.shape.faces_where(conditions={"direction": direction}))[0])
 
                 interface_cutter_element: InterfaceCutterElement = InterfaceCutterElement(500)
-                orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), polygon.frame)
+                polygon_frame: Frame = Frame(polygon.centroid, polygon[1] - polygon[0], polygon[2] - polygon[1])
+                orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), polygon_frame)
                 interface_cutter_element.transformation = orientation
 
-                model.add_element(element=interface_cutter_element, parent=interfaces)
+                model.add_element(element=interface_cutter_element)
                 model.add_interaction(interface_cutter_element, column_head_element, Interaction(name="cut"))
-                model.add_interaction(interface_cutter_element, beam_element, Interaction(name="empty"))
+                model.add_interaction(interface_cutter_element, beam_element, Interaction(name="cut"))
                 model.add_interaction(column_head_element, beam_element, interaction=Interaction(name="empty"))
 
                 # model.add_interaction(
@@ -354,15 +347,15 @@ class GridModel(Model):
                 direction0: CardinalDirections = CrossBlockShape.closest_direction(cell_network.vertex_point(v0_prev) - cell_network.vertex_point(v0))
                 direction1: CardinalDirections = CrossBlockShape.closest_direction(cell_network.vertex_point(v0_next) - cell_network.vertex_point(v0))
                 direction_angled: CardinalDirections = CardinalDirections.get_direction_combination(direction0, direction1)
-                polygon: Polygon = column_head_element.geometry.face_polygon(list(column_head_element.geometry.faces_where(conditions={"direction": direction_angled}))[0])
+                polygon: Polygon = column_head_element.shape.face_polygon(list(column_head_element.shape.faces_where(conditions={"direction": direction_angled}))[0])
 
                 interface_cutter_element: InterfaceCutterElement = InterfaceCutterElement(500)
                 orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), polygon.frame)
                 interface_cutter_element.transformation = orientation
 
-                model.add_element(element=interface_cutter_element, parent=interfaces)
+                model.add_element(element=interface_cutter_element)
                 model.add_interaction(interface_cutter_element, column_head_element, Interaction(name="cut"))
-                model.add_interaction(interface_cutter_element, plate_element, Interaction(name="empty"))
+                model.add_interaction(interface_cutter_element, plate_element, Interaction(name="cut"))
                 model.add_interaction(
                     column_head_element,
                     plate_element,
