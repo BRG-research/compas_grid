@@ -1,10 +1,4 @@
-from typing import Any
-from typing import Dict
-from typing import List
-
 import numpy as np
-from compas_model.elements import Element
-from compas_model.elements import Feature
 from numpy.typing import NDArray
 
 from compas.datastructures import Mesh
@@ -16,21 +10,16 @@ from compas.geometry import Vector
 from compas.geometry import bounding_box
 from compas.geometry import oriented_bounding_box
 from compas.itertools import pairwise
+from compas_grid.elements import BaseElement
 
 
-class PlateFeature(Feature):
-    pass
-
-
-class PlateElement(Element):
+class PlateElement(BaseElement):
     """Class representing a block element.
 
     Parameters
     ----------
     shape : :class:`compas.datastructures.Mesh`
         The base shape of the block.
-    features : list[:class:`PlateFeature`], optional
-        Additional block features.
     is_support : bool, optional
         Flag indicating that the block is a support.
     frame : :class:`compas.geometry.Frame`, optional
@@ -42,45 +31,39 @@ class PlateElement(Element):
     ----------
     shape : :class:`compas.datastructure.Mesh`
         The base shape of the block.
-    features : list[:class:`PlateFeature`]
-        A list of additional block features.
     is_support : bool
         Flag indicating that the block is a support.
 
     """
 
     @property
-    def __data__(self) -> Dict[str, Any]:
-        data: Dict[str, Any] = super(PlateElement, self).__data__
+    def __data__(self) -> dict[str, any]:
+        data: dict[str, any] = super(PlateElement, self).__data__
         data["bottom"] = self.bottom
         data["top"] = self.top
-        data["features"] = self.features
         return data
 
     @classmethod
-    def __from_data__(cls, data: Dict[str, Any]) -> "PlateElement":
+    def __from_data__(cls, data: dict[str, any]) -> "PlateElement":
         return cls(
             bottom=data["bottom"],
             top=data["top"],
-            features=data["features"],
         )
 
-    def __init__(self, bottom: Polygon, top: Polygon, features: List[PlateFeature] = None, frame: Frame = None, name: str = None, shape: Mesh = None):
+    def __init__(self, bottom: Polygon, top: Polygon, frame: Frame = None, name: str = None, shape: Mesh = None):
         super(PlateElement, self).__init__(frame=frame, name=name)
         self.bottom: Polygon = bottom
         self.top: Polygon = top
         self.shape: Mesh = shape if shape else self.compute_shape()
-        self.features: List[Feature] = features or []  # type: list[PlateFeature]
         if not self.name:
             self.name = self.__class__.__name__
-        self.is_transformed = False
 
     @property
-    def face_polygons(self) -> List[Polygon]:
+    def face_polygons(self) -> list[Polygon]:
         return [self.geometry.face_polygon(face) for face in self.geometry.faces()]  # type: ignore
 
     def compute_shape(self) -> Mesh:
-        """Compute the shape of the plate from the given polygons and features.
+        """Compute the shape of the plate from the given polygons.
         This shape is relative to the frame of the element.
 
         Returns
@@ -89,10 +72,10 @@ class PlateElement(Element):
 
         """
         offset: int = len(self.bottom)
-        vertices: List[Point] = self.bottom.points + self.top.points  # type: ignore
-        bottom: List[int] = list(range(offset))
-        top: List[int] = [i + offset for i in bottom]
-        faces: List[List[int]] = [bottom[::-1], top]
+        vertices: list[Point] = self.bottom.points + self.top.points  # type: ignore
+        bottom: list[int] = list(range(offset))
+        top: list[int] = [i + offset for i in bottom]
+        faces: list[list[int]] = [bottom[::-1], top]
         for (a, b), (c, d) in zip(pairwise(bottom + bottom[:1]), pairwise(top + top[:1])):
             faces.append([a, b, d, c])
         mesh: Mesh = Mesh.from_vertices_and_faces(vertices, faces)
@@ -102,19 +85,8 @@ class PlateElement(Element):
     # Implementations of abstract methods
     # =============================================================================
 
-    def compute_geometry(self, include_features: bool = False) -> Mesh:
-        geometry: Mesh = self.shape
-        if include_features:
-            if self.features:
-                for feature in self.features:
-                    geometry = feature.apply(geometry)
-        if not self.is_transformed:
-            geometry.transform(self.worldtransformation)
-            self.is_transformed = True
-        return geometry
-
     def compute_aabb(self, inflate: float = 0.0) -> Box:
-        points: List[Point] = self.geometry.vertices_attributes("xyz")
+        points: list[Point] = self.geometry.vertices_attributes("xyz")
         box: Box = Box.from_bounding_box(bounding_box(points))
         box.xsize += inflate
         box.ysize += inflate
@@ -122,7 +94,7 @@ class PlateElement(Element):
         return box
 
     def compute_obb(self, inflate: float = 0.0) -> Box:
-        points: List[Point] = self.geometry.vertices_attributes("xyz")
+        points: list[Point] = self.geometry.vertices_attributes("xyz")
         box: Box = Box.from_bounding_box(oriented_bounding_box(points))
         box.xsize += inflate
         box.ysize += inflate
@@ -132,25 +104,17 @@ class PlateElement(Element):
     def compute_collision_mesh(self) -> Mesh:
         from compas.geometry import convex_hull_numpy
 
-        points: List[Point] = self.geometry.vertices_attributes("xyz")
+        points: list[Point] = self.geometry.vertices_attributes("xyz")
         faces: NDArray[np.intc] = convex_hull_numpy(points)
-        vertices: List[Point] = [points[index] for index in range(len(points))]
+        vertices: list[Point] = [points[index] for index in range(len(points))]
         return Mesh.from_vertices_and_faces(vertices, faces)
-
-    def compute_geometry_world(self):
-        """Compute the interfaces of the element in 3D world space."""
-        print(self.tree_node.tree.model.graph.neighbors(self.graph_node))
-
-    def compute_geometry_local(self):
-        """Compute the interfaces of the element in local object space."""
-        print(self.tree_node.tree.model.graph.neighbors(self.graph_node))
 
     # =============================================================================
     # Constructors
     # =============================================================================
 
     @classmethod
-    def from_polygon_and_thickness(cls, polygon: Polygon, thickness: float, features: List[Feature] = None, frame: Frame = None, name: str = None, shape=None) -> "PlateElement":
+    def from_polygon_and_thickness(cls, polygon: Polygon, thickness: float, frame: Frame = None, name: str = None, shape=None) -> "PlateElement":
         """Create a plate element from a polygon and a thickness.
 
         Parameters
@@ -159,8 +123,6 @@ class PlateElement(Element):
             The base polygon of the plate.
         thickness : float
             The total offset thickness above and blow the polygon
-        features : list[:class:`PlateFeature`], optional
-            Additional block features.
         frame : :class:`compas.geometry.Frame`, optional
             The coordinate frame of the block.
         name : str, optional
@@ -182,13 +144,11 @@ class PlateElement(Element):
         top: Polygon = polygon.copy()
         for point in top.points:
             point += up
-        plate: PlateElement = cls(bottom, top, features=features, frame=frame, name=name, shape=shape)
+        plate: PlateElement = cls(bottom, top, frame=frame, name=name, shape=shape)
         return plate
 
     @classmethod
-    def from_width_depth_thickness(
-        cls, width: float, depth: float, thickness: float, features: List[Feature] = None, frame: Frame = None, name: str = None, shape=None
-    ) -> "PlateElement":
+    def from_width_depth_thickness(cls, width: float, depth: float, thickness: float, frame: Frame = None, name: str = None, shape=None) -> "PlateElement":
         """Create a plate element from a width, depth and thickness.
 
         Parameters
@@ -199,8 +159,6 @@ class PlateElement(Element):
             The depth of the plate.
         thickness : float
             The total offset thickness above and blow the polygon
-        features : list[:class:`PlateFeature`], optional
-            Additional block features.
         frame : :class:`compas.geometry.Frame`, optional
             The coordinate frame of the block.
         name : str, optional
@@ -214,4 +172,4 @@ class PlateElement(Element):
 
         """
         polygon: Polygon = Polygon.from_rectangle(Point(0, 0, 0), width, depth)
-        return cls.from_polygon_and_thickness(polygon, thickness, features=features, frame=frame, name=name, shape=shape)
+        return cls.from_polygon_and_thickness(polygon, thickness, frame=frame, name=name, shape=shape)

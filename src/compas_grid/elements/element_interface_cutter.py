@@ -1,20 +1,16 @@
-from compas_model.elements import Element
-from compas_model.elements import Feature
-
 import compas.datastructures  # noqa: F401
 from compas.datastructures import Mesh
 from compas.geometry import Box
 from compas.geometry import Frame
+from compas.geometry import Plane
 from compas.geometry import Polygon
+from compas.geometry import Transformation
 from compas.geometry import bounding_box
 from compas.geometry import oriented_bounding_box
+from compas_grid.elements import InterfaceElement
 
 
-class InterfaceCutterFeature(Feature):
-    pass
-
-
-class InterfaceCutterElement(Element):
+class InterfaceCutterElement(InterfaceElement):
     """Class representing a phyisical interface between two other elements.
 
     Parameters
@@ -23,8 +19,6 @@ class InterfaceCutterElement(Element):
         A polygon that represents the outline of the interface.
     thickness : float
         The thickness of the interface.
-    features : list[:class:`InterfaceFeature`], optional
-        Additional interface features.
     name : str, optional
         The name of the element.
 
@@ -32,8 +26,6 @@ class InterfaceCutterElement(Element):
     ----------
     shape : :class:`compas.datastructure.Mesh`
         The base shape of the interface.
-    features : list[:class:`BlockFeature`]
-        A list of additional interface features.
 
     Notes
     -----
@@ -43,20 +35,17 @@ class InterfaceCutterElement(Element):
     """
 
     @property
-    def __data__(self):
-        # type: () -> dict
+    def __data__(self) -> dict:
         data = super(InterfaceCutterElement, self).__data__
         return data
 
-    def __init__(self, size=500, features=None, frame=None, name=None):
+    def __init__(self, size=500, frame=None, name=None) -> None:
         frame = frame or Frame.worldXY()
         super(InterfaceCutterElement, self).__init__(frame=frame, name=name)
         self.size = size
         self.shape = self.compute_shape()
-        self.features = features or []  # type: list[InterfaceCutterFeature]
 
-    def compute_shape(self):
-        # type: () -> compas.datastructures.Mesh
+    def compute_shape(self) -> Mesh:
         polygon: Polygon = Polygon.from_rectangle([-self.size * 0.5, -self.size * 0.5, 0], self.size, self.size)
         mesh = Mesh.from_polygons([polygon])
         return mesh
@@ -65,16 +54,7 @@ class InterfaceCutterElement(Element):
     # Implementations of abstract methods
     # =============================================================================
 
-    def compute_geometry(self, include_features=False):
-        geometry = self.shape
-        if include_features:
-            if self.features:
-                for feature in self.features:
-                    geometry = feature.apply(geometry)
-        geometry.transform(self.worldtransformation)
-        return geometry
-
-    def compute_aabb(self, inflate=0.0):
+    def compute_aabb(self, inflate=0.0) -> Box:
         points = self.geometry.vertices_attributes("xyz")  # type: ignore
         box = Box.from_bounding_box(bounding_box(points))
         box.xsize += inflate
@@ -82,7 +62,7 @@ class InterfaceCutterElement(Element):
         box.zsize += inflate
         return box
 
-    def compute_obb(self, inflate=0.0):
+    def compute_obb(self, inflate=0.0) -> Box:
         points = self.geometry.vertices_attributes("xyz")  # type: ignore
         box = Box.from_bounding_box(oriented_bounding_box(points))
         box.xsize += inflate
@@ -90,7 +70,7 @@ class InterfaceCutterElement(Element):
         box.zsize += inflate
         return box
 
-    def compute_collision_mesh(self):
+    def compute_collision_mesh(self) -> Mesh:
         from compas.geometry import convex_hull_numpy
 
         points = self.geometry.vertices_attributes("xyz")  # type: ignore
@@ -98,10 +78,26 @@ class InterfaceCutterElement(Element):
         vertices = [points[index] for index in vertices]  # type: ignore
         return Mesh.from_vertices_and_faces(vertices, faces)
 
-    def compute_geometry_world(self):
-        """Compute the interfaces of the element in 3D world space."""
-        print(self.tree_node.tree.model.graph.neighbors(self.graph_node))
+    def compute_interface(self, geometries: list[any], xform: Transformation) -> None:
+        """Modify the geometry of the element."""
 
-    def compute_geometry_local(self):
-        """Compute the interfaces of the element in local object space."""
-        print(self.tree_node.tree.model.graph.neighbors(self.graph_node))
+        slice_plane: Plane = Plane.from_frame(self.frame).transformed(self.compute_worldtransformation())
+        slice_plane.transform(xform)  # transform plane to the object space
+
+        split_meshes: list[any] = None
+
+        try:
+            split_meshes = geometries[0].slice(slice_plane)  # Slice meshes and take the one opposite to the plane normal.
+        except Exception:
+            print("Error in slice")
+            import compas_grid
+            from compas import json_dump
+
+            json_dump([geometries[0], slice_plane], "error.json")
+
+            compas_grid.global_property.append(slice_plane)
+            compas_grid.global_property.append(geometries[0])
+
+        if split_meshes:
+            print("overwriting", len(split_meshes))
+            geometries[0] = split_meshes[0]

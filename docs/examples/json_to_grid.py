@@ -1,13 +1,14 @@
 from compas import json_load
 from compas.datastructures import Mesh
 from compas.geometry import Line
-from compas_grid.model import GridModel
-from compas_grid import BeamElement
+from compas_grid.models.model_grid import GridModel
+from compas_grid.elements import ColumnElement, BeamElement, InterfaceElement, PlateElement
+import compas_grid
 
 #######################################################################################################
 # Geometry from Rhino.
 #######################################################################################################
-rhino_geometry: dict[str, list[any]] = json_load("data/crea/crea_4x4_ground.json")
+rhino_geometry: dict[str, list[any]] = json_load("data/crea/crea_4x4.json")
 lines: list[Line] = rhino_geometry["Model::Line::Segments"]
 surfaces: list[Mesh] = rhino_geometry["Model::Mesh::Floor"]
 
@@ -32,21 +33,23 @@ try:
     viewer_live = ViewerLive()
 
     for element in model.elements():
-        # if isinstance(element, BeamElement):
-        #     element.apply_interactions()
-        # geometry = element.geometry
+        if isinstance(element, InterfaceElement):
+            continue
+        if isinstance(element, PlateElement) or True:
+            # if isinstance(element, BeamElement):
+            #     element.apply_interactions()
+            # geometry = element.geometry
 
-        geometry = element.geometry
-        geometries = element.compute_geometry_world()
+            geometry = element.geometry
+            geometries = element.compute_interfaces(True)
 
-        if geometries:
-            for geo in geometries:
-                geo.scale(0.001)
-            # for geometry in geometries:
-            print(len(geometries))
-            viewer_live.add(geometries)
+            if geometries:
+                for geo in geometries:
+                    viewer_live.add(geo.scaled(0.001))
 
-    for geo in model.all_geo:
+            # viewer_live.add(geometry.scaled(0.001))
+
+    for geo in compas_grid.global_property:
         viewer_live.add(geo.scaled(0.001))
     #
 

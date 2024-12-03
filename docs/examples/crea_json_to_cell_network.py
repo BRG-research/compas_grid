@@ -11,7 +11,7 @@ from compas_grid.element_beam import BeamElement
 from compas_grid.element_plate import PlateElement
 from compas_grid.element_column import ColumnElement
 from compas_grid.element_column_head import ColumnHeadElement
-from compas_grid.interface_cutter import CutterInterface
+from compas_grid.elements.interface_cutter import CutterInterface
 from compas_model.models import Model
 from compas_model.elements import Element
 from compas.colors import Color
