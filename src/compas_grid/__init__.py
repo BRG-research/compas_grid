@@ -2,6 +2,9 @@ from __future__ import print_function
 
 import os
 
+from .models.model_grid import GridModel
+
+
 global_property = []
 
 
@@ -18,9 +21,4 @@ DATA = os.path.abspath(os.path.join(HOME, "data"))
 DOCS = os.path.abspath(os.path.join(HOME, "docs"))
 TEMP = os.path.abspath(os.path.join(HOME, "temp"))
 
-__all__ = [
-    "HOME",
-    "DATA",
-    "DOCS",
-    "TEMP",
-]
+__all__ = ["HOME", "DATA", "DOCS", "TEMP", "GridModel"]

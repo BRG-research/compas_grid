@@ -1,9 +1,8 @@
 from compas import json_load
 from compas.datastructures import Mesh
 from compas.geometry import Line
-from compas_grid.models.model_grid import GridModel
-from compas_grid.elements import ColumnElement, BeamElement, PlateElement
 import compas_grid
+
 
 #######################################################################################################
 # Geometry from Rhino.
@@ -17,13 +16,12 @@ surfaces: list[Mesh] = rhino_geometry["Model::Mesh::Floor"]
 # Compute geometry inetaractions.
 #######################################################################################################
 
+model = compas_grid.models.GridModel.from_lines_and_surfaces(lines, surfaces)
 
-model = GridModel.from_lines_and_surfaces(lines, surfaces)
-
-geometry_interfaced = []
 local_transform = False
+geometry_interfaced = []
 for element in model.elements():
-    geometry_interfaced.append(element.compute_interactions(local_transform=local_transform))
+    geometry_interfaced.append(element.compute_interactions(local_transform))
 
 #######################################################################################################
 # Visualize the model.
