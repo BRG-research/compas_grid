@@ -17,8 +17,8 @@ from compas.geometry import Vector
 from compas.geometry.transformation import Transformation
 from compas_grid.datastructures import CellNetwork
 from compas_grid.elements import BeamElement
-from compas_grid.elements import ColumnElement
 from compas_grid.elements import ColumnHeadElement
+from compas_grid.elements import ColumnSquareElement
 from compas_grid.elements import CutterElement
 from compas_grid.elements import PlateElement
 from compas_grid.interactions import InteractionInterfaceCutter
@@ -122,16 +122,21 @@ class GridModel(Model):
     @classmethod
     def from_lines_and_surfaces(
         cls,
-        column_and_beams: list[Line],
+        columns_and_beams: list[Line],
         floor_surfaces: list[Mesh],
         tolerance: int = 3,
+        column: ColumnSquareElement = None,
+        column_head: ColumnHeadElement = None,
+        beam: BeamElement = None,
+        plate: PlateElement = None,
+        cutter: CutterElement = None,
     ) -> "GridModel":
         """Create a grid model from a list of Line and surfaces.
         You can extend user input to include facade and core surfaces.
 
         Parameters
         ----------
-        column_and_beams : list[Line]
+        columns_and_beams : list[Line]
             List of lines representing the columns and beams.
 
         floor_surfaces : list[Mesh]
@@ -151,7 +156,7 @@ class GridModel(Model):
         #######################################################################################################
         # Convert lines and surfaces to a CellNetwork.
         #######################################################################################################
-        cell_network = CellNetwork.from_lines_and_surfaces(column_and_beams, floor_surfaces, tolerance=tolerance)
+        cell_network = CellNetwork.from_lines_and_surfaces(columns_and_beams, floor_surfaces, tolerance=tolerance)
 
         #######################################################################################################
         # Convert the CellNetwork to a GridModel.
@@ -165,7 +170,11 @@ class GridModel(Model):
         beam_to_edge: dict[Element, tuple[int, int]] = {}
         vertex_to_plates_and_faces: dict[int, list[tuple[Element, list[int]]]] = {}
 
-        width, depth, height, column_head_offset = 150, 150, 300, 210
+        #######################################################################################################
+        # Define elements that are repetetive.
+        #######################################################################################################
+
+        # width, depth, height, column_head_offset = 150, 150, 300, 210
 
         def add_column_head(edge):
             # Get the top vertex of the column head and the axis of the column.
@@ -195,10 +204,10 @@ class GridModel(Model):
                 v,
                 e,
                 f,
-                width=width,
-                depth=depth,
-                height=height,
-                offset=column_head_offset,
+                width=150,
+                depth=150,
+                height=300,
+                offset=210,
             )
 
             orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(cell_network.vertex_point(column_head_vertex)))
@@ -216,7 +225,8 @@ class GridModel(Model):
             if axis[0][2] > axis[1][2]:
                 axis = Line(axis[1], axis[0])
 
-            element_column: ColumnElement = ColumnElement.from_square_section(width=width * 2, depth=depth * 2, height=axis.length)
+            element_column: ColumnSquareElement = ColumnSquareElement(width=column.width if column else 150 * 2, depth=column.depth if column else 150 * 2, height=axis.length)
+
             # element_column.frame = Frame(axis.start, [1, 0, 0], [0, 1, 0])
             orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(axis.start, [1, 0, 0], [0, 1, 0]))
             element_column.transformation = orientation
@@ -226,7 +236,7 @@ class GridModel(Model):
 
         def add_beam(edge):
             axis: Line = cell_network.edge_line(edge)
-            element: BeamElement = BeamElement.from_square_section(width=height, depth=depth * 2, height=axis.length)
+            element: BeamElement = BeamElement.from_square_section(width=150, depth=150 * 2, height=axis.length)
             # element.frame = Frame(axis.start, [0, 0, 1], Vector.cross(axis.direction, [0, 0, 1]))
             orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(axis.start, [0, 0, 1], Vector.cross(axis.direction, [0, 0, 1])))
             element.transformation = orientation
@@ -387,7 +397,7 @@ class GridModel(Model):
             add_beam(edge)
 
         for face in cell_network_floors:
-            add_floor(face, width=3000 - width, depth=3000 - depth, thickness=200)
+            add_floor(face, width=3000 - 150, depth=3000 - 150, thickness=200)
 
         # Interactions
         for edge in cell_network_columns:
@@ -400,3 +410,6 @@ class GridModel(Model):
             add_interaction_floor_and_column_head(vertex, plates_and_faces)
 
         return model
+
+        def add_column_heads(self):
+            pass
