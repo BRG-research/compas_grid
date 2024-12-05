@@ -18,8 +18,8 @@ lines: list[Line] = rhino_geometry["Model::Line::Segments"]
 surfaces: list[Mesh] = rhino_geometry["Model::Mesh::Floor"]
 
 #######################################################################################################
-# Define element types you will be repeated apply to the model.
-# Have as much unit elements as possible for scaling.
+# First create examples with the same type.
+# Then try to see if you can pass the clas type.
 #######################################################################################################
 
 column: ColumnSquareElement = ColumnSquareElement(width=300, depth=300, height=1)  # Scaled 1D vertically
