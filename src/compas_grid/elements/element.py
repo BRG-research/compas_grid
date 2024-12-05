@@ -96,7 +96,7 @@ class BaseElement(Element):
 
         return self.shape.transformed(self.worldtransformation)
 
-    def compute_interactions(self, is_local=False) -> list[Union[compas.geometry.Shape, compas.geometry.Brep, compas.datastructures.Mesh]]:
+    def compute_interactions(self, local_transform=False) -> list[Union[compas.geometry.Shape, compas.geometry.Brep, compas.datastructures.Mesh]]:
         """
         Interactions are applied by modifying Element V1 element by Element V0
         Short exaplanation: V0 -> V1.
@@ -105,7 +105,7 @@ class BaseElement(Element):
 
         Parameters
         ----------
-        is_local : bool, default False
+        local_transform : bool, default False
             If True, the interactions are computed in the local coordinate system of the element.
             If False, the interactions are computed in the world coordinate system.
 
@@ -119,7 +119,7 @@ class BaseElement(Element):
         elements = list(self.tree_node.tree.model.elements())
         geometry_to_modify: any = self.geometry.copy()
 
-        xform: Transformation = self.compute_worldtransformation().inverse() if is_local else Transformation()
+        xform: Transformation = self.compute_worldtransformation().inverse() if local_transform else Transformation()
         geometry_to_modify.transform(xform)
 
         for neighbor in graph.neighbors(self.graph_node):

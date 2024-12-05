@@ -1,7 +1,6 @@
 from compas.datastructures import Mesh
 from compas.geometry import Plane
 from compas.geometry import Transformation
-from compas_grid import global_property
 from compas_grid.interactions import InteractionInterface
 
 
@@ -43,7 +42,7 @@ class InteractionInterfaceCutter(InteractionInterface):
 
         try:
             split_meshes = geometry_to_modify.slice(slice_plane)  # Slice meshes and take the one opposite to the plane normal.
-        except Exception as e:
+        except Exception:
             print(
                 """
                 Class: InteractionInterfaceCutter\nSlicing is not successful.

@@ -19,7 +19,7 @@ from compas_grid.datastructures import CellNetwork
 from compas_grid.elements import BeamElement
 from compas_grid.elements import ColumnElement
 from compas_grid.elements import ColumnHeadElement
-from compas_grid.elements import InterfaceCutterElement
+from compas_grid.elements import CutterElement
 from compas_grid.elements import PlateElement
 from compas_grid.interactions import InteractionInterfaceCutter
 from compas_grid.shapes import CardinalDirections
@@ -257,7 +257,7 @@ class GridModel(Model):
                 column_base_vertex = edge[1]
 
             if column_head_vertex in column_head_to_vertex:
-                interface_cutter_element: InterfaceCutterElement = InterfaceCutterElement(500)
+                interface_cutter_element: CutterElement = CutterElement(500)
                 polygon = column_head_to_vertex[column_head_vertex].geometry.face_polygon(0)
                 polygon_frame: Frame = Frame(polygon.centroid, polygon[1] - polygon[0], polygon[2] - polygon[1])
                 polygon_frame = Frame(polygon_frame.point, polygon_frame.xaxis, -polygon_frame.yaxis)
@@ -276,7 +276,7 @@ class GridModel(Model):
                 # )
 
             if column_base_vertex in column_head_to_vertex:
-                interface_cutter_element: InterfaceCutterElement = InterfaceCutterElement(500)
+                interface_cutter_element: CutterElement = CutterElement(500)
 
                 polygon = column_head_to_vertex[column_base_vertex].geometry.face_polygon(1)
                 polygon_frame: Frame = Frame(polygon.centroid, polygon[1] - polygon[0], polygon[2] - polygon[1])
@@ -302,7 +302,7 @@ class GridModel(Model):
                 direction: CardinalDirections = CrossBlockShape.closest_direction(cell_network.vertex_point(edge[1]) - cell_network.vertex_point(edge[0]))
                 polygon: Polygon = column_head_element.geometry.face_polygon(list(column_head_element.geometry.faces_where(conditions={"direction": direction}))[0])
 
-                interface_cutter_element: InterfaceCutterElement = InterfaceCutterElement(500)
+                interface_cutter_element: CutterElement = CutterElement(500)
                 polygon_frame: Frame = Frame(polygon.centroid, polygon[1] - polygon[0], polygon[2] - polygon[1])
                 orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), polygon_frame)
                 interface_cutter_element.transformation = orientation
@@ -323,7 +323,7 @@ class GridModel(Model):
                 direction: CardinalDirections = CrossBlockShape.closest_direction(cell_network.vertex_point(edge[0]) - cell_network.vertex_point(edge[1]))
                 polygon: Polygon = column_head_element.geometry.face_polygon(list(column_head_element.geometry.faces_where(conditions={"direction": direction}))[0])
 
-                interface_cutter_element: InterfaceCutterElement = InterfaceCutterElement(500)
+                interface_cutter_element: CutterElement = CutterElement(500)
                 polygon_frame: Frame = Frame(polygon.centroid, polygon[1] - polygon[0], polygon[2] - polygon[1])
                 orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), polygon_frame)
                 interface_cutter_element.transformation = orientation
@@ -357,7 +357,7 @@ class GridModel(Model):
                 direction_angled: CardinalDirections = CardinalDirections.get_direction_combination(direction0, direction1)
                 polygon: Polygon = column_head_element.geometry.face_polygon(list(column_head_element.geometry.faces_where(conditions={"direction": direction_angled}))[0])
 
-                interface_cutter_element: InterfaceCutterElement = InterfaceCutterElement(500)
+                interface_cutter_element: CutterElement = CutterElement(500)
                 orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), polygon.frame)
                 interface_cutter_element.transformation = orientation
 

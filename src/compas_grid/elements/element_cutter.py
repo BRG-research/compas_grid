@@ -4,10 +4,10 @@ from compas.geometry import Box
 from compas.geometry import Frame
 from compas.geometry import bounding_box
 from compas.geometry import oriented_bounding_box
-from compas_grid.elements import InterfaceElement
+from compas_grid.elements import BaseElement
 
 
-class InterfaceCutterElement(InterfaceElement):
+class CutterElement(BaseElement):
     """Class representing a phyisical interface between two other elements.
 
     Parameters
@@ -33,12 +33,12 @@ class InterfaceCutterElement(InterfaceElement):
 
     @property
     def __data__(self) -> dict:
-        data = super(InterfaceCutterElement, self).__data__
+        data = super(CutterElement, self).__data__
         return data
 
     def __init__(self, size=500, frame=None, name=None) -> None:
         frame = frame or Frame.worldXY()
-        super(InterfaceCutterElement, self).__init__(frame=frame, name=name)
+        super(CutterElement, self).__init__(frame=frame, name=name)
         self.size = size
         self.shape = self.compute_shape()
 

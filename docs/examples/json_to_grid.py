@@ -20,9 +20,10 @@ surfaces: list[Mesh] = rhino_geometry["Model::Mesh::Floor"]
 
 model = GridModel.from_lines_and_surfaces(lines, surfaces)
 
-geometry_with_interactions = []
+geometry_interfaced = []
+local_transform = False
 for element in model.elements():
-    geometry_with_interactions.append(element.compute_interactions(is_local=False))
+    geometry_interfaced.append(element.compute_interactions(local_transform=local_transform))
 
 #######################################################################################################
 # Visualize the model.
@@ -33,7 +34,7 @@ try:
     viewer_live = ViewerLive()
     viewer_live.clear()
 
-    for geometry in geometry_with_interactions:
+    for geometry in geometry_interfaced:
         viewer_live.add(geometry.scaled(0.001))
 
     for geo in compas_grid.global_property:
