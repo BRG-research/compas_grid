@@ -21,7 +21,7 @@ from compas_grid.elements import ColumnElement
 from compas_grid.elements import ColumnHeadElement
 from compas_grid.elements import InterfaceCutterElement
 from compas_grid.elements import PlateElement
-from compas_grid.interactions import InteractionInterface
+from compas_grid.interactions import InteractionInterfaceCutter
 from compas_grid.shapes import CardinalDirections
 from compas_grid.shapes import CrossBlockShape
 
@@ -265,7 +265,7 @@ class GridModel(Model):
                 interface_cutter_element.transformation = orientation
 
                 model.add_element(element=interface_cutter_element)
-                model.add_interaction(interface_cutter_element, column_to_edge[edge], InteractionInterface())
+                model.add_interaction(interface_cutter_element, column_to_edge[edge], InteractionInterfaceCutter())
                 # model.add_interaction(interface_cutter_element, column_head_to_vertex[column_head_vertex], InteractionInterface())
                 model.add_interaction(column_head_to_vertex[column_head_vertex], column_to_edge[edge], interaction=Interaction())
 
@@ -285,7 +285,7 @@ class GridModel(Model):
                 interface_cutter_element.transformation = orientation
 
                 model.add_element(element=interface_cutter_element)
-                model.add_interaction(interface_cutter_element, column_to_edge[edge], InteractionInterface())
+                model.add_interaction(interface_cutter_element, column_to_edge[edge], InteractionInterfaceCutter())
                 # model.add_interaction(interface_cutter_element, column_head_to_vertex[column_base_vertex], InteractionInterface())
                 model.add_interaction(column_head_to_vertex[column_base_vertex], column_to_edge[edge], interaction=Interaction())
                 # model.add_interaction(
@@ -309,7 +309,7 @@ class GridModel(Model):
 
                 model.add_element(element=interface_cutter_element)
                 # model.add_interaction(interface_cutter_element, column_head_element, InteractionInterface())
-                model.add_interaction(interface_cutter_element, beam_element, InteractionInterface())
+                model.add_interaction(interface_cutter_element, beam_element, InteractionInterfaceCutter())
                 model.add_interaction(column_head_element, beam_element, interaction=Interaction())
 
                 # model.add_interaction(
@@ -330,7 +330,7 @@ class GridModel(Model):
 
                 model.add_element(element=interface_cutter_element)
                 # model.add_interaction(interface_cutter_element, column_head_element, InteractionInterface())
-                model.add_interaction(interface_cutter_element, beam_element, InteractionInterface())
+                model.add_interaction(interface_cutter_element, beam_element, InteractionInterfaceCutter())
                 model.add_interaction(column_head_element, beam_element, interaction=Interaction())
 
                 # model.add_interaction(
@@ -363,7 +363,7 @@ class GridModel(Model):
 
                 model.add_element(element=interface_cutter_element)
                 # model.add_interaction(interface_cutter_element, column_head_element, InteractionInterface())
-                model.add_interaction(interface_cutter_element, plate_element, InteractionInterface())
+                model.add_interaction(interface_cutter_element, plate_element, InteractionInterfaceCutter())
                 model.add_interaction(
                     column_head_element,
                     plate_element,
@@ -400,8 +400,3 @@ class GridModel(Model):
             add_interaction_floor_and_column_head(vertex, plates_and_faces)
 
         return model
-
-    def add_column_head_interactions(
-        self,
-    ):
-        pass

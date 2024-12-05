@@ -80,10 +80,11 @@ class BaseElement(Element):
         self.inflate_aabb = 0.0
         self.inflate_obb = 0.0
 
-    # ==========================================================================
-    # Methods
-    # ==========================================================================
-    def compute_geometry(self) -> any:
+    @property
+    def geometry_local(self):
+        return self._geometry
+
+    def compute_geometry(self) -> Union[compas.geometry.Shape, compas.geometry.Brep, compas.datastructures.Mesh]:
         """Compute the geometry of the element.
         The geometry is transformed by the world transformation.
 
@@ -93,46 +94,49 @@ class BaseElement(Element):
             Geometry.
         """
 
-        geometry: any = self.shape
-        geometry.transform(self.worldtransformation)
-        return geometry
+        return self.shape.transformed(self.worldtransformation)
 
-    def compute_interfaces(self, is_object_frame=False) -> list[any]:
-        """Add or cut or modify the current element by the neighbor element.
-        Even though the underlying model graph in undirected, default_edge_attributes are still stored (u, v) order.
-        If the U is current element we exclude it from the modification."""
+    def compute_interactions(self, is_local=False) -> list[Union[compas.geometry.Shape, compas.geometry.Brep, compas.datastructures.Mesh]]:
+        """
+        Interactions are applied by modifying Element V1 element by Element V0
+        Short exaplanation: V0 -> V1.
+        For example elemenet of v1 is cut by the element of v0.
+
+
+        Parameters
+        ----------
+        is_local : bool, default False
+            If True, the interactions are computed in the local coordinate system of the element.
+            If False, the interactions are computed in the world coordinate system.
+
+        Returns
+        -------
+        list[:class:`compas.geometry.Shape` | :class:`compas.geometry.Brep` | :class:`compas.datastructures.Mesh`]
+            The modified geometry of the element.
+        """
 
         graph = self.tree_node.tree.model.graph
         elements = list(self.tree_node.tree.model.elements())
-        geometries: list[any] = [self.geometry.copy()]
+        geometry_to_modify: any = self.geometry.copy()
 
-        xform: Transformation = self.compute_worldtransformation().inverse() if is_object_frame else Transformation()
-        geometries[0].transform(xform)
+        xform: Transformation = self.compute_worldtransformation().inverse() if is_local else Transformation()
+        geometry_to_modify.transform(xform)
 
         for neighbor in graph.neighbors(self.graph_node):
             edge: tuple[int, int] = (self.graph_node, neighbor) if graph.has_edge((self.graph_node, neighbor)) else (neighbor, self.graph_node)
 
-            # If the U is current element we exclude it from the modification.
-            # This gives clear order of interaction application from the smallest leaf to the root.
-
-            if edge[0] == self.graph_node:
+            # Order is important! We use Graph edges as directed edges.
+            # Meaning current element always modifies the other element, and never itself.
+            # If start element is the graph start of edge we continue, because we start element must modify the other element.
+            if edge[0] == self.graph_node:  # V0 is always an interface element, while V1 is the element to be modified, otherwise continue.
                 continue
-
-            # TODO: This is a temporary solution to consider only one InterfaceElement at a time. But interface elements can have a hierarchy too.
 
             for interaction in graph.edge_interactions(edge):
                 if isinstance(interaction, compas_grid.interactions.InteractionInterface):
-                    elements[neighbor].compute_interface(geometries, xform)
+                    # elements[neighbor].compute_interaction(geometry, xform)
 
-        return geometries
+                    result = interaction.compute_interaction(elements[neighbor].geometry, geometry_to_modify, xform)
+                    if result:
+                        geometry_to_modify = result
 
-    # def compute_geometry_local(self):
-    #     """Compute the interfaces of the element in local object space."""
-
-    #     geometries: list[any] = self.compute_geometry()
-    #     xform: Transformation = self.compute_worldtransformation().inverse()
-
-    #     for geometry in geometries:
-    #         geometry.transform(xform)
-
-    #     return geometries
+        return geometry_to_modify

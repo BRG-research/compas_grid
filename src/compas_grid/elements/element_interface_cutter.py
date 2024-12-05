@@ -2,9 +2,6 @@ import compas.datastructures  # noqa: F401
 from compas.datastructures import Mesh
 from compas.geometry import Box
 from compas.geometry import Frame
-from compas.geometry import Plane
-from compas.geometry import Polygon
-from compas.geometry import Transformation
 from compas.geometry import bounding_box
 from compas.geometry import oriented_bounding_box
 from compas_grid.elements import InterfaceElement
@@ -46,9 +43,10 @@ class InterfaceCutterElement(InterfaceElement):
         self.shape = self.compute_shape()
 
     def compute_shape(self) -> Mesh:
-        polygon: Polygon = Polygon.from_rectangle([-self.size * 0.5, -self.size * 0.5, 0], self.size, self.size)
-        mesh = Mesh.from_polygons([polygon])
-        return mesh
+        return Frame.worldXY()
+        # polygon: Polygon = Polygon.from_rectangle([-self.size * 0.5, -self.size * 0.5, 0], self.size, self.size)
+        # mesh = Mesh.from_polygons([polygon])
+        # return mesh
 
     # =============================================================================
     # Implementations of abstract methods
@@ -78,26 +76,24 @@ class InterfaceCutterElement(InterfaceElement):
         vertices = [points[index] for index in vertices]  # type: ignore
         return Mesh.from_vertices_and_faces(vertices, faces)
 
-    def compute_interface(self, geometries: list[any], xform: Transformation) -> None:
-        """Modify the geometry of the element."""
+    # def compute_interaction(self, geometry: Mesh, xform: Transformation) -> None:
+    #     """Modify the geometry of the element.
+    #     Geometry is modified in-place by slicing it with the plane of the interface."""
 
-        slice_plane: Plane = Plane.from_frame(self.frame).transformed(self.compute_worldtransformation())
-        slice_plane.transform(xform)  # transform plane to the object space
+    #     # First transform the plane to the 3D space.
+    #     slice_plane: Plane = Plane.from_frame(self.frame).transformed(self.compute_worldtransformation())
+    #     slice_plane.transform(xform)  # transform plane to the object space (often WorldXY)
+    #     split_meshes: list[any] = None
 
-        split_meshes: list[any] = None
+    #     try:
+    #         split_meshes = geometry.slice(slice_plane)  # Slice meshes and take the one opposite to the plane normal.
+    #     except Exception:
+    #         # print("Error in slice")
+    #         import compas_grid
 
-        try:
-            split_meshes = geometries[0].slice(slice_plane)  # Slice meshes and take the one opposite to the plane normal.
-        except Exception:
-            print("Error in slice")
-            import compas_grid
-            from compas import json_dump
-
-            json_dump([geometries[0], slice_plane], "error.json")
-
-            compas_grid.global_property.append(slice_plane)
-            compas_grid.global_property.append(geometries[0])
-
-        if split_meshes:
-            print("overwriting", len(split_meshes))
-            geometries[0] = split_meshes[0]
+    #         compas_grid.global_property.append(slice_plane)
+    #         compas_grid.global_property.append(geometry)
+    #         # from compas import json_dump
+    #         # json_dump([geometries[0], slice_plane], "error.json")
+    #     if split_meshes:
+    #         geometry = split_meshes[0]
