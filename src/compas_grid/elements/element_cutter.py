@@ -1,3 +1,5 @@
+from compas_model.models import Model
+
 from compas.datastructures import Mesh
 from compas.geometry import Box
 from compas.geometry import Frame
@@ -103,3 +105,23 @@ class CutterElement(BaseElement):
     #         # json_dump([geometries[0], slice_plane], "error.json")
     #     if split_meshes:
     #         geometry = split_meshes[0]
+
+    @classmethod
+    def cutter_element_model(self) -> Model:
+        """Create a model from the column head cross element and screws.
+
+        Returns
+        -------
+        :class:`compas_model.models.Model`
+            The model of the column head cross element.
+        """
+
+        from compas_grid.elements import ScrewElement
+
+        cutter: CutterElement = CutterElement()
+        screw: ScrewElement = ScrewElement(radius=20, length=200)
+        model: Model = Model(name="CutterElementModel")
+        parent = model.add_element(cutter.copy())
+        model.add_element(screw.copy(), parent=parent)
+
+        return model

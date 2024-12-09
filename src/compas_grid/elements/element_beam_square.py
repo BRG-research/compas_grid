@@ -14,7 +14,7 @@ from compas.itertools import pairwise
 from compas_grid.elements import BaseElement
 
 
-class BeamElement(BaseElement):
+class BeamSquareElement(BaseElement):
     """Class representing a beam element.
 
     Parameters
@@ -51,7 +51,7 @@ class BeamElement(BaseElement):
 
     @property
     def __data__(self) -> dict[str, any]:
-        data: dict[str, any] = super(BeamElement, self).__data__
+        data: dict[str, any] = super(BeamSquareElement, self).__data__
         data["width"] = self.width
         data["depth"] = self.depth
         data["length"] = self.length
@@ -61,7 +61,7 @@ class BeamElement(BaseElement):
         return data
 
     @classmethod
-    def __from_data__(cls, data: dict[str, any]) -> "BeamElement":
+    def __from_data__(cls, data: dict[str, any]) -> "BeamSquareElement":
         return cls(
             width=data["width"],
             depth=data["depth"],
@@ -79,8 +79,8 @@ class BeamElement(BaseElement):
         frame_bottom: Plane = Frame.worldXY(),
         frame_top: Plane = None,
         name: str = "None",
-    ) -> "BeamElement":
-        super(BeamElement, self).__init__(frame=frame_bottom, name=name)
+    ) -> "BeamSquareElement":
+        super(BeamSquareElement, self).__init__(frame=frame_bottom, name=name)
 
         self.width: float = width
         self.depth: float = depth
@@ -206,7 +206,7 @@ class BeamElement(BaseElement):
     # Constructors
     # =============================================================================
 
-    def rebuild(self, length: float) -> "BeamElement":
+    def rebuild(self, length: float) -> "BeamSquareElement":
         """Rebuild the column with a new length.
 
         Parameters
@@ -219,4 +219,4 @@ class BeamElement(BaseElement):
         :class:`ColumnSquareElement`
             The new column element.
         """
-        return BeamElement(width=self.width, depth=self.depth, length=length)
+        return BeamSquareElement(width=self.width, depth=self.depth, length=length)
