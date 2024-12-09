@@ -1,4 +1,3 @@
-import compas.datastructures  # noqa: F401
 from compas.datastructures import Mesh
 from compas.geometry import Box
 from compas.geometry import Frame
@@ -12,41 +11,48 @@ class CutterElement(BaseElement):
 
     Parameters
     ----------
-    polygon : :class:`compas.geometry.Polygon`
-        A polygon that represents the outline of the interface.
-    thickness : float
-        The thickness of the interface.
+    size : float, optional
+        The size of the interface.
+    frame : :class:`compas.geometry.Frame`, optional
+        The coordinate frame of the interface.
     name : str, optional
         The name of the element.
 
     Attributes
     ----------
-    shape : :class:`compas.datastructure.Mesh`
+    shape : :class:`compas.geometry.Frame`
         The base shape of the interface.
 
     Notes
     -----
-    The shape of the interface is calculated automatically from the input polygon and thickness.
-    The frame of the element is the frame of the polygon.
+    The shape is a frame. Size can be used for visualization purposes.
 
     """
 
     @property
-    def __data__(self) -> dict:
-        data = super(CutterElement, self).__data__
+    def __data__(self) -> dict[str, any]:
+        data: dict[str, any] = super(CutterElement, self).__data__
+        data["size"] = self.size
+        data["frame"] = self.frame
+        data["name"] = self.name
         return data
+
+    @classmethod
+    def __from_data__(cls, data: dict[str, any]) -> "CutterElement":
+        return cls(
+            size=data["size"],
+            frame=data["frame"],
+            name=data["name"],
+        )
 
     def __init__(self, size=500, frame=None, name=None) -> None:
         frame = frame or Frame.worldXY()
         super(CutterElement, self).__init__(frame=frame, name=name)
-        self.size = size
+        self.size = 500
         self.shape = self.compute_shape()
 
     def compute_shape(self) -> Mesh:
         return Frame.worldXY()
-        # polygon: Polygon = Polygon.from_rectangle([-self.size * 0.5, -self.size * 0.5, 0], self.size, self.size)
-        # mesh = Mesh.from_polygons([polygon])
-        # return mesh
 
     # =============================================================================
     # Implementations of abstract methods

@@ -4,7 +4,8 @@ import os
 
 from .models.model_grid import GridModel
 
-
+# Temporary gloval property for debugging.
+debug = False
 global_property = []
 
 

@@ -54,9 +54,7 @@ class ColumnSquareElement(BaseElement):
         data["width"] = self.width
         data["depth"] = self.depth
         data["height"] = self.height
-        data["frame_bottom"] = self.frame_bottom
         data["frame_top"] = self.frame_top
-        data["name"] = self.name
 
         return data
 
@@ -66,7 +64,7 @@ class ColumnSquareElement(BaseElement):
             width=data["width"],
             depth=data["depth"],
             height=data["height"],
-            frame_bottom=data["frame_bottom"],
+            frame_bottom=data["frame"],
             frame_top=data["frame_top"],
             name=data["name"],
         )
@@ -80,29 +78,6 @@ class ColumnSquareElement(BaseElement):
         frame_top: Plane = None,
         name: str = "None",
     ) -> "ColumnSquareElement":
-        """Create a column element from a square section centered on XY frame.
-
-        Parameters
-        ----------
-        width : float, optional
-            The width of the column.
-        depth : float, optional
-            The depth of the column.
-        height : float, optional
-            The height of the column.
-        frame_bottom : :class:`compas.geometry.Plane`, optional
-            The frame of the bottom polygon.
-        frame_top : :class:`compas.geometry.Plane`, optional
-            The frame of the top polygon.
-        name : str, optional
-            The name of the element.
-
-        Returns
-        -------
-        :class:`ColumnElement`
-
-        """
-
         super(ColumnSquareElement, self).__init__(frame=frame_bottom, name=name)
 
         self.width = width
@@ -228,3 +203,18 @@ class ColumnSquareElement(BaseElement):
     # =============================================================================
     # Constructors - DO NOT MAKE ANY OVERLOAD CONSTRUCTORS - Stay Simple!
     # =============================================================================
+
+    def rebuild(self, height: float) -> "ColumnSquareElement":
+        """Rebuild the column with a new height.
+
+        Parameters
+        ----------
+        height : float
+            The new height of the column.
+
+        Returns
+        -------
+        :class:`ColumnSquareElement`
+            The new column element.
+        """
+        return ColumnSquareElement(width=self.width, depth=self.depth, height=height)

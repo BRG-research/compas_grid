@@ -140,3 +140,7 @@ class BaseElement(Element):
                         geometry_to_modify = result
 
         return geometry_to_modify
+
+    def rebuild(self, parameter: any):
+        """Rebuild the element."""
+        pass

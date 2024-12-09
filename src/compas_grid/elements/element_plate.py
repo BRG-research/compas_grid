@@ -18,14 +18,16 @@ class PlateElement(BaseElement):
 
     Parameters
     ----------
-    shape : :class:`compas.datastructures.Mesh`
-        The base shape of the block.
-    is_support : bool, optional
-        Flag indicating that the block is a support.
+    polygon : :class:`compas.geometry.Polygon`
+        The base polygon of the plate.
+    thickness : float
+        The total offset thickness above and blow the polygon
     frame : :class:`compas.geometry.Frame`, optional
         The coordinate frame of the block.
     name : str, optional
         The name of the element.
+    shape : :class:`compas.datastructures.Mesh`, optional
+        The base shape of the element.
 
     Attributes
     ----------
@@ -39,24 +41,41 @@ class PlateElement(BaseElement):
     @property
     def __data__(self) -> dict[str, any]:
         data: dict[str, any] = super(PlateElement, self).__data__
-        data["bottom"] = self.bottom
-        data["top"] = self.top
+        data["polygon"] = self.polygon
+        data["thickness"] = self.thickness
+        data["frame"] = self.frame
+        data["name"] = self.name
+        data["shape"] = self.shape
         return data
 
     @classmethod
     def __from_data__(cls, data: dict[str, any]) -> "PlateElement":
-        return cls(
-            bottom=data["bottom"],
-            top=data["top"],
-        )
+        return cls(polygon=data["polygon"], thickness=data["thickness"], frame=data["frame"], name=data["name"], shape=data["shape"])
 
-    def __init__(self, bottom: Polygon, top: Polygon, frame: Frame = None, name: str = None, shape: Mesh = None):
+    def __init__(self, polygon: Polygon, thickness: float, frame: Frame = None, name: str = None, shape=None) -> "PlateElement":
         super(PlateElement, self).__init__(frame=frame, name=name)
-        self.bottom: Polygon = bottom
-        self.top: Polygon = top
+        self.polygon: Polygon = polygon
+        self.thickness: float = thickness
+        normal: Vector = polygon.normal
+        down: Vector = normal * (0.0 * thickness)
+        up: Vector = normal * (-1.0 * thickness)
+        self.bottom: Polygon = polygon.copy()
+        for point in self.bottom.points:
+            point += down
+        self.top: Polygon = polygon.copy()
+        for point in self.top.points:
+            point += up
         self.shape: Mesh = shape if shape else self.compute_shape()
         if not self.name:
             self.name = self.__class__.__name__
+
+    # def __init__(self, bottom: Polygon, top: Polygon, frame: Frame = None, name: str = None, shape: Mesh = None):
+    #     super(PlateElement, self).__init__(frame=frame, name=name)
+    #     self.bottom: Polygon = bottom
+    #     self.top: Polygon = top
+    #     self.shape: Mesh = shape if shape else self.compute_shape()
+    #     if not self.name:
+    #         self.name = self.__class__.__name__
 
     @property
     def face_polygons(self) -> list[Polygon]:
@@ -113,63 +132,5 @@ class PlateElement(BaseElement):
     # Constructors
     # =============================================================================
 
-    @classmethod
-    def from_polygon_and_thickness(cls, polygon: Polygon, thickness: float, frame: Frame = None, name: str = None, shape=None) -> "PlateElement":
-        """Create a plate element from a polygon and a thickness.
-
-        Parameters
-        ----------
-        polygon : :class:`compas.geometry.Polygon`
-            The base polygon of the plate.
-        thickness : float
-            The total offset thickness above and blow the polygon
-        frame : :class:`compas.geometry.Frame`, optional
-            The coordinate frame of the block.
-        name : str, optional
-            The name of the element.
-        shape : :class:`compas.datastructures.Mesh`, optional
-            The base shape of the element.
-
-        Returns
-        -------
-        :class:`PlateElement`
-
-        """
-        normal: Vector = polygon.normal
-        down: Vector = normal * (0.0 * thickness)
-        up: Vector = normal * (1.0 * thickness)
-        bottom: Polygon = polygon.copy()
-        for point in bottom.points:
-            point += down
-        top: Polygon = polygon.copy()
-        for point in top.points:
-            point += up
-        plate: PlateElement = cls(bottom, top, frame=frame, name=name, shape=shape)
-        return plate
-
-    @classmethod
-    def from_width_depth_thickness(cls, width: float, depth: float, thickness: float, frame: Frame = None, name: str = None, shape=None) -> "PlateElement":
-        """Create a plate element from a width, depth and thickness.
-
-        Parameters
-        ----------
-        width : float
-            The width of the plate.
-        depth : float
-            The depth of the plate.
-        thickness : float
-            The total offset thickness above and blow the polygon
-        frame : :class:`compas.geometry.Frame`, optional
-            The coordinate frame of the block.
-        name : str, optional
-            The name of the element.
-        shape : :class:`compas.datastructures.Mesh`, optional
-            The base shape of the element.
-
-        Returns
-        -------
-        :class:`PlateElement`
-
-        """
-        polygon: Polygon = Polygon.from_rectangle(Point(0, 0, 0), width, depth)
-        return cls.from_polygon_and_thickness(polygon, thickness, frame=frame, name=name, shape=shape)
+    def rebuild(self, polygon: Polygon) -> "PlateElement":
+        return self

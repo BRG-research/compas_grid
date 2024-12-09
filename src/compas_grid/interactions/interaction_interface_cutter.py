@@ -5,7 +5,17 @@ from compas_grid.interactions import InteractionInterface
 
 
 class InteractionInterfaceCutter(InteractionInterface):
-    """Class for cutting one element by a plane."""
+    """Class for cutting one element by a plane.
+
+    Notes
+    -----
+
+    Class does not have any attributes. It is used to cut the geometry of the element by a plane."""
+
+    @property
+    def __data__(self):
+        # type: () -> dict
+        return {"name": self.name}
 
     def __init__(self, name=None) -> None:
         super(InteractionInterfaceCutter, self).__init__(name=name)
@@ -34,7 +44,7 @@ class InteractionInterfaceCutter(InteractionInterface):
 
         # First transform the plane to the 3D space.
         slice_plane: Plane = Plane.from_frame(geometry_cutter)
-        slice_plane.translate([0.0, 0.0, 0.001])
+        # slice_plane.translate([0.0, 0.0, 0.001])
         slice_plane.transform(xform)  # transform plane to the object space (often WorldXY)
 
         # Perform split and capture debug information.
@@ -43,17 +53,17 @@ class InteractionInterfaceCutter(InteractionInterface):
         try:
             split_meshes = geometry_to_modify.slice(slice_plane)  # Slice meshes and take the one opposite to the plane normal.
         except Exception:
-            print(
-                """
-                Class: InteractionInterfaceCutter\nSlicing is not successful.
-                Check the transformation of <InterfaceCutterElement> or <Mesh.slice()>.
-                Data-set is added to <compas_grid.global_property> for debugging."
-                """
-            )
-
             import compas_grid
 
-            compas_grid.global_property.append(slice_plane)
-            compas_grid.global_property.append(geometry_to_modify)
+            if compas_grid.debug:
+                compas_grid.global_property.append(slice_plane)
+                compas_grid.global_property.append(geometry_to_modify)
+                print(
+                    """
+                    Class: InteractionInterfaceCutter\nSlicing is not successful.
+                    Check the transformation of <InterfaceCutterElement> or <Mesh.slice()>.
+                    Data-set is added to <compas_grid.global_property> for debugging."
+                    """
+                )
         if split_meshes:
             return split_meshes[0]

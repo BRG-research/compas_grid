@@ -2,8 +2,6 @@ from compas_model.elements import Element  # noqa: F401
 from compas_model.interactions import Interaction  # noqa: F401
 from compas_model.materials import Material  # noqa: F401
 from compas_model.models import Model  # noqa: F401
-from compas_model.models.elementnode import ElementNode
-from compas_model.models.interactiongraph import InteractionGraph
 
 import compas
 import compas.datastructures  # noqa: F401
@@ -17,7 +15,7 @@ from compas.geometry import Vector
 from compas.geometry.transformation import Transformation
 from compas_grid.datastructures import CellNetwork
 from compas_grid.elements import BeamElement
-from compas_grid.elements import ColumnHeadElement
+from compas_grid.elements import ColumnHeadCrossElement
 from compas_grid.elements import ColumnSquareElement
 from compas_grid.elements import CutterElement
 from compas_grid.elements import PlateElement
@@ -66,53 +64,6 @@ class GridModel(Model):
         }
         return data
 
-    @classmethod
-    def __from_data__(cls, data):
-        model = cls()
-        model._guid_material = {str(material.guid): material for material in data["materials"]}
-        model._guid_element = {str(element.guid): element for element in data["elements"]}
-
-        for e, m in data["element_material"].items():
-            element = model._guid_element[e]
-            material = model._guid_material[m]
-            element._material = material
-
-        def add(nodedata, parentnode):
-            # type: (dict, GroupNode) -> None
-
-            for childdata in nodedata["children"]:
-                if "element" in childdata:
-                    if "children" in childdata:
-                        raise Exception("A node containing an element cannot have children.")
-
-                    guid = childdata["element"]
-                    element = model._guid_element[guid]
-                    childnode = ElementNode(element=element)
-                    parentnode.add(childnode)
-
-                elif "children" in childdata:
-                    if "element" in childdata:
-                        raise Exception("A node containing other nodes cannot have an element.")
-
-                    parentnode.add(childnode)
-                    add(childdata, childnode)
-
-                else:
-                    raise Exception("A node without an element and without children is not supported.")
-
-        # add all children of a node's data representation
-        # in a "live" version of the node,
-        # while converting the data representations of the children to "live" nodes as well
-        # in this process, guid references to model elements are replaced by the actual elements
-        add(data["tree"]["root"], model._tree.root)  # type: ignore
-
-        # note that this overwrites the existing interaction graph
-        # during the reconstruction process,
-        # guid references to model elements are replaced by actual elements
-        model._graph = InteractionGraph.__from_data__(data["graph"], model._guid_element)
-
-        return model
-
     def __init__(self, name: str = None):
         super(GridModel, self).__init__(name=name)
         self._cell_network = None
@@ -126,7 +77,7 @@ class GridModel(Model):
         floor_surfaces: list[Mesh],
         tolerance: int = 3,
         column: ColumnSquareElement = None,
-        column_head: ColumnHeadElement = None,
+        column_head: ColumnHeadCrossElement = None,
         beam: BeamElement = None,
         plate: PlateElement = None,
         cutter: CutterElement = None,
@@ -199,16 +150,8 @@ class GridModel(Model):
                 if "is_floor" in cell_network.face_attributes(floor):
                     f.append(cell_network.face_vertices(floor))  # This would fail when faces would include vertical walls.
 
-            # Create column head and it to the model.
-            element_column_head: ColumnHeadElement = ColumnHeadElement.from_column_head_cross_shape(
-                v,
-                e,
-                f,
-                width=150,
-                depth=150,
-                height=300,
-                offset=210,
-            )
+            # Create column head and add it to the model.
+            element_column_head: ColumnHeadCrossElement = column_head.rebuild(v, e, f)
 
             orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(cell_network.vertex_point(column_head_vertex)))
             # element_column_head.frame = Frame(cell_network.vertex_point(column_head_vertex), [1, 0, 0], [0, 1, 0])
@@ -225,7 +168,7 @@ class GridModel(Model):
             if axis[0][2] > axis[1][2]:
                 axis = Line(axis[1], axis[0])
 
-            element_column: ColumnSquareElement = ColumnSquareElement(width=column.width if column else 150 * 2, depth=column.depth if column else 150 * 2, height=axis.length)
+            element_column: ColumnSquareElement = column.rebuild(height=axis.length)
 
             # element_column.frame = Frame(axis.start, [1, 0, 0], [0, 1, 0])
             orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(axis.start, [1, 0, 0], [0, 1, 0]))
@@ -236,7 +179,7 @@ class GridModel(Model):
 
         def add_beam(edge):
             axis: Line = cell_network.edge_line(edge)
-            element: BeamElement = BeamElement.from_square_section(width=150, depth=150 * 2, height=axis.length)
+            element: BeamElement = beam.rebuild(length=axis.length)
             # element.frame = Frame(axis.start, [0, 0, 1], Vector.cross(axis.direction, [0, 0, 1]))
             orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(axis.start, [0, 0, 1], Vector.cross(axis.direction, [0, 0, 1])))
             element.transformation = orientation
@@ -244,8 +187,9 @@ class GridModel(Model):
             beam_to_edge[edge] = element
 
         def add_floor(face, width=3000, depth=3000, thickness=200):
-            polygon: Polygon = Polygon([[-width, -depth, -thickness], [-width, depth, -thickness], [width, depth, -thickness], [width, -depth, -thickness]])
-            plate_element: PlateElement = PlateElement.from_polygon_and_thickness(polygon, thickness)
+            # polygon: Polygon = Polygon([[-width, -depth, -thickness], [-width, depth, -thickness], [width, depth, -thickness], [width, -depth, -thickness]])
+            plate_element: PlateElement = plate.copy()
+
             # plate_element.frame = Frame(cell_network.face_polygon(face).centroid, [1, 0, 0], [0, 1, 0])
             orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(cell_network.face_polygon(face).centroid, [1, 0, 0], [0, 1, 0]))
             plate_element.transformation = orientation
@@ -267,7 +211,7 @@ class GridModel(Model):
                 column_base_vertex = edge[1]
 
             if column_head_vertex in column_head_to_vertex:
-                interface_cutter_element: CutterElement = CutterElement(500)
+                interface_cutter_element: CutterElement = cutter.copy()
                 polygon = column_head_to_vertex[column_head_vertex].geometry.face_polygon(0)
                 polygon_frame: Frame = Frame(polygon.centroid, polygon[1] - polygon[0], polygon[2] - polygon[1])
                 polygon_frame = Frame(polygon_frame.point, polygon_frame.xaxis, -polygon_frame.yaxis)

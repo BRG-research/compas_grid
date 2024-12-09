@@ -19,19 +19,25 @@ class BeamElement(BaseElement):
 
     Parameters
     ----------
-    axis : :class:`compas.geometry.Line`
-        The axis of the beam.
-    section : :class:`compas.geometry.Polygon`
-        The section of the beam.
-    frame_bottom : :class:`compas.geometry.Frame`, optional
+    width : float, optional
+        The width of the beam.
+    depth : float, optional
+        The depth of the beam.
+    length : float, optional
+        The length of the beam.
+    frame_bottom : :class:`compas.geometry.Plane`, optional
         The frame of the bottom polygon.
-    frame_top : :class:`compas.geometry.Frame`, optional
+    frame_top : :class:`compas.geometry.Plane`, optional
         The frame of the top polygon.
     name : str, optional
         The name of the element.
 
     Attributes
     ----------
+    axis : :class:`compas.geometry.Line`
+        The axis of the beam.
+    section : :class:`compas.geometry.Polygon`
+        The section of the beam.
     polygon_bottom : :class:`compas.geometry.Polygon`
         The bottom polygon of the beam.
     polygon_top : :class:`compas.geometry.Polygon`
@@ -46,37 +52,50 @@ class BeamElement(BaseElement):
     @property
     def __data__(self) -> dict[str, any]:
         data: dict[str, any] = super(BeamElement, self).__data__
-        data["axis"] = self.axis.__data__
-        data["section"] = self.section
-        data["frame_bottom"] = self.frame_top
+        data["width"] = self.width
+        data["depth"] = self.depth
+        data["length"] = self.length
+        data["frame_bottom"] = self.frame
         data["frame_top"] = self.frame_top
+        data["name"] = self.name
         return data
 
     @classmethod
     def __from_data__(cls, data: dict[str, any]) -> "BeamElement":
         return cls(
-            axis=Line(data["axis"]["start"], data["axis"]["end"]),
-            section=data["section"],
+            width=data["width"],
+            depth=data["depth"],
+            length=data["length"],
             frame_bottom=data["frame"],
             frame_top=data["frame_top"],
+            name=data["name"],
         )
 
     def __init__(
         self,
-        axis: Line,
-        section: Polygon,
-        frame_bottom: Frame = Frame.worldXY(),  # if beams are inclined, the shape is cut by the inclined plane
-        frame_top: Frame = None,  # if beams are inclined, the shape is cut by the inclined plane
-        name: str = None,
-    ):
+        width: float = 0.1,
+        depth: float = 0.2,
+        length: float = 3.0,
+        frame_bottom: Plane = Frame.worldXY(),
+        frame_top: Plane = None,
+        name: str = "None",
+    ) -> "BeamElement":
         super(BeamElement, self).__init__(frame=frame_bottom, name=name)
-        self.axis: Line = axis or Line([0, 0, 0], [0, 0, 1])
-        self.section: Polygon = section
+
+        self.width: float = width
+        self.depth: float = depth
+        self.length: float = length
+
+        p3: list[float] = [-width * 1, -depth * 0.5, 0]
+        p2: list[float] = [-width * 1, depth * 0.5, 0]
+        p1: list[float] = [width * 0, depth * 0.5, 0]
+        p0: list[float] = [width * 0, -depth * 0.5, 0]
+        self.section: Polygon = Polygon([p0, p1, p2, p3]).translated([0, 0, 0.5 * length])
+        self.axis: Line = Line([0, 0, 0], [0, 0, length]).translated([0, 0, 0.5 * length])
         self.frame_top: Frame = frame_top or Frame(self.frame.point + self.axis.vector, self.frame.xaxis, self.frame.yaxis)
         self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()
         self.shape: Mesh = self.compute_shape()
         self.name = self.__class__.__name__
-        self.is_transformed = False
 
     @property
     def face_polygons(self) -> list[Polygon]:
@@ -187,48 +206,17 @@ class BeamElement(BaseElement):
     # Constructors
     # =============================================================================
 
-    @classmethod
-    def from_square_section(
-        cls,
-        width: float = 0.1,
-        depth: float = 0.2,
-        height: float = 3.0,
-        frame_bottom: Plane = Frame.worldXY(),
-        frame_top: Plane = None,
-        name: str = "None",
-    ) -> "BeamElement":
-        """Create a beam element from a square section centered on XY frame.
+    def rebuild(self, length: float) -> "BeamElement":
+        """Rebuild the column with a new length.
 
         Parameters
         ----------
-        width : float, optional
-            The width of the beam.
-        depth : float, optional
-            The depth of the beam.
-        height : float, optional
-            The height of the beam.
-        frame_bottom : :class:`compas.geometry.Plane`, optional
-            The frame of the bottom polygon.
-        frame_top : :class:`compas.geometry.Plane`, optional
-            The frame of the top polygon.
-        name : str, optional
-            The name of the element.
+        length : float
+            The new length of the column.
 
         Returns
         -------
-        :class:`BeamElement`
-
+        :class:`ColumnSquareElement`
+            The new column element.
         """
-
-        p3: list[float] = [-width * 0.5, -depth * 0.5, 0]
-        p2: list[float] = [-width * 0.5, depth * 0.5, 0]
-        p1: list[float] = [width * 0.5, depth * 0.5, 0]
-        p0: list[float] = [width * 0.5, -depth * 0.5, 0]
-        polygon: Polygon = Polygon([p0, p1, p2, p3])
-        axis: Line = Line([0, 0, 0], [0, 0, height])
-
-        polygon.translate([-width * 0.5, 0, 0])
-        axis.translate([-width * 0.5, 0, 0])
-
-        beam: BeamElement = cls(axis=axis, section=polygon, frame_bottom=frame_bottom, frame_top=frame_top, name=name)
-        return beam
+        return BeamElement(width=self.width, depth=self.depth, length=length)
