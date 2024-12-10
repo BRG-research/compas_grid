@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   Added work-in-progress example: `docs/examples/crea_json_to_cell_network.py` .
+-   Added data-structures:`datastrucuture.cell_network`, `element_beam`, `element_column_head`, `element_column`, `element_plate`, `interface_cutter`, `model`.
+-   Added shapes: `shape_column_head`
+-   Added examples: `docs\examples\json_to_grid.py`
 
 ### Changed
 

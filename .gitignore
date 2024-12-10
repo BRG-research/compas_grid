@@ -118,7 +118,7 @@ generated/
 libs/**
 !libs/PLACEHOLDER
 
-temp/**
+# temp/**
 !temp/PLACEHOLDER
 
 src/.build/**

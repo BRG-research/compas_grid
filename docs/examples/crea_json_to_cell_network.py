@@ -1,20 +1,28 @@
-from typing import Any, Tuple
-from compas import json_load
-from compas.geometry import Line, midpoint_line, Box, Frame, Polygon, Vector, Point, Polyline
-from compas.geometry import Transformation
-from compas.datastructures import Graph, CellNetwork, Mesh
-from compas.tolerance import TOL
-from compas_viewer import Viewer
-from compas_viewer.scene import ViewerSceneObject
 from collections import OrderedDict
+from typing import Any
+from typing import Tuple
+
+from compas_model.elements import Element
+from compas_model.models import Model
+from compas_viewer import Viewer
+
+from compas import json_load
+from compas.datastructures import CellNetwork
+from compas.datastructures import Graph
+from compas.datastructures import Mesh
+from compas.geometry import Frame
+from compas.geometry import Line
+from compas.geometry import Point
+from compas.geometry import Polygon
+from compas.geometry import Polyline
+from compas.geometry import Vector
+from compas.geometry import midpoint_line
+from compas.tolerance import TOL
 from compas_grid.element_beam import BeamElement
-from compas_grid.element_plate import PlateElement
 from compas_grid.element_column import ColumnElement
 from compas_grid.element_column_head import ColumnHeadElement
-from compas_grid.interface_cutter import CutterInterface
-from compas_model.models import Model
-from compas_model.elements import Element
-from compas.colors import Color
+from compas_grid.element_plate import PlateElement
+from compas_grid.elements.interface_cutter import CutterInterface
 
 # Classes as Datastructures,
 # CellNetwork - from from_mesh, from_graph, from_lines

@@ -2,10 +2,7 @@ from compas.datastructures import CellNetwork as BaseCellNetwork
 from compas.datastructures import Graph
 from compas.datastructures import Mesh
 from compas.geometry import Line
-from compas.geometry import Vector
-from compas.geometry import Point
 from compas.tolerance import TOL
-from compas_grid.element_column_head import ColumnHeadDirection
 
 
 class CellNetwork(BaseCellNetwork):
@@ -83,7 +80,10 @@ class CellNetwork(BaseCellNetwork):
         for u, v in graph.edges():
             xyz_u: list[float] = graph.node_attributes(u, "xyz")
             xyz_v: list[float] = graph.node_attributes(v, "xyz")
-            cell_network.edge_attribute((u, v), "is_beam" if abs(xyz_u[2] - xyz_v[2]) < 1 / max(1, tolerance) else "is_column", True)
+            if not abs(xyz_u[2] - xyz_v[2]) < 1 / max(1, tolerance):
+                cell_network.edge_attribute((u, v), "is_column", True)
+            else:
+                cell_network.edge_attribute((u, v), "is_beam", True)
 
         # Faces - Floors
         for mesh in floor_surfaces:
