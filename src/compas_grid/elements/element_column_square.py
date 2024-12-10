@@ -93,7 +93,6 @@ class ColumnSquareElement(BaseElement):
         self.frame_top: Frame = frame_top or Frame(self.frame.point + self.axis.vector, self.frame.xaxis, self.frame.yaxis)
         self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()
         self.shape: Mesh = self.compute_shape()
-        self.name = self.__class__.__name__
 
     @property
     def face_polygons(self) -> list[Polygon]:

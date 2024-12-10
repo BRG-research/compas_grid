@@ -81,6 +81,18 @@ class BaseElement(Element):
         self.inflate_obb = 0.0
 
     @property
+    def geometry_element(self):
+        pass
+
+    @property
+    def geometry_model(self):
+        pass
+
+    @property
+    def geometry_world(self):
+        pass
+
+    @property
     def geometry_local(self):
         return self._geometry
 

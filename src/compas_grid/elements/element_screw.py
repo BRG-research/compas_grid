@@ -50,7 +50,7 @@ class ScrewElement(BaseElement):
 
     @property
     def __data__(self) -> dict[str, any]:
-        data: dict[str, any] = super(ScrewElement, self).__data__
+        data: dict[str, any] = super().__data__
         data["radius"] = self.radius
         data["sides"] = self.sides
         data["length"] = self.length
@@ -78,7 +78,7 @@ class ScrewElement(BaseElement):
         frame_top: Plane = None,
         name: str = "None",
     ) -> "ScrewElement":
-        super(ScrewElement, self).__init__(frame=frame_bottom, name=name)
+        super().__init__(frame=frame_bottom, name=name)
 
         self.radius = radius
         self.sides = sides
@@ -91,7 +91,7 @@ class ScrewElement(BaseElement):
         self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()
         self.shape: Mesh = self.compute_shape()
         self.shape.translate(shift)
-        self.name = self.__class__.__name__
+        # self.line = Line(start=self.frame.point, end=self.frame.point + self.axis)
 
     @property
     def face_polygons(self) -> list[Polygon]:

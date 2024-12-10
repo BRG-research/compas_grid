@@ -85,10 +85,6 @@ class ColumnHeadCrossElement(BaseElement):
         data["offset"] = self.offset
         return data
 
-    @classmethod
-    def __from_data__(cls, data: dict[str, any]) -> "ColumnHeadCrossElement":
-        return cls(data["v"], data["e"], data["f"], data["width"], data["depth"], data["height"], data["offset"], data["name"])
-
     def __init__(
         self,
         v: dict[int, Point] = {
