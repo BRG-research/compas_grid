@@ -79,6 +79,36 @@ class BaseElement(Element):
         self._material = None
         self.inflate_aabb = 0.0
         self.inflate_obb = 0.0
+        self._is_dirty = True
+
+    @property
+    def geometry_element(self):
+        pass
+
+    @property
+    def geometry_model(self):
+        pass
+
+    @property
+    def geometry_world(self):
+        pass
+
+    @property
+    def geometry_local(self):
+        return self._geometry
+
+    @property
+    def is_dirty(self):
+        return self._is_dirty
+
+    @is_dirty.setter
+    def is_dirty(self, value):
+        self._is_dirty = value
+
+        if value:
+            elements = list(self.tree_node.tree.model.elements())
+            for neighbor in self.tree_node.tree.model.graph.neighbors(self.graph_node):
+                elements[neighbor].is_dirty = value
 
     def compute_geometry(self) -> Union[compas.geometry.Shape, compas.geometry.Brep, compas.datastructures.Mesh]:
         """Compute the geometry of the element.
