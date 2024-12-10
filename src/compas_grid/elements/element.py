@@ -79,23 +79,20 @@ class BaseElement(Element):
         self._material = None
         self.inflate_aabb = 0.0
         self.inflate_obb = 0.0
-        self._is_dirty = True
 
+        self._geometry_element: any = None  # Unchanged element geometry in local element frame.
+        self._geometry_model: any = None  # Geometry with applied interactions and transformations.
+        self._geometry_world: any = None  # Geometry in the world coordinate system.
+
+        self._is_dirty: bool = True
+
+    # ==========================================================================
+    # Geometry types: geometry of an element, model, world.
+    # ==========================================================================
     @property
     def geometry_element(self):
-        pass
-
-    @property
-    def geometry_model(self):
-        pass
-
-    @property
-    def geometry_world(self):
-        pass
-
-    @property
-    def geometry_local(self):
-        return self._geometry
+        if not self._geometry_element:
+            self._geometry_element = self.compute_geometry_element()
 
     @property
     def is_dirty(self):
@@ -110,9 +107,18 @@ class BaseElement(Element):
             for neighbor in self.tree_node.tree.model.graph.neighbors(self.graph_node):
                 elements[neighbor].is_dirty = value
 
-    def compute_geometry(self) -> Union[compas.geometry.Shape, compas.geometry.Brep, compas.datastructures.Mesh]:
-        """Compute the geometry of the element.
-        The geometry is transformed by the world transformation.
+    @property
+    def geometry_model(self):
+        if not self._geometry_model or self.is_dirty:
+            self._geometry_model = self.compute_geometry_model()
+
+    @property
+    def geometry_world(self):
+        if not self._geometry_world:
+            self._geometry_world = self.compute_geometry_world()
+
+    def compute_geometry_element(self) -> Union[compas.geometry.Shape, compas.geometry.Brep, compas.datastructures.Mesh]:
+        """Compute the geometry of the element in the local coordinate system.
 
         Returns
         -------
@@ -120,7 +126,57 @@ class BaseElement(Element):
             Geometry.
         """
 
-        return self.shape.transformed(self.worldtransformation)
+        pass
+
+    def compute_geometry_model(self) -> Union[compas.geometry.Shape, compas.geometry.Brep, compas.datastructures.Mesh]:
+        """Compute the geometry of the element in the global model coordinate system with applied interactions.
+        The model coordinate system is defined by the model frame.
+
+        Returns
+        -------
+        :class:`compas.geometry.Shape` | :class:`compas.geometry.Brep` | :class:`compas.datastructures.Mesh`
+            Geometry.
+        """
+
+        graph = self.tree_node.tree.model.graph
+        elements = list(self.tree_node.tree.model.elements())
+        geometry_to_modify: any = self.geometry.transformed(self.worldtransformation)
+
+        # xform: Transformation = self.compute_worldtransformation().inverse() if local_transform else Transformation()
+        xform: Transformation = Transformation()
+        geometry_to_modify.transform(xform)
+
+        for neighbor in graph.neighbors(self.graph_node):
+            edge: tuple[int, int] = (self.graph_node, neighbor) if graph.has_edge((self.graph_node, neighbor)) else (neighbor, self.graph_node)
+
+            # Order is important! We use Graph edges as directed edges.
+            # Meaning current element always modifies the other element, and never itself.
+            # If start element is the graph start of edge we continue, because we start element must modify the other element.
+            if edge[0] == self.graph_node:  # V0 is always an interface element, while V1 is the element to be modified, otherwise continue.
+                continue
+
+            for interaction in graph.edge_interactions(edge):
+                if isinstance(interaction, compas_grid.interactions.InteractionInterface):
+                    # elements[neighbor].compute_interaction(geometry, xform)
+
+                    result = interaction.compute_interaction(elements[neighbor].geometry, geometry_to_modify, xform)
+                    if result:
+                        geometry_to_modify = result
+
+        return geometry_to_modify
+
+    def compute_geometry_world(self) -> Union[compas.geometry.Shape, compas.geometry.Brep, compas.datastructures.Mesh]:
+        """Compute the geometry of the element in the world coordinate system.
+        We transform geometry from the model frame to WorldXY frame.
+
+        Returns
+        -------
+        :class:`compas.geometry.Shape` | :class:`compas.geometry.Brep` | :class:`compas.datastructures.Mesh`
+            Geometry.
+        """
+        geometry_world: any = self.geometry_model.copy()
+        xform: Transformation = Transformation.from_frame_to_frame(self.tree_node.tree.model.frame, compas.geometry.Frame.WorldXY())
+        return geometry_world.transformed(xform)
 
     def compute_interactions(self, local_transform=False) -> list[Union[compas.geometry.Shape, compas.geometry.Brep, compas.datastructures.Mesh]]:
         """
@@ -167,6 +223,6 @@ class BaseElement(Element):
 
         return geometry_to_modify
 
-    def rebuild(self, parameter: any):
-        """Rebuild the element."""
-        pass
+    # def rebuild(self, parameter: any):
+    #     """Rebuild the element."""
+    #     pass
