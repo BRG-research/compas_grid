@@ -80,22 +80,6 @@ class BaseElement(Element):
         self.inflate_aabb = 0.0
         self.inflate_obb = 0.0
 
-    @property
-    def geometry_element(self):
-        pass
-
-    @property
-    def geometry_model(self):
-        pass
-
-    @property
-    def geometry_world(self):
-        pass
-
-    @property
-    def geometry_local(self):
-        return self._geometry
-
     def compute_geometry(self) -> Union[compas.geometry.Shape, compas.geometry.Brep, compas.datastructures.Mesh]:
         """Compute the geometry of the element.
         The geometry is transformed by the world transformation.
