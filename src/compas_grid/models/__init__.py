@@ -1,4 +1,4 @@
-from .model_grid import GridModel
+from .gridmodel import GridModel
 
 
 __all__ = [
