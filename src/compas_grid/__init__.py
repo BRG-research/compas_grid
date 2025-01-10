@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import os
 
-from .models.model_grid import GridModel
+from .models import GridModel
 
 # Temporary gloval property for debugging.
 debug = False
