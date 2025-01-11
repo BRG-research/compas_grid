@@ -4,7 +4,7 @@ Model of simple grid structures for multi-storey buildings.
 
 ## Ubuntu Installation from Scratch
 
-- **Download Installer**: Visit [www.anaconda.com](https://www.anaconda.com/products/distribution#download-section) to download `Anaconda3-2024.10-1-Linux-x86_64.sh`, or use `wget https://repo.anaconda.com/archive/Anaconda3-2024.10-1-Linux-x86_64.sh`.
+- **Download Installer**: Visit [www.anaconda.com](https://www.anaconda.com/products/distribution#download-section) to download `Anaconda3-2024.10-1-Linux-x86_64.sh`.
 - **Run Installer**: Execute the installer with `bash Anaconda3-2024.10-1-Linux-x86_64.sh` and follow prompts.
 - **Initialize Anaconda**: Run `source ~/.bashrc` and initialize with `conda init`.
 - **Verify Installation**: Check Conda version with `conda --version`.
