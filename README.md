@@ -13,7 +13,7 @@ Model of simple grid structures for multi-storey buildings.
 - **Activate Environment**: Activate it with `conda activate model`.
 - **Install Git**: `sudo apt install git -y`
 - **Clone Model** go to you code directory ``cd '/home/petras/code', then `git clone https://github.com/blockresearchgroup/compas_model` then, `cd  compas_model` then, `pip install -e .`
-- **Clone Model** go to you code directory ``cd '..', then `git clone https://github.com/BRG-research/compas_grid` then, `cd  compas_grid` then, `pip install -e .`
+- **Clone Model** go to you code directory `cd ..`, then `git clone https://github.com/BRG-research/compas_grid` then, `cd  compas_grid` then, `pip install -e .`
 - **VS Code** open vscode set the environment with `CTRL+SHIFT+P`
 
 ## Git Branch
