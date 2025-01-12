@@ -1,14 +1,15 @@
 from pathlib import Path
 
-from compas_model.elements import BeamSquareElement
 from compas_model.elements import ColumnHeadCrossElement
-from compas_model.models import GridModel
+from compas_model.elements import PlateElement
 from compas_viewer import Viewer
 from compas_viewer.config import Config
 
 from compas import json_load
 from compas.datastructures import Mesh
 from compas.geometry import Line
+from compas.geometry import Polygon
+from compas_grid.models import GridModel
 
 # =============================================================================
 # JSON file with the geometry of the model. Datasets: frame.json, crea_4x4.json
@@ -26,17 +27,18 @@ model: GridModel = GridModel.from_lines_and_surfaces(columns_and_beams=lines, fl
 # Add Elements to CellNetwork Edge
 # =============================================================================
 edges_beams = list(model.cell_network.edges_where({"is_beam": True}))
+faces_floors = list(model.cell_network.faces_where({"is_floor": True}))
 
 column_head = ColumnHeadCrossElement(width=150, depth=150, height=300, offset=210)
-beam = BeamSquareElement(width=300, depth=300)
+plate: PlateElement = PlateElement(Polygon([[-2850, -2850, 0], [-2850, 2850, 0], [2850, 2850, 0], [2850, -2850, 0]]), 200)
 
 model.add_column_head(column_head, edges_beams[0])
-model.add_beam(beam, edges_beams[0])
+model.add_floor(plate, faces_floors[0])
 
 # =============================================================================
 # Add Interaction
 # =============================================================================
-model.compute_contact(column_head, beam)
+model.compute_contact(column_head, plate)
 
 # =============================================================================
 # Vizualize
@@ -48,6 +50,6 @@ config.camera.near = 10
 config.camera.far = 100000
 viewer = Viewer(config=config)
 viewer.scene.add(model.cell_network.lines)
-viewer.scene.add(model.cell_network.polygons)
+# viewer.scene.add(model.cell_network.polygons)
 viewer.scene.add(model.geometry)
 viewer.show()
