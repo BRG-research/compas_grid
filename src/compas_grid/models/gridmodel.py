@@ -313,6 +313,10 @@ class GridModel(Model):
         axis: Line = self.cell_network.edge_line(edge)
         if axis[0][2] > axis[1][2]:
             axis = Line(axis[1], axis[0])
+<<<<<<< HEAD
+=======
+
+>>>>>>> 81f3dd91dc97f2088dfb2b84b9b0ad3d55e81475
         column.height = axis.length
         orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(axis.start, [1, 0, 0], [0, 1, 0]))
         column.transformation = orientation
