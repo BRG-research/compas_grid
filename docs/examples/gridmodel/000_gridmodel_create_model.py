@@ -1,12 +1,12 @@
 from pathlib import Path
 
-from compas_model.models import GridModel
 from compas_viewer import Viewer
 from compas_viewer.config import Config
 
 from compas import json_load
 from compas.datastructures import Mesh
 from compas.geometry import Line
+from compas_grid.models import GridModel
 
 # =============================================================================
 # JSON file with the geometry of the model.

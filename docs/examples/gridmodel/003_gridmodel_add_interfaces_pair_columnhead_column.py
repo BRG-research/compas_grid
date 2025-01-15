@@ -2,13 +2,13 @@ from pathlib import Path
 
 from compas_model.elements import ColumnHeadCrossElement
 from compas_model.elements import ColumnSquareElement
-from compas_model.models import GridModel
 from compas_viewer import Viewer
 from compas_viewer.config import Config
 
 from compas import json_load
 from compas.datastructures import Mesh
 from compas.geometry import Line
+from compas_grid.models import GridModel
 
 # =============================================================================
 # JSON file with the geometry of the model. Datasets: frame.json, crea_4x4.json
@@ -50,5 +50,6 @@ config.camera.far = 100000
 viewer = Viewer(config=config)
 viewer.scene.add(model.cell_network.lines)
 viewer.scene.add(model.cell_network.polygons)
+print(model.geometry)
 viewer.scene.add(model.geometry)
 viewer.show()

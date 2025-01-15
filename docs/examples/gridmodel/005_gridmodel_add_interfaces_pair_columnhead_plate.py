@@ -2,7 +2,6 @@ from pathlib import Path
 
 from compas_model.elements import ColumnHeadCrossElement
 from compas_model.elements import PlateElement
-from compas_model.models import GridModel
 from compas_viewer import Viewer
 from compas_viewer.config import Config
 
@@ -10,6 +9,7 @@ from compas import json_load
 from compas.datastructures import Mesh
 from compas.geometry import Line
 from compas.geometry import Polygon
+from compas_grid.models import GridModel
 
 # =============================================================================
 # JSON file with the geometry of the model. Datasets: frame.json, crea_4x4.json

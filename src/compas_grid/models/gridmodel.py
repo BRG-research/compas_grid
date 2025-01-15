@@ -290,7 +290,7 @@ class GridModel(Model):
                 f.append(self.cell_network.face_vertices(floor))  # This would fail when faces would include vertical walls.
 
         # Create column head and add it to the model.
-        column_head.rebuild(v, e, f)
+        column_head.set_adjacency(v, e, f)
         orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(self.cell_network.vertex_point(v1)))
         column_head.transformation = orientation
         treenode: ElementNode = self.add_element(element=column_head)
@@ -313,8 +313,7 @@ class GridModel(Model):
         axis: Line = self.cell_network.edge_line(edge)
         if axis[0][2] > axis[1][2]:
             axis = Line(axis[1], axis[0])
-
-        column.rebuild(height=axis.length)
+        column.height = axis.length
         orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(axis.start, [1, 0, 0], [0, 1, 0]))
         column.transformation = orientation
 
@@ -335,7 +334,7 @@ class GridModel(Model):
             The edge where the beam is located.
         """
         axis: Line = self.cell_network.edge_line(edge)
-        beam.rebuild(length=axis.length)
+        beam.length = axis.length
         orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(axis.start, [0, 0, 1], Vector.cross(axis.direction, [0, 0, 1])))
         beam.transformation = orientation
         treenode: ElementNode = self.add_element(element=beam)
