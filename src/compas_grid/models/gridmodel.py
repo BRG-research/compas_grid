@@ -1,8 +1,4 @@
-from compas_model.elements import BeamElement  # noqa: F401
-from compas_model.elements import ColumnElement  # noqa: F401
-from compas_model.elements import ColumnHeadElement  # noqa: F401
 from compas_model.elements import Element  # noqa: F401
-from compas_model.elements import PlateElement  # noqa: F401
 from compas_model.interactions import Interaction  # noqa: F401
 from compas_model.models import ElementNode  # noqa: F401
 from compas_model.models import Model  # noqa: F401
@@ -17,6 +13,10 @@ from compas.geometry import Polygon
 from compas.geometry import Vector
 from compas.geometry.transformation import Transformation
 from compas.tolerance import TOL
+from compas_grid.elements import BeamElement  # noqa: F401
+from compas_grid.elements import ColumnElement  # noqa: F401
+from compas_grid.elements import ColumnHeadElement  # noqa: F401
+from compas_grid.elements import PlateElement  # noqa: F401
 
 
 class CellNetwork(BaseCellNetwork):

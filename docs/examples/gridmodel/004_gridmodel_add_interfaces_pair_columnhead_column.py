@@ -1,13 +1,13 @@
 from pathlib import Path
 
-from compas_model.elements import ColumnHeadCrossElement
-from compas_model.elements import ColumnSquareElement
 from compas_viewer import Viewer
 from compas_viewer.config import Config
 
 from compas import json_load
 from compas.datastructures import Mesh
 from compas.geometry import Line
+from compas_grid.elements import ColumnHeadCrossElement
+from compas_grid.elements import ColumnSquareElement
 from compas_grid.models import GridModel
 
 # =============================================================================
