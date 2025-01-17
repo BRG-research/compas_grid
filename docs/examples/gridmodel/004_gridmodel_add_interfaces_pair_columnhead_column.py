@@ -34,9 +34,9 @@ model.add_column_head(column_head, edges_columns[0])
 model.add_column(column, edges_columns[0])
 
 # =============================================================================
-# Add Interaction TODO: BooleanModifier
+# Add Modifier
 # =============================================================================
-model.compute_contact(column_head, column)
+model.add_modifier(column_head, column)
 
 # =============================================================================
 # Vizualize

@@ -4,7 +4,6 @@ from typing import Union
 
 from compas_model.elements.element import Element
 from compas_model.elements.element import Feature
-from compas_model.interactions import BooleanModifier
 
 from compas.datastructures import Mesh
 from compas.geometry import Box
@@ -24,6 +23,7 @@ from compas.itertools import pairwise
 
 if TYPE_CHECKING:
     from compas_model.elements import BlockElement
+    from compas_model.interactions.modifiers import BooleanModifier
 
 
 class BeamFeature(Feature):
@@ -199,7 +199,7 @@ class BeamElement(Element):
         brep: Brep = Brep.from_polygons(polygons)
         return brep
 
-    def compute_contact(self, target_element: Element, type: str = "") -> BooleanModifier:
+    def add_modifier(self, target_element: Element, type: str = ""):
         """Computes the contact interaction of the geometry of the elements that is used in the model's add_contact method.
 
         Returns
@@ -219,19 +219,19 @@ class BeamElement(Element):
             parent_class = parent_class.__bases__[0]
 
         parent_class_name = parent_class.__name__.lower().replace("element", "")
-        method_name = f"_compute_contact_with_{parent_class_name}"
+        method_name = f"_add_modifier_with_{parent_class_name}"
         method = getattr(self, method_name, None)
         if method is None:
             raise ValueError(f"Unsupported target element type: {type(target_element)}")
 
         return method(target_element, type)
 
-    def _compute_contact_with_beam(self, target_element: "BeamElement", type: str) -> Union["BooleanModifier", None]:
+    def _add_modifier_with_beam(self, target_element: "BeamElement", type: str) -> Union["BooleanModifier", None]:
         # Scenario:
         # A cable applies boolean difference with a block geometry.
         return BooleanModifier(self.elementgeometry.transformed(self.modeltransformation))
 
-    def _compute_contact_with_block(self, target_element: "BlockElement", type: str) -> Union["BooleanModifier", None]:
+    def _add_modifier_with_block(self, target_element: "BlockElement", type: str) -> Union["BooleanModifier", None]:
         # Scenario:
         # A beam with a profile applies boolean difference with a block geometry.
         if target_element.is_support:

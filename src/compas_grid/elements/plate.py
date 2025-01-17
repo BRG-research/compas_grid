@@ -81,6 +81,7 @@ class PlateElement(Element):
         self.top: Polygon = polygon.copy()
         for point in self.top.points:
             point += up
+        
 
     @property
     def face_polygons(self) -> list[Polygon]:

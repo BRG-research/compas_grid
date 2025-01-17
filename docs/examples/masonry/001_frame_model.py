@@ -7,6 +7,7 @@ from compas_viewer.config import Config
 
 from compas import json_load
 from compas.datastructures import Mesh
+from compas.geometry import Brep
 from compas.geometry import Frame
 from compas.geometry import Line
 from compas.geometry import Point
@@ -185,32 +186,33 @@ def from_barrel_vault(
         )
         mesh_xy: Mesh = mesh.transformed(xform)
 
-        block: BlockElement = BlockElement(shape=mesh_xy, is_support=mesh_xy.attributes["is_support"])
+        brep : Brep = Brep.from_polygons(mesh_xy.to_polygons())
+
+        block: BlockElement = BlockElement(shape=brep, is_support=mesh_xy.attributes["is_support"])
         block.transformation = xform.inverse()
         blocks.append(block)
 
     return blocks
 
 # Add blocks, by moving them by the height of the first column.
-blockmodel: list[BlockElement] = from_barrel_vault(span=6000, length=6000, thickness=250, rise=600, vou_span=5, vou_length=5)
+block_elements: list[BlockElement] = from_barrel_vault(span=6000, length=6000, thickness=250, rise=600, vou_span=5, vou_length=5)
 
-for block in blockmodel.elements():
+for block in block_elements:
     block.transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame([0, 0, lines[0].end[2]])) * block.transformation
     model.add_element(block)
 
 
 # Add Interactions
-for element in list(model.elements()):
-    if isinstance(element, BeamTProfileElement):
-        for block in blockmodel.elements():
-            if isinstance(element, BeamTProfileElement):
-                model.compute_contact(element, block)  # beam -> cuts -> block
+# for element in list(model.elements()):
+#     if isinstance(element, BeamTProfileElement):
+#         for block in block_elements:
+#             model.add_modifier(element, block)  # beam -> cuts -> block
 
-for element in list(model.elements()):
-    if isinstance(element, CableElement):
-        for beam in list(model.elements()):
-            if isinstance(beam, BeamTProfileElement):
-                model.compute_contact(element, beam)  # cable -> cuts -> beam
+# for element in list(model.elements()):
+#     if isinstance(element, CableElement):
+#         for beam in list(model.elements()):
+#             if isinstance(beam, BeamTProfileElement):
+#                 model.add_modifier(element, beam)  # cable -> cuts -> beam
 
 # =============================================================================
 # Vizualize

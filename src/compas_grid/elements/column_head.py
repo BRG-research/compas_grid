@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 from typing import Optional
 
 from compas_model.elements.element import Element
-from compas_model.interactions import ContactInterface
 
 from compas.datastructures import Mesh
 from compas.geometry import Box
@@ -16,9 +15,11 @@ from compas.geometry import bounding_box
 from compas.geometry import oriented_bounding_box
 
 if TYPE_CHECKING:
-    from compas_model.elements import BeamElement
-    from compas_model.elements import ColumnElement
-    from compas_model.elements import PlateElement
+    from compas_model.interactions.modifiers import SlicerModifier
+
+    from compas_grid.elements import BeamElement
+    from compas_grid.elements import ColumnElement
+    from compas_grid.elements import PlateElement
 
 
 class ColumnHeadElement(Element):
@@ -516,12 +517,12 @@ class ColumnHeadCrossElement(ColumnHeadElement):
         vertices = [points[index] for index in vertices]  # type: ignore
         return Mesh.from_vertices_and_faces(vertices, faces)
 
-    def compute_contact(self, target_element: Element, type: str = "") -> ContactInterface:
+    def add_modifier(self, target_element: Element, type: str = ""):
         """Computes the contact interaction of the geometry of the elements that is used in the model's add_contact method.
 
         Returns
         -------
-        :class:`compas_model.interactions.ContactInterface`
+        :class:`compas_model.interactions.SlicerModifier`
             The ContactInteraction that is applied to the neighboring element. One pair can have one or multiple variants.
         target_element : Element
             The target element to compute the contact interaction.
@@ -536,14 +537,14 @@ class ColumnHeadCrossElement(ColumnHeadElement):
             parent_class = parent_class.__bases__[0]
 
         parent_class_name = parent_class.__name__.lower().replace("element", "")
-        method_name = f"_compute_contact_with_{parent_class_name}"
+        method_name = f"_add_modifier_with_{parent_class_name}"
         method = getattr(self, method_name, None)
         if method is None:
             raise ValueError(f"Unsupported target element type: {type(target_element)}")
 
         return method(target_element, type)
 
-    def _compute_contact_with_column(self, target_element: "ColumnElement", type: str) -> "ContactInterface":
+    def _add_modifier_with_column(self, target_element: "ColumnElement", type: str):
         # Scenario:
         # Iterate Columns edges model.cell_network.edges_where({"is_column": True})
         # Check if edge vertex is in self.column_head_to_vertex
@@ -561,9 +562,9 @@ class ColumnHeadCrossElement(ColumnHeadElement):
 
         contact_frame: Frame = frame0 if column_head_is_closer_to_base else frame1
 
-        return ContactInterface(points=[], frame=contact_frame)
+        return SlicerModifier(contact_frame)
 
-    def _compute_contact_with_beam(self, target_element: "BeamElement", type: str) -> "ContactInterface":
+    def _add_modifier_with_beam(self, target_element: "BeamElement", type: str) -> "SlicerModifier":
         # Scenario:
         # Iterate Beams edges model.tcell_network.edges_where({"is_beam": True})
         # Check if the ColumnHead is on the left or right side of the beam-
@@ -580,9 +581,9 @@ class ColumnHeadCrossElement(ColumnHeadElement):
         polygon: Polygon = self.modelgeometry.face_polygon(list(self.modelgeometry.faces_where(conditions={"direction": cardinal_direction}))[0])
         contact_frame: Frame = Frame(polygon.centroid, polygon[1] - polygon[0], polygon[2] - polygon[1])
 
-        return ContactInterface(points=[], frame=contact_frame)
+        return SlicerModifier(contact_frame)
 
-    def _compute_contact_with_plate(self, target_element: "PlateElement", type: str) -> "ContactInterface":
+    def _add_modifier_with_plate(self, target_element: "PlateElement", type: str) -> "SlicerModifier":
         # Scenario:
         # Find the closest point of the plate polygon.
         # From this point take next and current point to define the CardinalDirection.
@@ -610,7 +611,7 @@ class ColumnHeadCrossElement(ColumnHeadElement):
         polygon: Polygon = self.modelgeometry.face_polygon(face_id)
         contact_frame: Frame = polygon.frame
 
-        return ContactInterface(points=[], frame=contact_frame)
+        return SlicerModifier(contact_frame)
 
     # =============================================================================
     # Constructors

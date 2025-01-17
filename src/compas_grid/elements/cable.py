@@ -4,7 +4,7 @@ from typing import Union
 
 from compas_model.elements.element import Element
 from compas_model.elements.element import Feature
-from compas_model.interactions import BooleanModifier
+
 
 from compas.datastructures import Mesh
 from compas.geometry import Box
@@ -19,6 +19,7 @@ from compas.geometry import intersection_line_plane
 from compas.geometry import oriented_bounding_box
 
 if TYPE_CHECKING:
+    from compas_model.interactions.modifiers import BooleanModifier
     from compas_model.elements import BeamElement
 
 
@@ -117,6 +118,7 @@ class CableElement(Element):
         self.section: Polygon = Polygon.from_sides_and_radius_xy(sides, radius)
         self.frame_top: Frame = frame_top or Frame(self.frame.point + self.axis.vector, self.frame.xaxis, self.frame.yaxis)
         self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()
+        
 
     @property
     def face_polygons(self) -> list[Polygon]:
@@ -266,7 +268,7 @@ class CableElement(Element):
         xform: Transformation = Translation.from_vector([0, 0, -distance])
         self.transformation = self.transformation * xform
 
-    def compute_contact(self, target_element: Element, type: str = "") -> BooleanModifier:
+    def add_modifier(self, target_element: Element, type: str = ""):
         """Computes the contact interaction of the geometry of the elements that is used in the model's add_contact method.
 
         Returns
@@ -286,14 +288,14 @@ class CableElement(Element):
             parent_class = parent_class.__bases__[0]
 
         parent_class_name = parent_class.__name__.lower().replace("element", "")
-        method_name = f"_compute_contact_with_{parent_class_name}"
+        method_name = f"_add_modifier_with_{parent_class_name}"
         method = getattr(self, method_name, None)
         if method is None:
             raise ValueError(f"Unsupported target element type: {type(target_element)}")
 
         return method(target_element, type)
 
-    def _compute_contact_with_beam(self, target_element: "BeamElement", type: str) -> Union["BooleanModifier", None]:
+    def _add_modifier_with_beam(self, target_element: "BeamElement", type: str):
         # Scenario:
         # A cable applies boolean difference with a block geometry.
         return BooleanModifier(self.elementgeometry.transformed(self.modeltransformation))
