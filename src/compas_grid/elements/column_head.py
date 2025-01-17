@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 from typing import Optional
 
 from compas_model.elements.element import Element
+from compas_model.interactions import SlicerModifier
 
 from compas.datastructures import Mesh
 from compas.geometry import Box
@@ -15,8 +16,6 @@ from compas.geometry import bounding_box
 from compas.geometry import oriented_bounding_box
 
 if TYPE_CHECKING:
-    from compas_model.interactions.modifiers import SlicerModifier
-
     from compas_grid.elements import BeamElement
     from compas_grid.elements import ColumnElement
     from compas_grid.elements import PlateElement

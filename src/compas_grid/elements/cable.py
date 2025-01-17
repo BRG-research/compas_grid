@@ -1,10 +1,8 @@
 from typing import TYPE_CHECKING
 from typing import Optional
-from typing import Union
 
 from compas_model.elements.element import Element
 from compas_model.elements.element import Feature
-
 
 from compas.datastructures import Mesh
 from compas.geometry import Box
@@ -19,8 +17,8 @@ from compas.geometry import intersection_line_plane
 from compas.geometry import oriented_bounding_box
 
 if TYPE_CHECKING:
-    from compas_model.interactions.modifiers import BooleanModifier
     from compas_model.elements import BeamElement
+    from compas_model.interactions import BooleanModifier
 
 
 class CableFeature(Feature):
@@ -118,7 +116,6 @@ class CableElement(Element):
         self.section: Polygon = Polygon.from_sides_and_radius_xy(sides, radius)
         self.frame_top: Frame = frame_top or Frame(self.frame.point + self.axis.vector, self.frame.xaxis, self.frame.yaxis)
         self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()
-        
 
     @property
     def face_polygons(self) -> list[Polygon]:

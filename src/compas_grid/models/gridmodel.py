@@ -1,5 +1,5 @@
 from compas_model.elements import Element  # noqa: F401
-from compas_model.interactions import Interaction  # noqa: F401
+from compas_model.interactions import Modifier  # noqa: F401
 from compas_model.models import ElementNode  # noqa: F401
 from compas_model.models import Model  # noqa: F401
 

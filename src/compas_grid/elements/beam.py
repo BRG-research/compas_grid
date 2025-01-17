@@ -1,9 +1,9 @@
-from typing import TYPE_CHECKING
 from typing import Optional
 from typing import Union
 
 from compas_model.elements.element import Element
 from compas_model.elements.element import Feature
+from compas_model.interactions import BooleanModifier
 
 from compas.datastructures import Mesh
 from compas.geometry import Box
@@ -20,10 +20,7 @@ from compas.geometry import intersection_line_plane
 from compas.geometry import mirror_points_line
 from compas.geometry import oriented_bounding_box
 from compas.itertools import pairwise
-
-if TYPE_CHECKING:
-    from compas_model.elements import BlockElement
-    from compas_model.interactions.modifiers import BooleanModifier
+from compas_grid.elements import BlockElement
 
 
 class BeamFeature(Feature):
