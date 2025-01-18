@@ -99,31 +99,26 @@ for i, edge in enumerate(edges_beams):
         else:
             beam.extend_two_sides(-100,-30)
 
-def ribs(polygon: Polygon, divisions: int = 12):
+def interpolate_first_line_within_polygon(polygon: Polygon, divisions: int = 12):
+    start, end = polygon[0], polygon[1]
+    angle = Vector.angle(polygon[1] - start, polygon[-1] - start)
+    rotation_angle = angle / divisions
+    
+    base_line = Line(start, end + (end - start))
+    lines = []
 
-    corner : Point = polygon[0]
-    v0 : Vector = polygon[1] - polygon[0]
-    v1 : Vector = polygon[-1] - polygon[0]
-
-    angle : float = Vector.angle(v0, v1)
-    rotation_angle : float = angle / divisions
-    geometry : Polyline = Polyline([polygon[0], polygon[1]+polygon[1]-polygon[0]])
-    geometries : list[Polygon] = []
-    for i in range(divisions+1):
-        current_angle : float = i * rotation_angle
-        rotation : Rotation = Rotation.from_axis_and_angle([0, 0, 1], current_angle, polygon[0])
-        rotated_geometry : Polygon = geometry.transformed(rotation)
+    for i in range(divisions + 1):
+        rotation = Rotation.from_axis_and_angle([0, 0, 1], i * rotation_angle, start)
+        rotated_line = base_line.transformed(rotation)
         
-        for j in range(1, len(polygon.points)-1):
-
-            segment : Line = Line(polygon[j], polygon[j+1])
-            intersection : Point = intersection_segment_segment(segment, rotated_geometry)
+        for j in range(1, len(polygon.points) - 1):
+            edge = Line(polygon[j], polygon[j + 1])
+            intersection = intersection_segment_segment(edge, rotated_line)
             if intersection[0]:
-                print(intersection)
-                rotated_geometry[-1] = Point(*intersection[0])
+                lines.append(Line(start, Point(*intersection[0])))
                 break
-        geometries.append(rotated_geometry)
-    return geometries
+
+    return lines
 
 
 
@@ -137,8 +132,22 @@ polygon : Polygon = Polygon([
 
     ])
 
+lines = interpolate_first_line_within_polygon(polygon)
 
-geometries = ribs(polygon)
+for line in lines:
+    beam: BeamArcElement = BeamArcElement(40, [300, 100], [0, line.length])
+
+    z_axis : Vector = line.direction
+    y_axis : Vector = Vector.Zaxis()
+    x_axis : Vector = Vector.cross(y_axis, z_axis)
+    print(z_axis)
+    frame : Frame = Frame(line.start, x_axis, y_axis)
+
+
+    beam.transformation = Transformation.from_frame_to_frame(Frame.worldXY(), frame)
+    grid_model.add_element(beam)
+
+
 
 plate : PlateRadialElement = PlateRadialElement(polygon, 400)
 
@@ -160,5 +169,5 @@ config.camera.far = 100000
 viewer = Viewer(config=config)
 for element in list(grid_model.elements()):
     viewer.scene.add(element.modelgeometry, hide_coplanaredges=False)
-viewer.scene.add(geometries)
+viewer.scene.add(lines)
 viewer.show()
