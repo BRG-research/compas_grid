@@ -3,6 +3,7 @@ from .block import BlockElement
 from .block import BlockGeometry
 from .plate import PlateFeature
 from .plate import PlateElement
+from .plate import PlateRadialElement
 from .column_head import ColumnHeadElement
 from .column_head import ColumnHeadCrossElement
 from .beam import BeamFeature
@@ -29,6 +30,7 @@ __all__ = [
     BlockGeometry,
     PlateFeature,
     PlateElement,
+    PlateRadialElement,
     ColumnHeadElement,
     ColumnHeadCrossElement,
     BeamFeature,
