@@ -10,6 +10,8 @@ from .beam import BeamElement
 from .beam import BeamIProfileElement
 from .beam import BeamSquareElement
 from .beam import BeamTProfileElement
+from .beam import BeamArcElement
+from .beam import BeamVProfileElement
 from .column import ColumnFeature
 from .column import ColumnElement
 from .column import ColumnRoundElement
@@ -34,6 +36,8 @@ __all__ = [
     BeamIProfileElement,
     BeamSquareElement,
     BeamTProfileElement,
+    BeamVProfileElement,
+    BeamArcElement,
     ColumnFeature,
     ColumnElement,
     ColumnRoundElement,

@@ -30,20 +30,6 @@ class BeamFeature(Feature):
 class BeamElement(Element):
     """Class representing a beam element."""
 
-    @property
-    def length(self) -> float:
-        return self._length
-
-    @length.setter
-    def length(self, length: float):
-        self._length = length
-
-        self.section = Polygon(list(self.points))
-
-        self.axis = Line([0, 0, 0], [0, 0, length])
-        self.frame_top = Frame(self.frame.point + self.axis.vector, self.frame.xaxis, self.frame.yaxis)
-        self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()
-
     def extend(self, distance: float) -> None:
         """Extend the beam.
 
@@ -54,6 +40,20 @@ class BeamElement(Element):
         """
         self.length = self.length + distance * 2
         xform: Transformation = Translation.from_vector([0, 0, -distance])
+        self.transformation = self.transformation * xform
+
+    def extend_two_sides(self, distance0: float, distance1: float) -> None:
+        """Extend the beam.
+
+        Parameters
+        ----------
+        distance0 : float
+            The distance to extend the start beam.
+        distance1 : float
+            The distance to extend the end beam.
+        """
+        self.length = self.length + distance0 + distance1
+        xform: Transformation = Translation.from_vector([0, 0, -distance0])
         self.transformation = self.transformation * xform
 
     def compute_aabb(self, inflate: float = 0.0) -> Box:
@@ -341,7 +341,7 @@ class BeamSquareElement(BeamElement):
         box: Box = Box.from_width_height_depth(self.width, self.length, self.depth)
         box.translate(
             [
-                self.width * -0.5,
+                0,
                 0,
                 self.length * 0.5,
             ]
@@ -383,6 +383,19 @@ class BeamSquareElement(BeamElement):
     #         faces.append([c, d, b, a])
     #     mesh: Mesh = Mesh.from_vertices_and_faces(vertices, faces)
     #     return mesh
+    @property
+    def length(self) -> float:
+        return self._length
+
+    @length.setter
+    def length(self, length: float):
+        self._length = length
+
+        self.section = Polygon(list(self.points))
+
+        self.axis = Line([0, 0, 0], [0, 0, length])
+        self.frame_top = Frame(self.frame.point + self.axis.vector, self.frame.xaxis, self.frame.yaxis)
+        self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()
 
 
 class BeamIProfileElement(BeamElement):
@@ -477,6 +490,20 @@ class BeamIProfileElement(BeamElement):
         self.section: Polygon = Polygon(self.points)
         self.axis: Line = Line([0, 0, 0], [0, 0, length])
         self.frame_top: Frame = frame_top or Frame(self.frame.point + self.axis.vector, self.frame.xaxis, self.frame.yaxis)
+        self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()
+
+    @property
+    def length(self) -> float:
+        return self._length
+
+    @length.setter
+    def length(self, length: float):
+        self._length = length
+
+        self.section = Polygon(list(self.points))
+
+        self.axis = Line([0, 0, 0], [0, 0, length])
+        self.frame_top = Frame(self.frame.point + self.axis.vector, self.frame.xaxis, self.frame.yaxis)
         self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()
 
     # =============================================================================
@@ -603,6 +630,266 @@ class BeamTProfileElement(BeamElement):
         self.frame_top: Frame = frame_top or Frame(self.frame.point + self.axis.vector, self.frame.xaxis, self.frame.yaxis)
         self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()
 
+    @property
+    def length(self) -> float:
+        return self._length
+
+    @length.setter
+    def length(self, length: float):
+        self._length = length
+
+        self.section = Polygon(list(self.points))
+
+        self.axis = Line([0, 0, 0], [0, 0, length])
+        self.frame_top = Frame(self.frame.point + self.axis.vector, self.frame.xaxis, self.frame.yaxis)
+        self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()
+
     # =============================================================================
     # Constructors
     # =============================================================================
+
+
+class BeamArcElement(BeamElement):
+    """Class representing a beam with varying thickness.
+
+    Parameters
+    ----------
+    width : float, optional
+        The width of the beam.
+    heights : list[float], optional
+        The height of the beam.
+    distances : list[float], optional
+        The step width on the left side of the beam.
+    name : str, optional
+        The name of the element.
+
+    Attributes
+    ----------
+    axis : :class:`compas.geometry.Line`
+        The axis of the beam.
+    transformation : :class:`compas.geometry.Transformation`
+        The transformation applied to the beam.
+    material : :class:`compas_model.Material`
+        The material of the beam.
+    """
+
+    @property
+    def __data__(self) -> dict:
+        return {
+            "width": self.width,
+            "heights": self.heights,
+            "lengths": self.lengths,
+            "is_support": self.is_support,
+            "transformation": self.transformation,
+            "features": self._features,
+            "name": self.name,
+        }
+
+    def __init__(
+        self,
+        width: float = 120,
+        heights: list[float] = [400, 400, 200, 200, 400, 400],
+        lengths: list[float] = [0, 300, 3000 - 60, 3000 + 60, 6000 - 300, 6000],
+        is_support: bool = False,
+        transformation: Optional[Transformation] = None,
+        features: Optional[list[BeamFeature]] = None,
+        name: Optional[str] = None,
+    ) -> "BeamIProfileElement":
+        super().__init__(frame=Frame.worldXY(), transformation=transformation, features=features, name=name)
+
+        self.is_support: bool = is_support
+
+        self.width: float = abs(width)
+        self.heights: float = heights
+        self.lengths: float = lengths
+
+        self.height = max(heights)
+        self.length = max(lengths)
+
+        self.points0: list[list[float]] = [[-self.width * 0.5, self.height * 0.5, min(lengths)], [-self.width * 0.5, self.height * 0.5, self.length]]
+
+        for i in range(len(heights)):
+            self.points0.append([-self.width * 0.5, self.height * 0.5 - heights[len(heights) - 1 - i], lengths[len(heights) - 1 - i]])
+
+        self.polygon_bottom: Polygon = Polygon(self.points0)
+        self.polygon_top: Polygon = self.polygon_bottom.translated([self.width, 0, 0])
+
+        self.sections = []
+
+        # Create the polygon of the T profile
+        self.section: Polygon = Polygon([[self.polygon_bottom[0], self.polygon_bottom[-1], self.polygon_top[-1], self.polygon_top[0]]])
+        self.axis: Line = Line([0, 0, 0], [0, 0, self.length])
+
+
+class BeamVProfileElement(BeamElement):
+    """Class representing a beam element with a square section.
+
+    Parameters
+    ----------
+    width0 : float
+        The width of the beam bottom.
+    width1 : float
+        The width of the beam top.
+    depth : float
+        The depth of the beam.
+    length : float
+        The length of the beam.
+    frame_bottom : :class:`compas.geometry.Frame`
+        Main frame of the beam.
+    frame_top : :class:`compas.geometry.Frame`
+        Second frame of the beam that is used to cut the second end, while the first frame is used to cut the first end.
+    transformation : Optional[:class:`compas.geometry.Transformation`]
+        Transformation applied to the beam.
+    features : Optional[list[:class:`compas_model.features.BeamFeature`]]
+        Features of the beam.
+    name : Optional[str]
+        If no name is defined, the class name is given.
+
+    Attributes
+    ----------
+    width0 : float
+        The width of the beam bottom.
+    width1 : float
+        The width of the beam top.
+    depth : float
+        The depth of the beam.
+    length : float
+        The length of the beam.
+    is_support : bool
+        Flag indicating if the beam is a support.
+    frame_bottom : :class:`compas.geometry.Frame`
+        Main frame of the beam.
+    frame_top : :class:`compas.geometry.Frame`
+        Second frame of the beam.
+    axis : :class:`compas.geometry.Line`
+        Line axis of the beam.
+    section : :class:`compas.geometry.Polygon`
+        Section polygon of the beam.
+    polygon_bottom : :class:`compas.geometry.Polygon`
+        The bottom polygon of the beam.
+    polygon_top : :class:`compas.geometry.Polygon`
+        The top polygon of the beam.
+    transformation : :class:`compas.geometry.Transformation`
+        Transformation applied to the beam.
+    features : list[:class:`compas_model.features.BeamFeature`]
+        Features of the beam.
+    name : str
+        The name of the beam.
+    """
+
+    @property
+    def __data__(self) -> dict:
+        return {
+            "width0": self.width0,
+            "width1": self.width1,
+            "depth": self.depth,
+            "length": self.length,
+            "frame_top": self.frame_top,
+            "is_support": self.is_support,
+            "frame": self.frame,
+            "transformation": self.transformation,
+            "features": self._features,
+            "name": self.name,
+        }
+
+    def __init__(
+        self,
+        width0: float = 0.1,
+        width1: float = 0.1,
+        depth: float = 0.2,
+        length: float = 3.0,
+        frame_top: Optional[Plane] = None,
+        is_support: bool = False,
+        frame: Frame = Frame.worldXY(),
+        transformation: Optional[Transformation] = None,
+        features: Optional[list[BeamFeature]] = None,
+        name: Optional[str] = None,
+    ) -> "BeamSquareElement":
+        super().__init__(frame=frame, transformation=transformation, features=features, name=name)
+
+        self.is_support: bool = is_support
+
+        self.width0: float = width0
+        self.width1: float = width1
+        self.depth: float = depth
+        self._length: float = length
+
+        self.points: list[list[float]] = [
+            [-self.width0 * 0.5, -depth * 0.5, 0],
+            [-self.width1 * 0.5, depth * 0.5, 0],
+            [self.width1 * 0.5, depth * 0.5, 0],
+            [self.width0 * 0.5, -depth * 0.5, 0],
+        ]
+
+        self.section: Polygon = Polygon(self.points)
+        self.axis: Line = Line([0, 0, 0], [0, 0, length])
+        self.frame_top: Frame = frame_top or Frame(self.frame.point + self.axis.vector, self.frame.xaxis, self.frame.yaxis)
+        self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()
+
+    # def compute_elementgeometry(self) -> Brep:
+    #     """Compute the shape of the beam from the given polygons .
+    #     This shape is relative to the frame of the element.
+
+    #     Returns
+    #     -------
+    #     :class:`compas.datastructures.Brep`
+    #     """
+    #     box: Box = Box.from_width_height_depth(self.width, self.length, self.depth)
+    #     box.translate(
+    #         [
+    #             0,
+    #             0,
+    #             self.length * 0.5,
+    #         ]
+    #     )
+    #     return Brep.from_box(box)
+
+    def compute_elementgeometry(self) -> Mesh:
+        """Compute the shape of the beam from the given polygons .
+        This shape is relative to the frame of the element.
+
+        Returns
+        -------
+        :class:`compas.datastructures.Mesh`
+
+        """
+
+        from compas.geometry import earclip_polygon
+
+        offset: int = len(self.polygon_bottom)
+        vertices: list[Point] = self.polygon_bottom.points + self.polygon_top.points  # type: ignore
+
+        triangles: list[list[int]] = earclip_polygon(Polygon(self.polygon_bottom.points))
+        top_faces: list[list[int]] = []
+        bottom_faces: list[list[int]] = []
+        for i in range(len(triangles)):
+            triangle_top: list[int] = []
+            triangle_bottom: list[int] = []
+            for j in range(3):
+                triangle_top.append(triangles[i][j] + offset)
+                triangle_bottom.append(triangles[i][j])
+            triangle_bottom.reverse()
+            top_faces.append(triangle_top)
+            bottom_faces.append(triangle_bottom)
+        faces: list[list[int]] = bottom_faces + top_faces
+
+        bottom: list[int] = list(range(offset))
+        top: list[int] = [i + offset for i in bottom]
+        for (a, b), (c, d) in zip(pairwise(bottom + bottom[:1]), pairwise(top + top[:1])):
+            faces.append([c, d, b, a])
+        mesh: Mesh = Mesh.from_vertices_and_faces(vertices, faces)
+        return mesh
+
+    @property
+    def length(self) -> float:
+        return self._length
+
+    @length.setter
+    def length(self, length: float):
+        self._length = length
+
+        self.section = Polygon(list(self.points))
+
+        self.axis = Line([0, 0, 0], [0, 0, length])
+        self.frame_top = Frame(self.frame.point + self.axis.vector, self.frame.xaxis, self.frame.yaxis)
+        self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()

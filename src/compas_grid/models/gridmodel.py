@@ -335,8 +335,8 @@ class GridModel(Model):
         """
         axis: Line = self.cell_network.edge_line(edge)
         beam.length = axis.length
-        orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(axis.start, [0, 0, 1], Vector.cross(axis.direction, [0, 0, 1])))
-        beam.transformation = orientation
+        orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(axis.start, Vector.cross(axis.direction, [0, 0, -1]), [0, 0, 1]))
+        beam.transformation = beam.transformation * orientation
         treenode: ElementNode = self.add_element(element=beam)
         self.beam_to_edge[edge] = beam
 

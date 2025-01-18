@@ -1,6 +1,7 @@
-from compas_model.elements import ColumnSquareElement
 from compas_viewer import Viewer
 from compas_viewer.config import Config
+
+from compas_grid.elements import ColumnSquareElement
 
 scale = 1
 column: ColumnSquareElement = ColumnSquareElement()
