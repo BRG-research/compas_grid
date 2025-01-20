@@ -49,7 +49,7 @@ surfaces: list[Mesh] = rhino_geometry["Model::Mesh::Floor"]
 model = Model()
 print(lines)
 print(surfaces)
-grid_model : GridModel = GridModel.from_lines_and_surfaces(lines, surfaces)
+grid_model: GridModel = GridModel.from_lines_and_surfaces(lines, surfaces)
 
 # =============================================================================
 # Add Column on a CellNetwork Edge
@@ -72,7 +72,6 @@ faces_floors = list(grid_model.cell_network.faces_where({"is_floor": True}))  # 
 #    break
 
 
-
 # Add Four Columns and Their ColumnHeads
 for edge in edges_columns:
     column_head: ColumnHeadCrossElement = ColumnHeadCrossElement(width=100, depth=100, height=400, offset=400)
@@ -83,34 +82,35 @@ for edge in edges_columns:
     grid_model.add_column(column_square, edge)
 
 # Add Four Beams
-beam_nodes : list[ElementNode] = []
+beam_nodes: list[ElementNode] = []
 for i, edge in enumerate(edges_beams):
     if i < 4:
-        beam: BeamArcElement = BeamArcElement(200, [400,400,200,200,400,400], [0, 500, 3000-60, 3000+60, 6000-500, 6000])
+        beam: BeamArcElement = BeamArcElement(200, [400, 400, 200, 200, 400, 400], [0, 500, 3000 - 60, 3000 + 60, 6000 - 500, 6000])
         beam.transformation = Translation.from_vector([0, 0, -200])
         grid_model.add_beam(beam, edge)
     else:
         beam: BeamVProfileElement = BeamVProfileElement(width0=120, width1=60, depth=200, length=lines[i].length)
-        #beam: BeamSquareElement = BeamSquareElement(width=80, depth=200, length=lines[i].length)
+        # beam: BeamSquareElement = BeamSquareElement(width=80, depth=200, length=lines[i].length)
         beam.transformation = Translation.from_vector([0, 0, -100])
         grid_model.add_beam(beam, edge)
         if i == 4:
-            beam.extend_two_sides(-100,-100)
+            beam.extend_two_sides(-100, -100)
         else:
-            beam.extend_two_sides(-100,-30)
+            beam.extend_two_sides(-100, -30)
+
 
 def interpolate_first_line_within_polygon(polygon: Polygon, divisions: int = 12):
     start, end = polygon[0], polygon[1]
     angle = Vector.angle(polygon[1] - start, polygon[-1] - start)
     rotation_angle = angle / divisions
-    
+
     base_line = Line(start, end + (end - start))
     lines = []
 
     for i in range(divisions + 1):
         rotation = Rotation.from_axis_and_angle([0, 0, 1], i * rotation_angle, start)
         rotated_line = base_line.transformed(rotation)
-        
+
         for j in range(1, len(polygon.points) - 1):
             edge = Line(polygon[j], polygon[j + 1])
             intersection = intersection_segment_segment(edge, rotated_line)
@@ -121,40 +121,36 @@ def interpolate_first_line_within_polygon(polygon: Polygon, divisions: int = 12)
     return lines
 
 
-
 # Add Slab
 width = 2870
-polygon : Polygon = Polygon([
-    [0, 0, 0],
-    [width, 0, 0],
-    [width, width, 0],
-    [0, width, 0],
-
-    ])
+polygon: Polygon = Polygon(
+    [
+        [0, 0, 0],
+        [width, 0, 0],
+        [width, width, 0],
+        [0, width, 0],
+    ]
+)
 
 lines = interpolate_first_line_within_polygon(polygon)
 
 for line in lines:
     beam: BeamArcElement = BeamArcElement(40, [300, 100], [0, line.length])
 
-    z_axis : Vector = line.direction
-    y_axis : Vector = Vector.Zaxis()
-    x_axis : Vector = Vector.cross(y_axis, z_axis)
+    z_axis: Vector = line.direction
+    y_axis: Vector = Vector.Zaxis()
+    x_axis: Vector = Vector.cross(y_axis, z_axis)
     print(z_axis)
-    frame : Frame = Frame(line.start, x_axis, y_axis)
-
+    frame: Frame = Frame(line.start, x_axis, y_axis)
 
     beam.transformation = Transformation.from_frame_to_frame(Frame.worldXY(), frame)
     grid_model.add_element(beam)
 
 
-
-plate : PlateRadialElement = PlateRadialElement(polygon, 400)
+plate: PlateRadialElement = PlateRadialElement(polygon, 400)
 
 plate.transformation = Translation.from_vector([30, 30, 3800])
 grid_model.add_element(plate)
-
-
 
 
 # =============================================================================

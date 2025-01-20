@@ -3,6 +3,7 @@ from typing import Optional
 
 from compas_model.elements.element import Element
 from compas_model.elements.element import Feature
+from compas_model.interactions import BooleanModifier
 
 from compas.datastructures import Mesh
 from compas.geometry import Box
@@ -18,7 +19,6 @@ from compas.geometry import oriented_bounding_box
 
 if TYPE_CHECKING:
     from compas_model.elements import BeamElement
-    from compas_model.interactions import BooleanModifier
 
 
 class CableFeature(Feature):

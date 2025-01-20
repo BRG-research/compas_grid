@@ -4,8 +4,6 @@ from compas_viewer import Viewer
 from compas_viewer.config import Config
 
 from compas import json_load
-from compas.datastructures import Mesh
-from compas.geometry import Line
 from compas.geometry import Polygon
 from compas_grid.elements import BeamSquareElement
 from compas_grid.elements import ColumnHeadCrossElement
@@ -16,14 +14,14 @@ from compas_grid.models import GridModel
 # =============================================================================
 # JSON file with the geometry of the model. Datasets: data/frame.json, data/crea/crea_4x4.json
 # =============================================================================
-rhino_geometry: dict[str, list[any]] = json_load(Path("data/crea/crea_4x4.json"))
-lines: list[Line] = rhino_geometry["Model::Line::Segments"]
-surfaces: list[Mesh] = rhino_geometry["Model::Mesh::Floor"]
+rhino_geometry = json_load(Path("data/crea/crea_4x4.json"))
+lines = rhino_geometry["Model::Line::Segments"]
+surfaces = rhino_geometry["Model::Mesh::Floor"]
 
 # =============================================================================
 # Model
 # =============================================================================
-model: GridModel = GridModel.from_lines_and_surfaces(columns_and_beams=lines, floor_surfaces=surfaces)
+model = GridModel.from_lines_and_surfaces(columns_and_beams=lines, floor_surfaces=surfaces)
 
 # =============================================================================
 # Add Column on a CellNetwork Edge
@@ -35,21 +33,20 @@ edges_columns = list(model.cell_network.edges_where({"is_column": True}))  # Ord
 edges_beams = list(model.cell_network.edges_where({"is_beam": True}))  # Order as in the model
 faces_floors = list(model.cell_network.faces_where({"is_floor": True}))  # Order as in the model
 
-
 for edge in edges_columns:
-    column_head: ColumnHeadCrossElement = ColumnHeadCrossElement(width=150, depth=150, height=300, offset=210)
+    column_head = ColumnHeadCrossElement(width=150, depth=150, height=300, offset=210)
     model.add_column_head(column_head, edge)
 
 for edge in edges_columns:
-    column_square: ColumnSquareElement = ColumnSquareElement(width=300, depth=300)
+    column_square = ColumnSquareElement(width=300, depth=300)
     model.add_column(column_square, edge)
 
 for edge in edges_beams:
-    beam_square: BeamSquareElement = BeamSquareElement(width=300, depth=300)
+    beam_square = BeamSquareElement(width=300, depth=300)
     model.add_beam(beam_square, edge)
 
 for face in faces_floors:
-    plate: PlateElement = PlateElement(Polygon([[-2850, -2850, 0], [-2850, 2850, 0], [2850, 2850, 0], [2850, -2850, 0]]), 200)
+    plate = PlateElement(Polygon([[-2850, -2850, 0], [-2850, 2850, 0], [2850, 2850, 0], [2850, -2850, 0]]), 200)
     model.add_floor(plate, face)
 
 # =============================================================================
@@ -68,14 +65,11 @@ for edge in edges_columns:
             model.add_interaction(model.column_head_to_vertex[edge[i]], model.column_to_edge[edge])
             model.add_modifier(model.column_head_to_vertex[edge[i]], model.column_to_edge[edge])
 
-
-
 for edge in edges_beams:
     for i in range(2):
         if edge[i] in model.column_head_to_vertex:
             model.add_interaction(model.column_head_to_vertex[edge[i]], model.beam_to_edge[edge])
             model.add_modifier(model.column_head_to_vertex[edge[i]], model.beam_to_edge[edge])
-
 
 for vertex, plates_and_faces in model.vertex_to_plates_and_faces.items():
     if vertex in model.column_head_to_vertex:
@@ -83,7 +77,7 @@ for vertex, plates_and_faces in model.vertex_to_plates_and_faces.items():
         model.add_modifier(model.column_head_to_vertex[vertex], plates_and_faces[0][0])
 
 # =============================================================================
-# Vizualize
+# Visualize
 # =============================================================================
 config = Config()
 config.camera.target = [0, 0, 100]

@@ -15,7 +15,7 @@ beam: BeamTProfileElement = BeamTProfileElement(
     length=6,
 )
 
-beam_arc : BeamArcElement = BeamArcElement()
+beam_arc: BeamArcElement = BeamArcElement()
 
 # TOL.lineardeflection = 1000
 

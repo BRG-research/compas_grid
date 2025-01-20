@@ -4,8 +4,6 @@ from compas_viewer import Viewer
 from compas_viewer.config import Config
 
 from compas import json_load
-from compas.datastructures import Mesh
-from compas.geometry import Line
 from compas_grid.elements import ColumnHeadCrossElement
 from compas_grid.elements import ColumnSquareElement
 from compas_grid.models import GridModel
@@ -13,14 +11,14 @@ from compas_grid.models import GridModel
 # =============================================================================
 # JSON file with the geometry of the model. Datasets: frame.json, crea_4x4.json
 # =============================================================================
-rhino_geometry: dict[str, list[any]] = json_load(Path("data/frame.json"))
-lines: list[Line] = rhino_geometry["Model::Line::Segments"]
-surfaces: list[Mesh] = rhino_geometry["Model::Mesh::Floor"]
+rhino_geometry = json_load(Path("data/frame.json"))
+lines = rhino_geometry["Model::Line::Segments"]
+surfaces = rhino_geometry["Model::Mesh::Floor"]
 
 # =============================================================================
 # Model
 # =============================================================================
-model: GridModel = GridModel.from_lines_and_surfaces(columns_and_beams=lines, floor_surfaces=surfaces)
+model = GridModel.from_lines_and_surfaces(columns_and_beams=lines, floor_surfaces=surfaces)
 
 # =============================================================================
 # Add Elements to CellNetwork Edge
@@ -40,9 +38,8 @@ model.add_interaction(column_head, column)
 model.add_modifier(column_head, column)
 
 # =============================================================================
-# Vizualize
+# Visualize
 # =============================================================================
-
 config = Config()
 config.camera.target = [0, 0, 100]
 config.camera.position = [10000, -10000, 10000]

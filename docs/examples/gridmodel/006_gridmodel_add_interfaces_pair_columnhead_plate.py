@@ -4,8 +4,6 @@ from compas_viewer import Viewer
 from compas_viewer.config import Config
 
 from compas import json_load
-from compas.datastructures import Mesh
-from compas.geometry import Line
 from compas.geometry import Polygon
 from compas_grid.elements import ColumnHeadCrossElement
 from compas_grid.elements import PlateElement
@@ -14,14 +12,14 @@ from compas_grid.models import GridModel
 # =============================================================================
 # JSON file with the geometry of the model. Datasets: frame.json, crea_4x4.json
 # =============================================================================
-rhino_geometry: dict[str, list[any]] = json_load(Path("data/frame.json"))
-lines: list[Line] = rhino_geometry["Model::Line::Segments"]
-surfaces: list[Mesh] = rhino_geometry["Model::Mesh::Floor"]
+rhino_geometry = json_load(Path("data/frame.json"))
+lines = rhino_geometry["Model::Line::Segments"]
+surfaces = rhino_geometry["Model::Mesh::Floor"]
 
 # =============================================================================
 # Model
 # =============================================================================
-model: GridModel = GridModel.from_lines_and_surfaces(columns_and_beams=lines, floor_surfaces=surfaces)
+model = GridModel.from_lines_and_surfaces(columns_and_beams=lines, floor_surfaces=surfaces)
 
 # =============================================================================
 # Add Elements to CellNetwork Edge
@@ -30,7 +28,7 @@ edges_beams = list(model.cell_network.edges_where({"is_beam": True}))
 faces_floors = list(model.cell_network.faces_where({"is_floor": True}))
 
 column_head = ColumnHeadCrossElement(width=150, depth=150, height=300, offset=210)
-plate: PlateElement = PlateElement(Polygon([[-2850, -2850, 0], [-2850, 2850, 0], [2850, 2850, 0], [2850, -2850, 0]]), 200)
+plate = PlateElement(Polygon([[-2850, -2850, 0], [-2850, 2850, 0], [2850, 2850, 0], [2850, -2850, 0]]), 200)
 
 model.add_column_head(column_head, edges_beams[0])
 model.add_floor(plate, faces_floors[0])
@@ -42,7 +40,7 @@ model.add_interaction(column_head, plate)
 model.add_modifier(column_head, plate)
 
 # =============================================================================
-# Vizualize
+# Visualize
 # =============================================================================
 config = Config()
 config.camera.target = [0, 0, 100]

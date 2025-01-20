@@ -24,12 +24,10 @@ points = [
     # Horizontal line
     Point(-3000, 0, 3800),
     Point(3000, 0, 3800),
-
     # Two segments in the middle
     Point(0, -3000, 3800),
     Point(0, 0, 3800),
     Point(0, 3000, 3800),
-    
 ]
 
 lines = [
