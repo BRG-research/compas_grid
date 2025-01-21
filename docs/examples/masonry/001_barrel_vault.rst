@@ -1,13 +1,7 @@
 ********************************************************************************
-Examples
+001 Barrel Vault
 ********************************************************************************
 
-.. toctree::
-   :maxdepth: 2
-   :titlesonly:
-   :glob:
-
-   examples/elements/index
-   examples/masonry/index
-   examples/gridmodel/index
-   
+.. literalinclude:: 001_barrel_vault.py
+   :language: python
+   :linenos:

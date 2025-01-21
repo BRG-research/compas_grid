@@ -1,13 +1,7 @@
 ********************************************************************************
-Examples
+000 frame
 ********************************************************************************
 
-.. toctree::
-   :maxdepth: 2
-   :titlesonly:
-   :glob:
-
-   examples/elements/index
-   examples/masonry/index
-   examples/gridmodel/index
-   
+.. literalinclude:: 000_frame.py
+   :language: python
+   :linenos:

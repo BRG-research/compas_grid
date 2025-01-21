@@ -1,13 +1,7 @@
 ********************************************************************************
-Examples
+003 gridmodel add interfaces
 ********************************************************************************
 
-.. toctree::
-   :maxdepth: 2
-   :titlesonly:
-   :glob:
-
-   examples/elements/index
-   examples/masonry/index
-   examples/gridmodel/index
-   
+.. literalinclude:: 003_gridmodel_add_interfaces.py
+   :language: python
+   :linenos:

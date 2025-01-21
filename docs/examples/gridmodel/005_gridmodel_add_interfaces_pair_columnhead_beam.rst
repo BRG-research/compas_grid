@@ -1,13 +1,7 @@
 ********************************************************************************
-Examples
+005 gridmodel add interfaces pair columnhead beam
 ********************************************************************************
 
-.. toctree::
-   :maxdepth: 2
-   :titlesonly:
-   :glob:
-
-   examples/elements/index
-   examples/masonry/index
-   examples/gridmodel/index
-   
+.. literalinclude:: 005_gridmodel_add_interfaces_pair_columnhead_beam.py
+   :language: python
+   :linenos:

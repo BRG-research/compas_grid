@@ -1,13 +1,7 @@
 ********************************************************************************
-Examples
+Column
 ********************************************************************************
 
-.. toctree::
-   :maxdepth: 2
-   :titlesonly:
-   :glob:
-
-   examples/elements/index
-   examples/masonry/index
-   examples/gridmodel/index
-   
+.. literalinclude:: column.py
+   :language: python
+   :linenos:

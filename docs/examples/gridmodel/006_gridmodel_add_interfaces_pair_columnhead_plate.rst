@@ -1,13 +1,7 @@
 ********************************************************************************
-Examples
+006 gridmodel add interfaces pair columnhead plate
 ********************************************************************************
 
-.. toctree::
-   :maxdepth: 2
-   :titlesonly:
-   :glob:
-
-   examples/elements/index
-   examples/masonry/index
-   examples/gridmodel/index
-   
+.. literalinclude:: 006_gridmodel_add_interfaces_pair_columnhead_plate.py
+   :language: python
+   :linenos:

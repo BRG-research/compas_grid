@@ -1,13 +1,11 @@
 ********************************************************************************
-Examples
+Masonry
 ********************************************************************************
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :titlesonly:
-   :glob:
 
-   examples/elements/index
-   examples/masonry/index
-   examples/gridmodel/index
-   
+   000_frame
+   001_barrel_vault
+   002_frame_model

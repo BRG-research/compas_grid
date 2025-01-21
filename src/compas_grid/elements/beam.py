@@ -137,64 +137,64 @@ class BeamElement(Element):
             points1.append(result1)
         return Polygon(points0), Polygon(points1)
 
-    # def compute_elementgeometry(self) -> Mesh:
-    #     """Compute the shape of the beam from the given polygons .
-    #     This shape is relative to the frame of the element.
-
-    #     Returns
-    #     -------
-    #     :class:`compas.datastructures.Mesh`
-
-    #     """
-
-    #     from compas.geometry import earclip_polygon
-
-    #     offset: int = len(self.polygon_bottom)
-    #     vertices: list[Point] = self.polygon_bottom.points + self.polygon_top.points  # type: ignore
-
-    #     triangles: list[list[int]] = earclip_polygon(Polygon(self.polygon_bottom.points))
-    #     top_faces: list[list[int]] = []
-    #     bottom_faces: list[list[int]] = []
-    #     for i in range(len(triangles)):
-    #         triangle_top: list[int] = []
-    #         triangle_bottom: list[int] = []
-    #         for j in range(3):
-    #             triangle_top.append(triangles[i][j] + offset)
-    #             triangle_bottom.append(triangles[i][j])
-    #         triangle_bottom.reverse()
-    #         top_faces.append(triangle_top)
-    #         bottom_faces.append(triangle_bottom)
-    #     faces: list[list[int]] = bottom_faces + top_faces
-
-    #     bottom: list[int] = list(range(offset))
-    #     top: list[int] = [i + offset for i in bottom]
-    #     for (a, b), (c, d) in zip(pairwise(bottom + bottom[:1]), pairwise(top + top[:1])):
-    #         faces.append([c, d, b, a])
-    #     mesh: Mesh = Mesh.from_vertices_and_faces(vertices, faces)
-    #     return mesh
-
-    def compute_elementgeometry(self) -> Brep:
+    def compute_elementgeometry(self) -> Mesh:
         """Compute the shape of the beam from the given polygons .
         This shape is relative to the frame of the element.
 
         Returns
         -------
-        :class:`compas.datastructures.Brep`
+        :class:`compas.datastructures.Mesh`
+
         """
 
-        polygons: list[Polygon] = []
+        from compas.geometry import earclip_polygon
 
         offset: int = len(self.polygon_bottom)
         vertices: list[Point] = self.polygon_bottom.points + self.polygon_top.points  # type: ignore
-        polygons.append(self.polygon_bottom)
-        polygons.append(self.polygon_top)
+
+        triangles: list[list[int]] = earclip_polygon(Polygon(self.polygon_bottom.points))
+        top_faces: list[list[int]] = []
+        bottom_faces: list[list[int]] = []
+        for i in range(len(triangles)):
+            triangle_top: list[int] = []
+            triangle_bottom: list[int] = []
+            for j in range(3):
+                triangle_top.append(triangles[i][j] + offset)
+                triangle_bottom.append(triangles[i][j])
+            triangle_bottom.reverse()
+            top_faces.append(triangle_top)
+            bottom_faces.append(triangle_bottom)
+        faces: list[list[int]] = bottom_faces + top_faces
 
         bottom: list[int] = list(range(offset))
         top: list[int] = [i + offset for i in bottom]
         for (a, b), (c, d) in zip(pairwise(bottom + bottom[:1]), pairwise(top + top[:1])):
-            polygons.append(Polygon([vertices[c], vertices[d], vertices[b], vertices[a]]))
-        brep: Brep = Brep.from_polygons(polygons)
-        return brep
+            faces.append([c, d, b, a])
+        mesh: Mesh = Mesh.from_vertices_and_faces(vertices, faces)
+        return mesh
+
+    # def compute_elementgeometry(self) -> Brep:
+    #     """Compute the shape of the beam from the given polygons .
+    #     This shape is relative to the frame of the element.
+
+    #     Returns
+    #     -------
+    #     :class:`compas.datastructures.Brep`
+    #     """
+
+    #     polygons: list[Polygon] = []
+
+    #     offset: int = len(self.polygon_bottom)
+    #     vertices: list[Point] = self.polygon_bottom.points + self.polygon_top.points  # type: ignore
+    #     polygons.append(self.polygon_bottom)
+    #     polygons.append(self.polygon_top)
+
+    #     bottom: list[int] = list(range(offset))
+    #     top: list[int] = [i + offset for i in bottom]
+    #     for (a, b), (c, d) in zip(pairwise(bottom + bottom[:1]), pairwise(top + top[:1])):
+    #         polygons.append(Polygon([vertices[c], vertices[d], vertices[b], vertices[a]]))
+    #     brep: Brep = Brep.from_polygons(polygons)
+    #     return brep
 
     def add_modifier(self, target_element: Element, type: str = ""):
         """Computes the contact interaction of the geometry of the elements that is used in the model's add_contact method.

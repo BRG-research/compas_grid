@@ -1,13 +1,7 @@
 ********************************************************************************
-Examples
+001 gridmodel create model
 ********************************************************************************
 
-.. toctree::
-   :maxdepth: 2
-   :titlesonly:
-   :glob:
-
-   examples/elements/index
-   examples/masonry/index
-   examples/gridmodel/index
-   
+.. literalinclude:: 001_gridmodel_create_model.py
+   :language: python
+   :linenos:

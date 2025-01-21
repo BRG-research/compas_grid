@@ -4,7 +4,7 @@ from compas_model.models import Model
 from compas_viewer import Viewer
 from compas_viewer.config import Config
 
-from compas import json_load
+from compas import json_load, json_dump
 from compas.datastructures import Mesh
 from compas.geometry import Frame
 from compas.geometry import Line
@@ -97,6 +97,7 @@ for cable in cables:
 # =============================================================================
 # Visualize
 # =============================================================================
+json_dump(model, "barrel_vault_frame")
 TOL.lineardeflection = 100
 config = Config()
 config.camera.target = [0, 0, 100]

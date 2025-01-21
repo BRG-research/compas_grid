@@ -1,13 +1,7 @@
 ********************************************************************************
-Examples
+Beam
 ********************************************************************************
 
-.. toctree::
-   :maxdepth: 2
-   :titlesonly:
-   :glob:
-
-   examples/elements/index
-   examples/masonry/index
-   examples/gridmodel/index
-   
+.. literalinclude:: beam.py
+   :language: python
+   :linenos:
