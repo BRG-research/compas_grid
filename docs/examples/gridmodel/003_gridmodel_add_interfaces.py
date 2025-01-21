@@ -14,7 +14,7 @@ from compas_grid.models import GridModel
 # =============================================================================
 # JSON file with the geometry of the model. Datasets: data/frame.json, data/crea/crea_4x4.json
 # =============================================================================
-rhino_geometry = json_load(Path("data/crea/crea_4x4.json"))
+rhino_geometry = json_load(Path("data/frame.json"))
 lines = rhino_geometry["Model::Line::Segments"]
 surfaces = rhino_geometry["Model::Mesh::Floor"]
 

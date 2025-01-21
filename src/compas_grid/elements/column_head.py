@@ -8,6 +8,7 @@ from compas_model.interactions import SlicerModifier
 from compas.datastructures import Mesh
 from compas.geometry import Box
 from compas.geometry import Frame
+from compas.geometry import Plane
 from compas.geometry import Point
 from compas.geometry import Polygon
 from compas.geometry import Transformation
@@ -560,8 +561,7 @@ class ColumnHeadCrossElement(ColumnHeadElement):
         frame1: Frame = Frame(polygon.centroid, polygon[1] - polygon[0], (polygon[2] - polygon[1]) * 1)
 
         contact_frame: Frame = frame0 if column_head_is_closer_to_base else frame1
-
-        return SlicerModifier(contact_frame)
+        return SlicerModifier(Plane.from_frame(contact_frame))
 
     def _add_modifier_with_beam(self, target_element: "BeamElement", type: str) -> "SlicerModifier":
         # Scenario:
@@ -580,7 +580,7 @@ class ColumnHeadCrossElement(ColumnHeadElement):
         polygon: Polygon = self.modelgeometry.face_polygon(list(self.modelgeometry.faces_where(conditions={"direction": cardinal_direction}))[0])
         contact_frame: Frame = Frame(polygon.centroid, polygon[1] - polygon[0], polygon[2] - polygon[1])
 
-        return SlicerModifier(contact_frame)
+        return SlicerModifier(Plane.from_frame(contact_frame))
 
     def _add_modifier_with_plate(self, target_element: "PlateElement", type: str) -> "SlicerModifier":
         # Scenario:
@@ -608,9 +608,9 @@ class ColumnHeadCrossElement(ColumnHeadElement):
         face_ids: list[int] = list(self.modelgeometry.faces_where(conditions={"direction": direction_angled}))
         face_id: int = face_ids[0] if len(face_ids) > 0 else 5
         polygon: Polygon = self.modelgeometry.face_polygon(face_id)
-        contact_frame: Frame = polygon.frame
+        contact_frame = polygon.frame
 
-        return SlicerModifier(contact_frame)
+        return SlicerModifier(Plane.from_frame(contact_frame))
 
     # =============================================================================
     # Constructors
@@ -653,13 +653,12 @@ class ColumnHeadCrossElement(ColumnHeadElement):
         },
     ) -> CardinalDirections:
         """
-        Find the closest cardinal direction for a given vector.
+        Find the closest cardinal direction to the given vector.
 
         Parameters
-        -------
+        ----------
         vector : Vector
-            The vector to compare.
-
+            The input vector.
         directions : dict
             A dictionary of cardinal directions and their corresponding unit vectors.
 
@@ -684,10 +683,10 @@ class ColumnHeadCrossElement(ColumnHeadElement):
     @staticmethod
     def get_direction_combination(direction1: "CardinalDirections", direction2: "CardinalDirections") -> "CardinalDirections":
         """
-        Get the direction combination of two directions.
+        Get the direction combination of two cardinal directions.
 
         Parameters
-        -------
+        ----------
         direction1 : CardinalDirections
             The first direction.
         direction2 : CardinalDirections

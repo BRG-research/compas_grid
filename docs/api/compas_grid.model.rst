@@ -1,10 +1,14 @@
 ********************************************************************************
-API Reference
+compas_grid.models
 ********************************************************************************
 
-.. toctree::
-    :maxdepth: 1
+.. currentmodule:: compas_grid.models
 
-    api/compas_grid.model
-    api/compas_grid.elements
-    
+Classes
+=======
+
+.. autosummary::
+    :toctree: generated/
+    :nosignatures:
+
+    GridModel

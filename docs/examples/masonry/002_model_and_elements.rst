@@ -1,7 +1,11 @@
 ********************************************************************************
-002 Frame Model
+002 Model and Elements
 ********************************************************************************
 
-.. literalinclude:: 002_frame_model.py
+.. figure:: /_images/002_model_and_elements.png
+   :figclass: figure
+   :class: figure-img img-fluid
+
+.. literalinclude:: 002_model_and_elements.py
    :language: python
    :linenos:

@@ -220,8 +220,8 @@ class BeamSquareElement(BeamElement):
     ----------
     width : float
         The width of the beam.
-    depth : float
-        The depth of the beam.
+    height : float
+        The height of the beam.
     length : float
         The length of the beam.
     frame_bottom : :class:`compas.geometry.Frame`
@@ -239,8 +239,8 @@ class BeamSquareElement(BeamElement):
     ----------
     width : float
         The width of the beam.
-    depth : float
-        The depth of the beam.
+    height : float
+        The height of the beam.
     length : float
         The length of the beam.
     is_support : bool
@@ -269,7 +269,7 @@ class BeamSquareElement(BeamElement):
     def __data__(self) -> dict:
         return {
             "width": self.width,
-            "depth": self.depth,
+            "height": self.height,
             "length": self.length,
             "frame_top": self.frame_top,
             "is_support": self.is_support,
@@ -282,7 +282,7 @@ class BeamSquareElement(BeamElement):
     def __init__(
         self,
         width: float = 0.1,
-        depth: float = 0.2,
+        height: float = 0.2,
         length: float = 3.0,
         frame_top: Optional[Plane] = None,
         is_support: bool = False,
@@ -296,10 +296,10 @@ class BeamSquareElement(BeamElement):
         self.is_support: bool = is_support
 
         self.width: float = width
-        self.depth: float = depth
+        self.height: float = height
         self._length: float = length
 
-        self.points: list[list[float]] = [[-width * 1, -depth * 0.5, 0], [-width * 1, depth * 0.5, 0], [width * 0, depth * 0.5, 0], [width * 0, -depth * 0.5, 0]]
+        self.points: list[list[float]] = [[-width * 0.5, -height * 0.5, 0], [-width * 0.5, height * 0.5, 0], [width * 0.5, height * 0.5, 0], [width * 0.5, -height * 0.5, 0]]
 
         self.section: Polygon = Polygon(self.points)
         self.axis: Line = Line([0, 0, 0], [0, 0, length])
@@ -364,8 +364,8 @@ class BeamIProfileElement(BeamElement):
     ----------
     width : float, optional
         The width of the beam.
-    depth : float, optional
-        The depth of the beam.
+    height : float, optional
+        The height of the beam.
     thickness : float, optional
         The thickness of the beam.
     length : float, optional
@@ -397,7 +397,7 @@ class BeamIProfileElement(BeamElement):
     def __data__(self) -> dict:
         return {
             "width": self.width,
-            "depth": self.depth,
+            "height": self.height,
             "thickness": self.thickness,
             "length": self.length,
             "frame_top": self.frame_top,
@@ -411,7 +411,7 @@ class BeamIProfileElement(BeamElement):
     def __init__(
         self,
         width: float = 0.1,
-        depth: float = 0.2,
+        height: float = 0.2,
         thickness: float = 0.02,
         length: float = 3.0,
         frame_top: Optional[Plane] = None,
@@ -426,23 +426,23 @@ class BeamIProfileElement(BeamElement):
         self.is_support: bool = is_support
 
         self.width: float = width
-        self.depth: float = depth
+        self.height: float = height
         self.thickness: float = thickness
         self._length: float = length
 
         self.points: list[float] = [
-            [0, -self.depth * 0.5, 0],
-            [0, self.depth * 0.5, 0],
-            [-self.thickness, self.depth * 0.5, 0],
+            [0, -self.height * 0.5, 0],
+            [0, self.height * 0.5, 0],
+            [-self.thickness, self.height * 0.5, 0],
             [-self.thickness, self.thickness * 0.5, 0],
             [-self.width + self.thickness, self.thickness * 0.5, 0],
-            [-self.width + self.thickness, self.depth * 0.5, 0],
-            [-self.width, self.depth * 0.5, 0],
-            [-self.width, -self.depth * 0.5, 0],
-            [-self.width + self.thickness, -self.depth * 0.5, 0],
+            [-self.width + self.thickness, self.height * 0.5, 0],
+            [-self.width, self.height * 0.5, 0],
+            [-self.width, -self.height * 0.5, 0],
+            [-self.width + self.thickness, -self.height * 0.5, 0],
             [-self.width + self.thickness, -self.thickness * 0.5, 0],
             [-self.thickness, -self.thickness * 0.5, 0],
-            [-self.thickness, -self.depth * 0.5, 0],
+            [-self.thickness, -self.height * 0.5, 0],
         ]
 
         # Create the polygon of the I profile
@@ -689,8 +689,8 @@ class BeamVProfileElement(BeamElement):
         The width of the beam bottom.
     width1 : float
         The width of the beam top.
-    depth : float
-        The depth of the beam.
+    height : float
+        The height of the beam.
     length : float
         The length of the beam.
     frame_bottom : :class:`compas.geometry.Frame`
@@ -710,8 +710,8 @@ class BeamVProfileElement(BeamElement):
         The width of the beam bottom.
     width1 : float
         The width of the beam top.
-    depth : float
-        The depth of the beam.
+    height : float
+        The height of the beam.
     length : float
         The length of the beam.
     is_support : bool
@@ -741,7 +741,7 @@ class BeamVProfileElement(BeamElement):
         return {
             "width0": self.width0,
             "width1": self.width1,
-            "depth": self.depth,
+            "height": self.height,
             "length": self.length,
             "frame_top": self.frame_top,
             "is_support": self.is_support,
@@ -755,7 +755,7 @@ class BeamVProfileElement(BeamElement):
         self,
         width0: float = 0.1,
         width1: float = 0.1,
-        depth: float = 0.2,
+        height: float = 0.2,
         length: float = 3.0,
         frame_top: Optional[Plane] = None,
         is_support: bool = False,
@@ -770,14 +770,14 @@ class BeamVProfileElement(BeamElement):
 
         self.width0: float = width0
         self.width1: float = width1
-        self.depth: float = depth
+        self.height: float = height
         self._length: float = length
 
         self.points: list[list[float]] = [
-            [-self.width0 * 0.5, -depth * 0.5, 0],
-            [-self.width1 * 0.5, depth * 0.5, 0],
-            [self.width1 * 0.5, depth * 0.5, 0],
-            [self.width0 * 0.5, -depth * 0.5, 0],
+            [-self.width0 * 0.5, -height * 0.5, 0],
+            [-self.width1 * 0.5, height * 0.5, 0],
+            [self.width1 * 0.5, height * 0.5, 0],
+            [self.width0 * 0.5, -height * 0.5, 0],
         ]
 
         self.section: Polygon = Polygon(self.points)

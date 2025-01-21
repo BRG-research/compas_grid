@@ -142,7 +142,7 @@ barrel_vault = from_barrel_vault(span=6000, length=6000, thickness=250, rise=600
 # =============================================================================
 # Serialize the Barrel Vault into a JSON file.
 # =============================================================================
-model_input = {"Model::Mesh::ElementGeometry": barrel_vault[0], "Model::Frame::Frame": barrel_vault[1]}
+model_input = {"meshes": barrel_vault[0], "frames": barrel_vault[1]}
 json_dump(model_input, Path("data/barrel_vault.json"))
 
 # =============================================================================

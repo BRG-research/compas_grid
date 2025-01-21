@@ -40,7 +40,7 @@ mesh = Mesh.from_vertices_and_faces(points[4:], [[0, 1, 2, 3]])
 # Serialize the Frame into a JSON file.
 # =============================================================================
 
-model_input = {"Model::Line::Segments": lines, "Model::Mesh::Floor": [mesh]}
+model_input = {"lines": lines, "meshes": [mesh]}
 json_dump(model_input, Path("data/frame.json"))
 
 # =============================================================================
