@@ -96,7 +96,7 @@ sphinx_compas2_theme.replace(html5.HTML5Translator)
 
 # -- Options for HTML output ----------------------------------------------
 
-html_theme = "sphinx_compas2_theme"
+html_theme = "sidebaronly"
 html_title = project
 
 favicons = [
@@ -149,7 +149,7 @@ html_context = {
     "doc_path": "docs",
 }
 
-html_static_path = sphinx_compas2_theme.get_html_static_path() + ["_static"]
+html_static_path = sphinx_compas2_theme.get_html_static_path()
 html_css_files = []
 html_extra_path = []
 html_last_updated_fmt = ""
