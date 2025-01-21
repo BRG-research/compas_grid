@@ -227,19 +227,6 @@ class ColumnSquareElement(ColumnElement):
         mesh: Mesh = Mesh.from_vertices_and_faces(vertices, faces)
         return mesh
 
-    # def compute_elementgeometry(self) -> Brep:
-    #     """Compute the shape of the column from the given polygons.
-    #     This shape is relative to the frame of the element.
-
-    #     Returns
-    #     -------
-    #     :class:`compas.geometry.Brep`
-
-    #     """
-    #     box: Box = Box.from_width_height_depth(self.width, self.height, self.depth).translated([0, 0, self.height * 0.5])
-    #     brep = Brep.from_box(box)
-    #     return brep
-
     # =============================================================================
     # Constructors
     # =============================================================================

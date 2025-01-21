@@ -97,7 +97,8 @@ for cable in cables:
 # =============================================================================
 # Visualize
 # =============================================================================
-json_dump(model, "barrel_vault_frame")
+json_dump(model, "barrel_vault_frame.json")
+model_deserialized = json_load("barrel_vault_frame.json")
 TOL.lineardeflection = 100
 config = Config()
 config.camera.target = [0, 0, 100]
@@ -105,6 +106,6 @@ config.camera.position = [10000, -10000, 10000]
 config.camera.near = 10
 config.camera.far = 100000
 viewer = Viewer(config=config)
-for element in list(model.elements()):
+for element in list(model_deserialized.elements()):
     viewer.scene.add(element.modelgeometry, hide_coplanaredges=True)
 viewer.show()

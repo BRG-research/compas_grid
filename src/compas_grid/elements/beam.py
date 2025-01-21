@@ -7,7 +7,6 @@ from compas_model.interactions import BooleanModifier
 
 from compas.datastructures import Mesh
 from compas.geometry import Box
-from compas.geometry import Brep
 from compas.geometry import Frame
 from compas.geometry import Line
 from compas.geometry import Plane
@@ -173,29 +172,6 @@ class BeamElement(Element):
         mesh: Mesh = Mesh.from_vertices_and_faces(vertices, faces)
         return mesh
 
-    # def compute_elementgeometry(self) -> Brep:
-    #     """Compute the shape of the beam from the given polygons .
-    #     This shape is relative to the frame of the element.
-
-    #     Returns
-    #     -------
-    #     :class:`compas.datastructures.Brep`
-    #     """
-
-    #     polygons: list[Polygon] = []
-
-    #     offset: int = len(self.polygon_bottom)
-    #     vertices: list[Point] = self.polygon_bottom.points + self.polygon_top.points  # type: ignore
-    #     polygons.append(self.polygon_bottom)
-    #     polygons.append(self.polygon_top)
-
-    #     bottom: list[int] = list(range(offset))
-    #     top: list[int] = [i + offset for i in bottom]
-    #     for (a, b), (c, d) in zip(pairwise(bottom + bottom[:1]), pairwise(top + top[:1])):
-    #         polygons.append(Polygon([vertices[c], vertices[d], vertices[b], vertices[a]]))
-    #     brep: Brep = Brep.from_polygons(polygons)
-    #     return brep
-
     def add_modifier(self, target_element: Element, type: str = ""):
         """Computes the contact interaction of the geometry of the elements that is used in the model's add_contact method.
 
@@ -330,59 +306,42 @@ class BeamSquareElement(BeamElement):
         self.frame_top: Frame = frame_top or Frame(self.frame.point + self.axis.vector, self.frame.xaxis, self.frame.yaxis)
         self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()
 
-    def compute_elementgeometry(self) -> Brep:
+    def compute_elementgeometry(self) -> Mesh:
         """Compute the shape of the beam from the given polygons .
         This shape is relative to the frame of the element.
 
         Returns
         -------
-        :class:`compas.datastructures.Brep`
+        :class:`compas.datastructures.Mesh`
+
         """
-        box: Box = Box.from_width_height_depth(self.width, self.length, self.depth)
-        box.translate(
-            [
-                0,
-                0,
-                self.length * 0.5,
-            ]
-        )
-        return Brep.from_box(box)
 
-    # def compute_elementgeometry(self) -> Mesh:
-    #     """Compute the shape of the beam from the given polygons .
-    #     This shape is relative to the frame of the element.
+        from compas.geometry import earclip_polygon
 
-    #     Returns
-    #     -------
-    #     :class:`compas.datastructures.Mesh`
+        offset: int = len(self.polygon_bottom)
+        vertices: list[Point] = self.polygon_bottom.points + self.polygon_top.points  # type: ignore
 
-    #     """
+        triangles: list[list[int]] = earclip_polygon(Polygon(self.polygon_bottom.points))
+        top_faces: list[list[int]] = []
+        bottom_faces: list[list[int]] = []
+        for i in range(len(triangles)):
+            triangle_top: list[int] = []
+            triangle_bottom: list[int] = []
+            for j in range(3):
+                triangle_top.append(triangles[i][j] + offset)
+                triangle_bottom.append(triangles[i][j])
+            triangle_bottom.reverse()
+            top_faces.append(triangle_top)
+            bottom_faces.append(triangle_bottom)
+        faces: list[list[int]] = bottom_faces + top_faces
 
-    #     from compas.geometry import earclip_polygon
+        bottom: list[int] = list(range(offset))
+        top: list[int] = [i + offset for i in bottom]
+        for (a, b), (c, d) in zip(pairwise(bottom + bottom[:1]), pairwise(top + top[:1])):
+            faces.append([c, d, b, a])
+        mesh: Mesh = Mesh.from_vertices_and_faces(vertices, faces)
+        return mesh
 
-    #     offset: int = len(self.polygon_bottom)
-    #     vertices: list[Point] = self.polygon_bottom.points + self.polygon_top.points  # type: ignore
-
-    #     triangles: list[list[int]] = earclip_polygon(Polygon(self.polygon_bottom.points))
-    #     top_faces: list[list[int]] = []
-    #     bottom_faces: list[list[int]] = []
-    #     for i in range(len(triangles)):
-    #         triangle_top: list[int] = []
-    #         triangle_bottom: list[int] = []
-    #         for j in range(3):
-    #             triangle_top.append(triangles[i][j] + offset)
-    #             triangle_bottom.append(triangles[i][j])
-    #         triangle_bottom.reverse()
-    #         top_faces.append(triangle_top)
-    #         bottom_faces.append(triangle_bottom)
-    #     faces: list[list[int]] = bottom_faces + top_faces
-
-    #     bottom: list[int] = list(range(offset))
-    #     top: list[int] = [i + offset for i in bottom]
-    #     for (a, b), (c, d) in zip(pairwise(bottom + bottom[:1]), pairwise(top + top[:1])):
-    #         faces.append([c, d, b, a])
-    #     mesh: Mesh = Mesh.from_vertices_and_faces(vertices, faces)
-    #     return mesh
     @property
     def length(self) -> float:
         return self._length
@@ -825,24 +784,6 @@ class BeamVProfileElement(BeamElement):
         self.axis: Line = Line([0, 0, 0], [0, 0, length])
         self.frame_top: Frame = frame_top or Frame(self.frame.point + self.axis.vector, self.frame.xaxis, self.frame.yaxis)
         self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()
-
-    # def compute_elementgeometry(self) -> Brep:
-    #     """Compute the shape of the beam from the given polygons .
-    #     This shape is relative to the frame of the element.
-
-    #     Returns
-    #     -------
-    #     :class:`compas.datastructures.Brep`
-    #     """
-    #     box: Box = Box.from_width_height_depth(self.width, self.length, self.depth)
-    #     box.translate(
-    #         [
-    #             0,
-    #             0,
-    #             self.length * 0.5,
-    #         ]
-    #     )
-    #     return Brep.from_box(box)
 
     def compute_elementgeometry(self) -> Mesh:
         """Compute the shape of the beam from the given polygons .

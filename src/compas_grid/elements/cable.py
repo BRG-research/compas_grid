@@ -176,24 +176,6 @@ class CableElement(Element):
         mesh: Mesh = Mesh.from_vertices_and_faces(vertices, faces)
         return mesh
 
-    # def compute_elementgeometry(self) -> Mesh:
-    #     """Compute the shape of the Cable from the given polygons.
-    #     This shape is relative to the frame of the element.
-
-    #     Returns
-    #     -------
-    #     :class:`compas.datastructures.Mesh`
-
-    #     """
-
-    #     from compas.geometry import Brep
-    #     from compas.geometry import Cylinder
-
-    #     cylinder: Cylinder = Cylinder.from_line_and_radius(self.axis, self.radius)
-    #     brep: Brep = Brep.from_cylinder(cylinder)
-
-    #     return brep
-
     # =============================================================================
     # Implementations of abstract methods
     # =============================================================================

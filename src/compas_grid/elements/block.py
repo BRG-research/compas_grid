@@ -16,7 +16,6 @@ from compas.geometry import centroid_polyhedron
 from compas.geometry import dot_vectors
 from compas.geometry import oriented_bounding_box
 from compas.geometry import volume_polyhedron
-from compas.geometry.brep.brep import Brep
 
 
 class BlockGeometry(Mesh):
@@ -166,34 +165,10 @@ class BlockElement(Element):
     # Implementations of abstract methods
     # =============================================================================
 
-    def compute_elementgeometry(self) -> Union[Mesh, Brep]:
+    def compute_elementgeometry(self) -> Mesh:
         geometry = self.shape
         # apply features?
         return geometry
-
-    # def compute_modelgeometry(self) -> Union[Mesh, Brep]:
-    #     if not self.model:
-    #         raise Exception
-
-    #     geometry = self.elementgeometry.transformed(self.modeltransformation)
-
-    #     # apply effect of interactions?
-    #     node = self.graphnode
-    #     nbrs = self.model.graph.neighbors_in(node)
-    #     for nbr in nbrs:
-    #         element = self.model.graph.node_element(nbr)
-    #         if element:
-    #             for interaction in self.model.graph.edge_interactions((nbr, node)):
-    #                 # example interactions are
-    #                 # cutters, boolean operations, slicers, ...
-    #                 if hasattr(interaction, "apply"):
-    #                     try:
-    #                         interaction.apply(geometry)
-    #                     except Exception as e:
-    #                         print(str(e))
-    #                         pass
-
-    #     return geometry
 
     def compute_aabb(self) -> Box:
         points = self.modelgeometry.vertices_attributes("xyz")
