@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script src="_static/documentation_options.js?v=bb99e320"></script>
+    <script src="_static/documentation_options.js?v=1be0d999"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -55,11 +55,11 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'examples';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com//compas_grid/gh-pages/versions.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'latest';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2';
         </script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="API Reference" href="api.html" />
+    <link rel="next" title="Elements" href="examples/elements/index.html" />
     <link rel="prev" title="Tutorial" href="tutorial.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -224,7 +224,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      latest  <!-- this text may get changed later by javascript -->
+      0.2  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -390,7 +390,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      latest  <!-- this text may get changed later by javascript -->
+      0.2  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -462,9 +462,65 @@ document.write(`
 <li class="toctree-l1"><a class="reference internal" href="index.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Examples</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="api.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/compas_grid.html">compas_grid</a></li>
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Examples</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="examples/elements/index.html">Elements</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/elements/beam.html">Beam</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/elements/column.html">Column</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/elements/cable.html">Cable</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="examples/masonry/index.html">Masonry</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/masonry/000_input_frame.html">000 Input Frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/masonry/001_input_barrel_vault.html">001 Input Barrel Vault</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/masonry/002_model_and_elements.html">002 Model and Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/masonry/003_model_interactions.html">003 Model Interactions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/masonry/004_orient_to_xy.html">003 Orient to XY</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="examples/gridmodel/index.html">GridModel</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/gridmodel/000_frame.html">000 frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/gridmodel/001_gridmodel_create_model.html">001 gridmodel create model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/gridmodel/002_gridmodel_add_elements.html">002 gridmodel add elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/gridmodel/003_gridmodel_add_interfaces.html">003 gridmodel add interfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/gridmodel/004_gridmodel_add_interfaces_pair_columnhead_column.html">004 gridmodel add interfaces pair columnhead column</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/gridmodel/005_gridmodel_add_interfaces_pair_columnhead_beam.html">005 gridmodel add interfaces pair columnhead beam</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/gridmodel/006_gridmodel_add_interfaces_pair_columnhead_plate.html">006 gridmodel add interfaces pair columnhead plate</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/compas_grid.model.html">compas_grid.models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.models.GridModel.html">GridModel</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/compas_grid.elements.html">compas_grid.elements</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.BlockFeature.html">BlockFeature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.BlockElement.html">BlockElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.BlockGeometry.html">BlockGeometry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.PlateFeature.html">PlateFeature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.PlateElement.html">PlateElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.PlateRadialElement.html">PlateRadialElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.ColumnHeadElement.html">ColumnHeadElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.ColumnHeadCrossElement.html">ColumnHeadCrossElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.BeamFeature.html">BeamFeature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.BeamElement.html">BeamElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.BeamIProfileElement.html">BeamIProfileElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.BeamSquareElement.html">BeamSquareElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.BeamTProfileElement.html">BeamTProfileElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.BeamVProfileElement.html">BeamVProfileElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.BeamArcElement.html">BeamArcElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.ColumnFeature.html">ColumnFeature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.ColumnElement.html">ColumnElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.ColumnRoundElement.html">ColumnRoundElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.ColumnSquareElement.html">ColumnSquareElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.FastenersFeature.html">FastenersFeature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.FastenersElement.html">FastenersElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.ScrewElement.html">ScrewElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.CableFeature.html">CableFeature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.CableElement.html">CableElement</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
@@ -531,6 +587,32 @@ document.write(`
   <section id="examples">
 <h1>Examples</h1>
 <div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/elements/index.html">Elements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/elements/beam.html">Beam</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/elements/column.html">Column</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/elements/cable.html">Cable</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples/masonry/index.html">Masonry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/masonry/000_input_frame.html">000 Input Frame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/masonry/001_input_barrel_vault.html">001 Input Barrel Vault</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/masonry/002_model_and_elements.html">002 Model and Elements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/masonry/003_model_interactions.html">003 Model Interactions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/masonry/004_orient_to_xy.html">003 Orient to XY</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples/gridmodel/index.html">GridModel</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/gridmodel/000_frame.html">000 frame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/gridmodel/001_gridmodel_create_model.html">001 gridmodel create model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/gridmodel/002_gridmodel_add_elements.html">002 gridmodel add elements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/gridmodel/003_gridmodel_add_interfaces.html">003 gridmodel add interfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/gridmodel/004_gridmodel_add_interfaces_pair_columnhead_column.html">004 gridmodel add interfaces pair columnhead column</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/gridmodel/005_gridmodel_add_interfaces_pair_columnhead_beam.html">005 gridmodel add interfaces pair columnhead beam</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/gridmodel/006_gridmodel_add_interfaces_pair_columnhead_plate.html">006 gridmodel add interfaces pair columnhead plate</a></li>
+</ul>
+</li>
+</ul>
 </div>
 </section>
 
