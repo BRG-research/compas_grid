@@ -98,16 +98,16 @@ for cable in cables:
 # Serialize Model
 # =============================================================================
 json_dump(model, "data/model.json")
-
+model.contacts(k=6)
 # =============================================================================
 # Visualize
 # =============================================================================
-config = Config()
-config.camera.target = [0, 0, 100]
-config.camera.position = [10000, -10000, 10000]
-config.camera.near = 10
-config.camera.far = 100000
-viewer = Viewer(config=config)
-for element in list(model.elements()):
-    viewer.scene.add(element.modelgeometry, hide_coplanaredges=True)
-viewer.show()
+# config = Config()
+# config.camera.target = [0, 0, 100]
+# config.camera.position = [10000, -10000, 10000]
+# config.camera.near = 10
+# config.camera.far = 100000
+# viewer = Viewer(config=config)
+# for element in list(model.elements()):
+#     viewer.scene.add(element.modelgeometry, hide_coplanaredges=True)
+# viewer.show()
