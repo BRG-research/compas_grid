@@ -606,8 +606,8 @@ document.write(`
 <span class="linenos">12</span><span class="c1"># JSON file with the geometry of the model. Datasets: frame.json, crea_4x4.json</span>
 <span class="linenos">13</span><span class="c1"># =============================================================================</span>
 <span class="linenos">14</span><span class="n">rhino_geometry</span> <span class="o">=</span> <span class="n">json_load</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data/frame.json&quot;</span><span class="p">))</span>
-<span class="linenos">15</span><span class="n">lines</span> <span class="o">=</span> <span class="n">rhino_geometry</span><span class="p">[</span><span class="s2">&quot;Model::Line::Segments&quot;</span><span class="p">]</span>
-<span class="linenos">16</span><span class="n">surfaces</span> <span class="o">=</span> <span class="n">rhino_geometry</span><span class="p">[</span><span class="s2">&quot;Model::Mesh::Floor&quot;</span><span class="p">]</span>
+<span class="linenos">15</span><span class="n">lines</span> <span class="o">=</span> <span class="n">rhino_geometry</span><span class="p">[</span><span class="s2">&quot;lines&quot;</span><span class="p">]</span>
+<span class="linenos">16</span><span class="n">surfaces</span> <span class="o">=</span> <span class="n">rhino_geometry</span><span class="p">[</span><span class="s2">&quot;meshes&quot;</span><span class="p">]</span>
 <span class="linenos">17</span>
 <span class="linenos">18</span><span class="c1"># =============================================================================</span>
 <span class="linenos">19</span><span class="c1"># Model</span>

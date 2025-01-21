@@ -640,6 +640,9 @@ document.write(`
 <tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.compute_obb.html#compas_grid.elements.PlateElement.compute_obb" title="compas_grid.elements.PlateElement.compute_obb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_obb</span></code></a></p></td>
 <td><p>Computes the Oriented Bounding Box (OBB) of the geometry of the element.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.compute_point.html#compas_grid.elements.PlateElement.compute_point" title="compas_grid.elements.PlateElement.compute_point"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_point</span></code></a></p></td>
+<td><p>Computes a reference point for the element geometry (e.g. the centroid).</p></td>
+</tr>
 </tbody>
 </table>
 <p class="rubric">Inherited Methods</p>
@@ -666,37 +669,34 @@ document.write(`
 <tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.compute_modeltransformation.html#compas_grid.elements.PlateElement.compute_modeltransformation" title="compas_grid.elements.PlateElement.compute_modeltransformation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_modeltransformation</span></code></a></p></td>
 <td><p>Compute the transformation to model coordinates of this element based on its position in the spatial hierarchy of the model.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.compute_point.html#compas_grid.elements.PlateElement.compute_point" title="compas_grid.elements.PlateElement.compute_point"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_point</span></code></a></p></td>
-<td><p>Computes a reference point for the element geometry (e.g. the centroid).</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.contacts.html#compas_grid.elements.PlateElement.contacts" title="compas_grid.elements.PlateElement.contacts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contacts</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.contacts.html#compas_grid.elements.PlateElement.contacts" title="compas_grid.elements.PlateElement.contacts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contacts</span></code></a></p></td>
 <td><p>Compute the contacts between this element and another element.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.copy.html#compas_grid.elements.PlateElement.copy" title="compas_grid.elements.PlateElement.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.copy.html#compas_grid.elements.PlateElement.copy" title="compas_grid.elements.PlateElement.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
 <td><p>Make an independent copy of the data object.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.from_json.html#compas_grid.elements.PlateElement.from_json" title="compas_grid.elements.PlateElement.from_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_json</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.from_json.html#compas_grid.elements.PlateElement.from_json" title="compas_grid.elements.PlateElement.from_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_json</span></code></a></p></td>
 <td><p>Construct an object of this type from a JSON file.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.from_jsonstring.html#compas_grid.elements.PlateElement.from_jsonstring" title="compas_grid.elements.PlateElement.from_jsonstring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_jsonstring</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.from_jsonstring.html#compas_grid.elements.PlateElement.from_jsonstring" title="compas_grid.elements.PlateElement.from_jsonstring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_jsonstring</span></code></a></p></td>
 <td><p>Construct an object of this type from a JSON string.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.sha256.html#compas_grid.elements.PlateElement.sha256" title="compas_grid.elements.PlateElement.sha256"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sha256</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.sha256.html#compas_grid.elements.PlateElement.sha256" title="compas_grid.elements.PlateElement.sha256"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sha256</span></code></a></p></td>
 <td><p>Compute a hash of the data for comparison during version control using the sha256 algorithm.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.to_json.html#compas_grid.elements.PlateElement.to_json" title="compas_grid.elements.PlateElement.to_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_json</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.to_json.html#compas_grid.elements.PlateElement.to_json" title="compas_grid.elements.PlateElement.to_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_json</span></code></a></p></td>
 <td><p>Convert an object to its native data representation and save it to a JSON file.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.to_jsonstring.html#compas_grid.elements.PlateElement.to_jsonstring" title="compas_grid.elements.PlateElement.to_jsonstring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_jsonstring</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.to_jsonstring.html#compas_grid.elements.PlateElement.to_jsonstring" title="compas_grid.elements.PlateElement.to_jsonstring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_jsonstring</span></code></a></p></td>
 <td><p>Convert an object to its native data representation and save it to a JSON string.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.transform.html#compas_grid.elements.PlateElement.transform" title="compas_grid.elements.PlateElement.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.transform.html#compas_grid.elements.PlateElement.transform" title="compas_grid.elements.PlateElement.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a></p></td>
 <td><p>Transforms the element.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.transformed.html#compas_grid.elements.PlateElement.transformed" title="compas_grid.elements.PlateElement.transformed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transformed</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.transformed.html#compas_grid.elements.PlateElement.transformed" title="compas_grid.elements.PlateElement.transformed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transformed</span></code></a></p></td>
 <td><p>Creates a transformed copy of the element.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.validate_data.html#compas_grid.elements.PlateElement.validate_data" title="compas_grid.elements.PlateElement.validate_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_data</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.PlateElement.validate_data.html#compas_grid.elements.PlateElement.validate_data" title="compas_grid.elements.PlateElement.validate_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_data</span></code></a></p></td>
 <td><p>Validate the data against the object's data schema.</p></td>
 </tr>
 </tbody>

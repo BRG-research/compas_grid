@@ -59,7 +59,7 @@
         </script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="FastenersElement.ToString" href="compas_grid.elements.FastenersElement.ToString.html" />
+    <link rel="next" title="FastenersElement.compute_point" href="compas_grid.elements.FastenersElement.compute_point.html" />
     <link rel="prev" title="FastenersFeature.validate_data" href="compas_grid.elements.FastenersFeature.validate_data.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -601,6 +601,14 @@ document.write(`
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">compas_grid.elements.</span></span><span class="sig-name descname"><span class="pre">FastenersElement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transformation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></p>
 <p>Class representing a fastener: screw, dowel, bolt and etc.</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.compute_point.html#compas_grid.elements.FastenersElement.compute_point" title="compas_grid.elements.FastenersElement.compute_point"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_point</span></code></a></p></td>
+<td><p>Computes a reference point for the element geometry (e.g. the centroid).</p></td>
+</tr>
+</tbody>
+</table>
 <p class="rubric">Inherited Methods</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
@@ -637,37 +645,34 @@ document.write(`
 <tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.compute_obb.html#compas_grid.elements.FastenersElement.compute_obb" title="compas_grid.elements.FastenersElement.compute_obb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_obb</span></code></a></p></td>
 <td><p>Computes the Oriented Bounding Box (OBB) of the geometry of the element.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.compute_point.html#compas_grid.elements.FastenersElement.compute_point" title="compas_grid.elements.FastenersElement.compute_point"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_point</span></code></a></p></td>
-<td><p>Computes a reference point for the element geometry (e.g. the centroid).</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.contacts.html#compas_grid.elements.FastenersElement.contacts" title="compas_grid.elements.FastenersElement.contacts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contacts</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.contacts.html#compas_grid.elements.FastenersElement.contacts" title="compas_grid.elements.FastenersElement.contacts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contacts</span></code></a></p></td>
 <td><p>Compute the contacts between this element and another element.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.copy.html#compas_grid.elements.FastenersElement.copy" title="compas_grid.elements.FastenersElement.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.copy.html#compas_grid.elements.FastenersElement.copy" title="compas_grid.elements.FastenersElement.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
 <td><p>Make an independent copy of the data object.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.from_json.html#compas_grid.elements.FastenersElement.from_json" title="compas_grid.elements.FastenersElement.from_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_json</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.from_json.html#compas_grid.elements.FastenersElement.from_json" title="compas_grid.elements.FastenersElement.from_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_json</span></code></a></p></td>
 <td><p>Construct an object of this type from a JSON file.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.from_jsonstring.html#compas_grid.elements.FastenersElement.from_jsonstring" title="compas_grid.elements.FastenersElement.from_jsonstring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_jsonstring</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.from_jsonstring.html#compas_grid.elements.FastenersElement.from_jsonstring" title="compas_grid.elements.FastenersElement.from_jsonstring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_jsonstring</span></code></a></p></td>
 <td><p>Construct an object of this type from a JSON string.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.sha256.html#compas_grid.elements.FastenersElement.sha256" title="compas_grid.elements.FastenersElement.sha256"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sha256</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.sha256.html#compas_grid.elements.FastenersElement.sha256" title="compas_grid.elements.FastenersElement.sha256"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sha256</span></code></a></p></td>
 <td><p>Compute a hash of the data for comparison during version control using the sha256 algorithm.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.to_json.html#compas_grid.elements.FastenersElement.to_json" title="compas_grid.elements.FastenersElement.to_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_json</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.to_json.html#compas_grid.elements.FastenersElement.to_json" title="compas_grid.elements.FastenersElement.to_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_json</span></code></a></p></td>
 <td><p>Convert an object to its native data representation and save it to a JSON file.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.to_jsonstring.html#compas_grid.elements.FastenersElement.to_jsonstring" title="compas_grid.elements.FastenersElement.to_jsonstring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_jsonstring</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.to_jsonstring.html#compas_grid.elements.FastenersElement.to_jsonstring" title="compas_grid.elements.FastenersElement.to_jsonstring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_jsonstring</span></code></a></p></td>
 <td><p>Convert an object to its native data representation and save it to a JSON string.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.transform.html#compas_grid.elements.FastenersElement.transform" title="compas_grid.elements.FastenersElement.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.transform.html#compas_grid.elements.FastenersElement.transform" title="compas_grid.elements.FastenersElement.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a></p></td>
 <td><p>Transforms the element.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.transformed.html#compas_grid.elements.FastenersElement.transformed" title="compas_grid.elements.FastenersElement.transformed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transformed</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.transformed.html#compas_grid.elements.FastenersElement.transformed" title="compas_grid.elements.FastenersElement.transformed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transformed</span></code></a></p></td>
 <td><p>Creates a transformed copy of the element.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.validate_data.html#compas_grid.elements.FastenersElement.validate_data" title="compas_grid.elements.FastenersElement.validate_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_data</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="compas_grid.elements.FastenersElement.validate_data.html#compas_grid.elements.FastenersElement.validate_data" title="compas_grid.elements.FastenersElement.validate_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_data</span></code></a></p></td>
 <td><p>Validate the data against the object's data schema.</p></td>
 </tr>
 </tbody>
