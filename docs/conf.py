@@ -10,7 +10,7 @@ project = "compas_grid"
 copyright = "Petras Vestartas"
 author = "Petras Vestartas"
 package = "compas_grid"
-organization = ""
+organization = "brg-research"
 
 master_doc = "index"
 source_suffix = {".rst": "restructuredtext", ".md": "markdown"}
