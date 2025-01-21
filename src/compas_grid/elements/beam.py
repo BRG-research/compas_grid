@@ -68,7 +68,7 @@ class BeamElement(Element):
         :class:`compas.geometry.Box`
             The axis-aligned bounding box.
         """
-        points: list[list[float]] = self.geometry.vertices_attributes("xyz")  # type: ignore
+        points: list[list[float]] = self.modelgeometry.vertices_attributes("xyz")  # type: ignore
         box: Box = Box.from_bounding_box(bounding_box(points))
         box.xsize += inflate
         box.ysize += inflate
@@ -88,7 +88,7 @@ class BeamElement(Element):
         :class:`compas.geometry.Box`
             The oriented bounding box.
         """
-        points: list[list[float]] = self.geometry.vertices_attributes("xyz")  # type: ignore
+        points: list[list[float]] = self.modelgeometry.vertices_attributes("xyz")  # type: ignore
         box: Box = Box.from_bounding_box(oriented_bounding_box(points))
         box.xsize += inflate
         box.ysize += inflate
@@ -105,14 +105,14 @@ class BeamElement(Element):
         """
         from compas.geometry import convex_hull_numpy
 
-        points: list[list[float]] = self.geometry.vertices_attributes("xyz")  # type: ignore
+        points: list[list[float]] = self.modelgeometry.vertices_attributes("xyz")  # type: ignore
         vertices, faces = convex_hull_numpy(points)
         vertices = [points[index] for index in vertices]  # type: ignore
         return Mesh.from_vertices_and_faces(vertices, faces)
 
     @property
     def face_polygons(self) -> list[Polygon]:
-        return [self.geometry.face_polygon(face) for face in self.geometry.faces()]  # type: ignore
+        return [self.modelgeometry.face_polygon(face) for face in self.modelgeometry.faces()]  # type: ignore
 
     def compute_top_and_bottom_polygons(self) -> tuple[Polygon, Polygon]:
         """Compute the top and bottom polygons of the beam.
@@ -211,6 +211,9 @@ class BeamElement(Element):
             return BooleanModifier(self.elementgeometry.transformed(self.modeltransformation))
         else:
             return None
+
+    def compute_point(self) -> Point:
+        return Point(*self.aabb.frame.point)
 
 
 class BeamSquareElement(BeamElement):

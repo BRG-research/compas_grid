@@ -6,6 +6,8 @@ from compas_viewer.config import Config
 
 from compas import json_load
 from compas.geometry import Frame
+from compas.geometry import Line
+from compas.geometry import Point
 from compas.geometry import Translation
 from compas.geometry import Vector
 from compas.geometry.transformation import Transformation
@@ -41,7 +43,6 @@ for i in range(0, 4):
 beams = []
 for i in range(4, len(lines) - 2):
     beam = BeamTProfileElement(width=300, height=700, step_width_left=75, step_height_left=150, length=lines[i].length)
-    # beam = BeamVProfileElement (width0=300, width1=100, height=700, length=lines[i].length)
     point = lines[i].start
     xaxis = Vector.Zaxis().cross(lines[i].vector)
     yaxis = Vector.Zaxis()
@@ -80,6 +81,19 @@ for i in range(len(barrel_vault["meshes"])):
     blocks.append(block)
 
 # =============================================================================
+# Add Interactions
+# =============================================================================
+for beam in beams:
+    for block in blocks:
+        model.add_interaction(beam, block)
+        model.add_modifier(beam, block)  # beam -> cuts -> block
+
+# =============================================================================
+# Compute Contacts
+# =============================================================================
+model.compute_contacts(tolerance=1, minimum_area=1, k=8)
+
+# =============================================================================
 # Visualize
 # =============================================================================
 config = Config()
@@ -88,6 +102,17 @@ config.camera.position = [10000, -10000, 10000]
 config.camera.near = 10
 config.camera.far = 100000
 viewer = Viewer(config=config)
+viewer = Viewer()
+
+lines = []
 for element in list(model.elements()):
-    viewer.scene.add(element.modelgeometry, hide_coplanaredges=True)
+    for line in element.modelgeometry.to_lines():
+        lines.append(Line(Point(*line[0]), Point(*line[1])))
+viewer.scene.add(lines)
+
+for edge in model.graph.edges():
+    if model.graph.edge_attribute(edge, "contacts"):
+        for contact in model.graph.edge_attribute(edge, "contacts"):
+            viewer.scene.add(contact.mesh, facecolor=(0, 255, 0), hide_coplanaredges=True)
+
 viewer.show()

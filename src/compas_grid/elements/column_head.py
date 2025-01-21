@@ -445,7 +445,7 @@ class ColumnHeadCrossElement(ColumnHeadElement):
 
     @property
     def face_polygons(self) -> list[Polygon]:
-        return [self.geometry.face_polygon(face) for face in self.geometry.faces()]  # type: ignore
+        return [self.modelgeometry.face_polygon(face) for face in self.modelgeometry.faces()]  # type: ignore
 
     def compute_elementgeometry(self) -> Mesh:
         """Compute the shape of the column head.
@@ -475,7 +475,7 @@ class ColumnHeadCrossElement(ColumnHeadElement):
         :class:`compas.geometry.Box`
             The axis-aligned bounding box.
         """
-        points: list[list[float]] = self.geometry.vertices_attributes("xyz")  # type: ignore
+        points: list[list[float]] = self.modelgeometry.vertices_attributes("xyz")  # type: ignore
         box: Box = Box.from_bounding_box(bounding_box(points))
         box.xsize += inflate
         box.ysize += inflate
@@ -495,7 +495,7 @@ class ColumnHeadCrossElement(ColumnHeadElement):
         :class:`compas.geometry.Box`
             The oriented bounding box.
         """
-        points: list[list[float]] = self.geometry.vertices_attributes("xyz")  # type: ignore
+        points: list[list[float]] = self.modelgeometry.vertices_attributes("xyz")  # type: ignore
         box: Box = Box.from_bounding_box(oriented_bounding_box(points))
         box.xsize += inflate
         box.ysize += inflate
@@ -512,7 +512,7 @@ class ColumnHeadCrossElement(ColumnHeadElement):
         """
         from compas.geometry import convex_hull_numpy
 
-        points: list[list[float]] = self.geometry.vertices_attributes("xyz")  # type: ignore
+        points: list[list[float]] = self.modelgeometry.vertices_attributes("xyz")  # type: ignore
         vertices, faces = convex_hull_numpy(points)
         vertices = [points[index] for index in vertices]  # type: ignore
         return Mesh.from_vertices_and_faces(vertices, faces)
@@ -708,3 +708,6 @@ class ColumnHeadCrossElement(ColumnHeadElement):
             (CardinalDirections.EAST, CardinalDirections.NORTH): CardinalDirections.NORTH_EAST,
         }
         return direction_combinations[(direction1, direction2)]
+
+    def compute_point(self) -> Point:
+        return Point(*self.aabb.frame.point)

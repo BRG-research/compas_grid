@@ -21,6 +21,9 @@ from compas.itertools import pairwise
 class FastenersElement(Element):
     """Class representing a fastener: screw, dowel, bolt and etc."""
 
+    def compute_point(self) -> Point:
+        return Point(*self.aabb.frame.point)
+
 
 class FastenersFeature(Feature):
     pass
@@ -163,7 +166,7 @@ class ScrewElement(Element):
         :class:`compas.geometry.Box`
             The axis-aligned bounding box.
         """
-        points: list[list[float]] = self.geometry.vertices_attributes("xyz")  # type: ignore
+        points: list[list[float]] = self.modelgeometry.vertices_attributes("xyz")  # type: ignore
         box: Box = Box.from_bounding_box(bounding_box(points))
         box.xsize += inflate
         box.ysize += inflate
@@ -183,7 +186,7 @@ class ScrewElement(Element):
         :class:`compas.geometry.Box`
             The oriented bounding box.
         """
-        points: list[list[float]] = self.geometry.vertices_attributes("xyz")  # type: ignore
+        points: list[list[float]] = self.modelgeometry.vertices_attributes("xyz")  # type: ignore
         box: Box = Box.from_bounding_box(oriented_bounding_box(points))
         box.xsize += inflate
         box.ysize += inflate
@@ -200,7 +203,7 @@ class ScrewElement(Element):
         """
         from compas.geometry import convex_hull_numpy
 
-        points: list[list[float]] = self.geometry.vertices_attributes("xyz")  # type: ignore
+        points: list[list[float]] = self.modelgeometry.vertices_attributes("xyz")  # type: ignore
         vertices, faces = convex_hull_numpy(points)
         vertices = [points[index] for index in vertices]  # type: ignore
         return Mesh.from_vertices_and_faces(vertices, faces)

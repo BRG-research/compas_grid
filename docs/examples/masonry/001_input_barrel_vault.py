@@ -13,7 +13,6 @@ from compas.geometry import angle_vectors
 from compas.geometry import subtract_vectors
 from compas.geometry import transform_points
 from compas.geometry import translate_points
-from compas.tolerance import TOL
 
 
 def from_barrel_vault(
@@ -148,7 +147,6 @@ json_dump(model_input, Path("data/barrel_vault.json"))
 # =============================================================================
 # Visualize
 # =============================================================================
-TOL.lineardeflection = 100
 config = Config()
 config.camera.target = [0, 0, 100]
 config.camera.position = [10000, -10000, 10000]

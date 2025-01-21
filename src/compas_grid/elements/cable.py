@@ -10,6 +10,7 @@ from compas.geometry import Box
 from compas.geometry import Frame
 from compas.geometry import Line
 from compas.geometry import Plane
+from compas.geometry import Point
 from compas.geometry import Polygon
 from compas.geometry import Transformation
 from compas.geometry import Translation
@@ -119,7 +120,7 @@ class CableElement(Element):
 
     @property
     def face_polygons(self) -> list[Polygon]:
-        return [self.geometry.face_polygon(face) for face in self.geometry.faces()]  # type: ignore
+        return [self.modelgeometry.face_polygon(face) for face in self.modelgeometry.faces()]  # type: ignore
 
     @property
     def length(self) -> float:
@@ -193,7 +194,7 @@ class CableElement(Element):
         :class:`compas.geometry.Box`
             The axis-aligned bounding box.
         """
-        points: list[list[float]] = self.geometry.vertices_attributes("xyz")  # type: ignore
+        points: list[list[float]] = self.modelgeometry.vertices_attributes("xyz")  # type: ignore
         box: Box = Box.from_bounding_box(bounding_box(points))
         box.xsize += inflate
         box.ysize += inflate
@@ -213,7 +214,7 @@ class CableElement(Element):
         :class:`compas.geometry.Box`
             The oriented bounding box.
         """
-        points: list[list[float]] = self.geometry.vertices_attributes("xyz")  # type: ignore
+        points: list[list[float]] = self.modelgeometry.vertices_attributes("xyz")  # type: ignore
         box: Box = Box.from_bounding_box(oriented_bounding_box(points))
         box.xsize += inflate
         box.ysize += inflate
@@ -230,7 +231,7 @@ class CableElement(Element):
         """
         from compas.geometry import convex_hull_numpy
 
-        points: list[list[float]] = self.geometry.vertices_attributes("xyz")  # type: ignore
+        points: list[list[float]] = self.modelgeometry.vertices_attributes("xyz")  # type: ignore
         vertices, faces = convex_hull_numpy(points)
         vertices = [points[index] for index in vertices]  # type: ignore
         return Mesh.from_vertices_and_faces(vertices, faces)
@@ -278,6 +279,9 @@ class CableElement(Element):
         # Scenario:
         # A cable applies boolean difference with a block geometry.
         return BooleanModifier(self.elementgeometry.transformed(self.modeltransformation))
+
+    def compute_point(self) -> Point:
+        return Point(*self.aabb.frame.point)
 
     # =============================================================================
     # Constructors

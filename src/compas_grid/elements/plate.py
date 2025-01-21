@@ -84,7 +84,7 @@ class PlateElement(Element):
 
     @property
     def face_polygons(self) -> list[Polygon]:
-        return [self.geometry.face_polygon(face) for face in self.geometry.faces()]  # type: ignore
+        return [self.modelgeometry.face_polygon(face) for face in self.modelgeometry.faces()]  # type: ignore
 
     def compute_elementgeometry(self) -> Mesh:
         """Compute the shape of the plate from the given polygons.
@@ -110,7 +110,7 @@ class PlateElement(Element):
     # =============================================================================
 
     def compute_aabb(self, inflate: float = 0.0) -> Box:
-        points: list[Point] = self.geometry.vertices_attributes("xyz")
+        points: list[Point] = self.modelgeometry.vertices_attributes("xyz")
         box: Box = Box.from_bounding_box(bounding_box(points))
         box.xsize += inflate
         box.ysize += inflate
@@ -118,7 +118,7 @@ class PlateElement(Element):
         return box
 
     def compute_obb(self, inflate: float = 0.0) -> Box:
-        points: list[Point] = self.geometry.vertices_attributes("xyz")
+        points: list[Point] = self.modelgeometry.vertices_attributes("xyz")
         box: Box = Box.from_bounding_box(oriented_bounding_box(points))
         box.xsize += inflate
         box.ysize += inflate
@@ -128,10 +128,13 @@ class PlateElement(Element):
     def compute_collision_mesh(self) -> Mesh:
         from compas.geometry import convex_hull_numpy
 
-        points: list[Point] = self.geometry.vertices_attributes("xyz")
+        points: list[Point] = self.modelgeometry.vertices_attributes("xyz")
         faces: NDArray[np.intc] = convex_hull_numpy(points)
         vertices: list[Point] = [points[index] for index in range(len(points))]
         return Mesh.from_vertices_and_faces(vertices, faces)
+
+    def compute_point(self) -> Point:
+        return Point(*self.aabb.frame.point)
 
     # =============================================================================
     # Constructors
@@ -201,7 +204,7 @@ class PlateRadialElement(Element):
 
     @property
     def face_polygons(self) -> list[Polygon]:
-        return [self.geometry.face_polygon(face) for face in self.geometry.faces()]  # type: ignore
+        return [self.modelgeometry.face_polygon(face) for face in self.modelgeometry.faces()]  # type: ignore
 
     def compute_elementgeometry(self) -> Mesh:
         """Compute the shape of the plate from the given polygons.
@@ -227,7 +230,7 @@ class PlateRadialElement(Element):
     # =============================================================================
 
     def compute_aabb(self, inflate: float = 0.0) -> Box:
-        points: list[Point] = self.geometry.vertices_attributes("xyz")
+        points: list[Point] = self.modelgeometry.vertices_attributes("xyz")
         box: Box = Box.from_bounding_box(bounding_box(points))
         box.xsize += inflate
         box.ysize += inflate
@@ -235,7 +238,7 @@ class PlateRadialElement(Element):
         return box
 
     def compute_obb(self, inflate: float = 0.0) -> Box:
-        points: list[Point] = self.geometry.vertices_attributes("xyz")
+        points: list[Point] = self.modelgeometry.vertices_attributes("xyz")
         box: Box = Box.from_bounding_box(oriented_bounding_box(points))
         box.xsize += inflate
         box.ysize += inflate
@@ -245,7 +248,7 @@ class PlateRadialElement(Element):
     def compute_collision_mesh(self) -> Mesh:
         from compas.geometry import convex_hull_numpy
 
-        points: list[Point] = self.geometry.vertices_attributes("xyz")
+        points: list[Point] = self.modelgeometry.vertices_attributes("xyz")
         faces: NDArray[np.intc] = convex_hull_numpy(points)
         vertices: list[Point] = [points[index] for index in range(len(points))]
         return Mesh.from_vertices_and_faces(vertices, faces)

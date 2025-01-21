@@ -204,3 +204,6 @@ class BlockElement(Element):
         shape = box.to_mesh()
         block = cls(shape=shape)
         return block
+
+    def compute_point(self) -> Point:
+        return Point(*self.aabb.frame.point)
