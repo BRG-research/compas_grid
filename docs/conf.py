@@ -96,7 +96,7 @@ sphinx_compas2_theme.replace(html5.HTML5Translator)
 
 # -- Options for HTML output ----------------------------------------------
 
-html_theme = "sidebaronly"
+html_theme = "sphinx_compas2_theme"
 html_title = project
 
 favicons = [
