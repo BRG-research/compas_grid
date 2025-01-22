@@ -323,7 +323,7 @@ class GridModel(Model):
 
         return treenode
 
-    def add_beam(self, beam: Element, edge: tuple[int, int] = None) -> ElementNode:
+    def add_beam(self, beam: Element, edge: tuple[int, int] = None, extend : float = 0) -> ElementNode:
         """Add a beam to the model.
         NOTE This methods updates the attributes of the Element.
 
@@ -335,12 +335,15 @@ class GridModel(Model):
             The edge where the beam is located.
         """
         axis: Line = self.cell_network.edge_line(edge)
-        beam.length = axis.length
+        beam.length = axis.length + extend*2
+
         orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(axis.start, Vector.cross(axis.direction, [0, 0, -1]), [0, 0, 1]))
+        extension_transformation: Transformation = Translation.from_vector([0, 0, -extend])
         if not beam.transformation:
-            beam.transformation = Translation.from_vector([0, 0, -beam.depth * 0.5]) * orientation  # Initialize transformation if it's not set.
+            beam.transformation = Translation.from_vector([0, 0, -beam.height * -0.5]) * orientation * extension_transformation # Initialize transformation if it's not set.
         else:
-            beam.transformation = beam.transformation * Translation.from_vector([0, 0, -beam.depth * 0.5]) * orientation
+            beam.transformation = beam.transformation * Translation.from_vector([0, 0, -beam.height * -0.5]) * orientation * extension_transformation
+
         treenode: ElementNode = self.add_element(element=beam)
         self.beam_to_edge[edge] = beam
 
@@ -358,8 +361,17 @@ class GridModel(Model):
             The face where the floor is located.
         """
         orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(self.cell_network.face_polygon(face).centroid, [1, 0, 0], [0, 1, 0]))
-        plate.transformation = orientation
+        # plate.transformation = orientation
+
+
+        if not plate.transformation:
+            plate.transformation = orientation  # Initialize transformation if it's not set.
+        else:
+            plate.transformation = orientation * plate.transformation
+
         treenode: ElementNode = self.add_element(element=plate)
+
+
 
         for vertex in self.cell_network.face_vertices(face):
             if vertex in self.vertex_to_plates_and_faces:
