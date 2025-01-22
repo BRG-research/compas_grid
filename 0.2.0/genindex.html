@@ -1,0 +1,2352 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index &#8212; compas_grid</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/css/compas.css?v=617b33e2" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script src="_static/documentation_options.js?v=1be0d999"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/tabs.js?v=3ee01567"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'genindex';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com//compas_grid/gh-pages/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2';
+        </script>
+    <link rel="index" title="Index" href="#" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  <div class="navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/compas_icon_white.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="_static/compas_icon_white.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+    <p class="title logo__title">compas_grid</p>
+  
+</a></div>
+    
+  </div>
+  
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <!-- <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="index.html">
+                        Introduction
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="installation.html">
+                        Installation
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="tutorial.html">
+                        Tutorial
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="api.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="license.html">
+                        License
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
+  </ul> -->
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.2  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com//compas_grid" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="http://forum.compas-framework.org/" title="Discourse" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-discourse"></i></span>
+            <label class="sr-only">Discourse</label></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/compas_grid/" title="PyPI" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-python"></i></span>
+            <label class="sr-only">PyPI</label></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+    </div>
+  
+
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <!-- <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="index.html">
+                        Introduction
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="installation.html">
+                        Installation
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="tutorial.html">
+                        Tutorial
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="api.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="license.html">
+                        License
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
+  </ul> -->
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.2  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com//compas_grid" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="http://forum.compas-framework.org/" title="Discourse" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-discourse"></i></span>
+            <label class="sr-only">Discourse</label></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/compas_grid/" title="PyPI" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-python"></i></span>
+            <label class="sr-only">PyPI</label></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="examples.html">Examples</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="examples/elements/index.html">Elements</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/elements/beam.html">Beam</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/elements/column.html">Column</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/elements/cable.html">Cable</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="examples/masonry/index.html">Masonry</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/masonry/000_input_frame.html">000 Input Frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/masonry/001_input_barrel_vault.html">001 Input Barrel Vault</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/masonry/002_model_and_elements.html">002 Model and Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/masonry/003_model_interactions.html">003 Model Interactions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/masonry/004_orient_to_xy.html">003 Orient to XY</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="examples/gridmodel/index.html">GridModel</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/gridmodel/000_frame.html">000 frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/gridmodel/001_gridmodel_create_model.html">001 gridmodel create model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/gridmodel/002_gridmodel_add_elements.html">002 gridmodel add elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/gridmodel/003_gridmodel_add_interfaces.html">003 gridmodel add interfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/gridmodel/004_gridmodel_add_interfaces_pair_columnhead_column.html">004 gridmodel add interfaces pair columnhead column</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/gridmodel/005_gridmodel_add_interfaces_pair_columnhead_beam.html">005 gridmodel add interfaces pair columnhead beam</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/gridmodel/006_gridmodel_add_interfaces_pair_columnhead_plate.html">006 gridmodel add interfaces pair columnhead plate</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/compas_grid.model.html">compas_grid.models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.models.GridModel.html">GridModel</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api/compas_grid.elements.html">compas_grid.elements</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.BlockFeature.html">BlockFeature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.BlockElement.html">BlockElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.BlockGeometry.html">BlockGeometry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.PlateFeature.html">PlateFeature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.PlateElement.html">PlateElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.PlateRadialElement.html">PlateRadialElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.ColumnHeadElement.html">ColumnHeadElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.ColumnHeadCrossElement.html">ColumnHeadCrossElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.BeamFeature.html">BeamFeature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.BeamElement.html">BeamElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.BeamIProfileElement.html">BeamIProfileElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.BeamSquareElement.html">BeamSquareElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.BeamTProfileElement.html">BeamTProfileElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.BeamVProfileElement.html">BeamVProfileElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.BeamArcElement.html">BeamArcElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.ColumnFeature.html">ColumnFeature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.ColumnElement.html">ColumnElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.ColumnRoundElement.html">ColumnRoundElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.ColumnSquareElement.html">ColumnSquareElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.FastenersFeature.html">FastenersFeature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.FastenersElement.html">FastenersElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.ScrewElement.html">ScrewElement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.CableFeature.html">CableFeature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/compas_grid.elements.CableElement.html">CableElement</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="sidebar-primary-item"><div class="sidebar-primary-item">
+    <a href="https://compas.dev" target="_blank">
+        COMPAS.dev <i class="fa fa-external-link" aria-hidden="true"></i>
+    </a>
+</div></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+
+<h1 id="index">Index</h1>
+
+<div class="genindex-jumpbox">
+ <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
+ | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#J"><strong>J</strong></a>
+ | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#Q"><strong>Q</strong></a>
+ | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
+ | <a href="#W"><strong>W</strong></a>
+ 
+</div>
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.aabb.html#compas_grid.elements.BlockGeometry.aabb">aabb() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.models.GridModel.add_beam.html#compas_grid.models.GridModel.add_beam">add_beam() (compas_grid.models.GridModel method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.models.GridModel.add_column.html#compas_grid.models.GridModel.add_column">add_column() (compas_grid.models.GridModel method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.models.GridModel.add_column_head.html#compas_grid.models.GridModel.add_column_head">add_column_head() (compas_grid.models.GridModel method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.models.GridModel.add_element.html#compas_grid.models.GridModel.add_element">add_element() (compas_grid.models.GridModel method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.models.GridModel.add_elements.html#compas_grid.models.GridModel.add_elements">add_elements() (compas_grid.models.GridModel method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.add_face.html#compas_grid.elements.BlockGeometry.add_face">add_face() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.add_feature.html#compas_grid.elements.BeamArcElement.add_feature">add_feature() (compas_grid.elements.BeamArcElement method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.add_feature.html#compas_grid.elements.BeamElement.add_feature">(compas_grid.elements.BeamElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.add_feature.html#compas_grid.elements.BeamIProfileElement.add_feature">(compas_grid.elements.BeamIProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.add_feature.html#compas_grid.elements.BeamSquareElement.add_feature">(compas_grid.elements.BeamSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.add_feature.html#compas_grid.elements.BeamTProfileElement.add_feature">(compas_grid.elements.BeamTProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.add_feature.html#compas_grid.elements.BeamVProfileElement.add_feature">(compas_grid.elements.BeamVProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockElement.add_feature.html#compas_grid.elements.BlockElement.add_feature">(compas_grid.elements.BlockElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.add_feature.html#compas_grid.elements.CableElement.add_feature">(compas_grid.elements.CableElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.add_feature.html#compas_grid.elements.ColumnElement.add_feature">(compas_grid.elements.ColumnElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.add_feature.html#compas_grid.elements.ColumnHeadCrossElement.add_feature">(compas_grid.elements.ColumnHeadCrossElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.add_feature.html#compas_grid.elements.ColumnHeadElement.add_feature">(compas_grid.elements.ColumnHeadElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.add_feature.html#compas_grid.elements.ColumnRoundElement.add_feature">(compas_grid.elements.ColumnRoundElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.add_feature.html#compas_grid.elements.ColumnSquareElement.add_feature">(compas_grid.elements.ColumnSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersElement.add_feature.html#compas_grid.elements.FastenersElement.add_feature">(compas_grid.elements.FastenersElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateElement.add_feature.html#compas_grid.elements.PlateElement.add_feature">(compas_grid.elements.PlateElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateRadialElement.add_feature.html#compas_grid.elements.PlateRadialElement.add_feature">(compas_grid.elements.PlateRadialElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.add_feature.html#compas_grid.elements.ScrewElement.add_feature">(compas_grid.elements.ScrewElement method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.models.GridModel.add_floor.html#compas_grid.models.GridModel.add_floor">add_floor() (compas_grid.models.GridModel method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.models.GridModel.add_interaction.html#compas_grid.models.GridModel.add_interaction">add_interaction() (compas_grid.models.GridModel method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.models.GridModel.add_material.html#compas_grid.models.GridModel.add_material">add_material() (compas_grid.models.GridModel method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.add_modifier.html#compas_grid.elements.BeamArcElement.add_modifier">add_modifier() (compas_grid.elements.BeamArcElement method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.add_modifier.html#compas_grid.elements.BeamElement.add_modifier">(compas_grid.elements.BeamElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.add_modifier.html#compas_grid.elements.BeamIProfileElement.add_modifier">(compas_grid.elements.BeamIProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.add_modifier.html#compas_grid.elements.BeamSquareElement.add_modifier">(compas_grid.elements.BeamSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.add_modifier.html#compas_grid.elements.BeamTProfileElement.add_modifier">(compas_grid.elements.BeamTProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.add_modifier.html#compas_grid.elements.BeamVProfileElement.add_modifier">(compas_grid.elements.BeamVProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockElement.add_modifier.html#compas_grid.elements.BlockElement.add_modifier">(compas_grid.elements.BlockElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.add_modifier.html#compas_grid.elements.CableElement.add_modifier">(compas_grid.elements.CableElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.add_modifier.html#compas_grid.elements.ColumnElement.add_modifier">(compas_grid.elements.ColumnElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.add_modifier.html#compas_grid.elements.ColumnHeadCrossElement.add_modifier">(compas_grid.elements.ColumnHeadCrossElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.add_modifier.html#compas_grid.elements.ColumnHeadElement.add_modifier">(compas_grid.elements.ColumnHeadElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.add_modifier.html#compas_grid.elements.ColumnRoundElement.add_modifier">(compas_grid.elements.ColumnRoundElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.add_modifier.html#compas_grid.elements.ColumnSquareElement.add_modifier">(compas_grid.elements.ColumnSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersElement.add_modifier.html#compas_grid.elements.FastenersElement.add_modifier">(compas_grid.elements.FastenersElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateElement.add_modifier.html#compas_grid.elements.PlateElement.add_modifier">(compas_grid.elements.PlateElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateRadialElement.add_modifier.html#compas_grid.elements.PlateRadialElement.add_modifier">(compas_grid.elements.PlateRadialElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.add_modifier.html#compas_grid.elements.ScrewElement.add_modifier">(compas_grid.elements.ScrewElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.models.GridModel.add_modifier.html#compas_grid.models.GridModel.add_modifier">(compas_grid.models.GridModel method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.add_vertex.html#compas_grid.elements.BlockGeometry.add_vertex">add_vertex() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.adjacency_matrix.html#compas_grid.elements.BlockGeometry.adjacency_matrix">adjacency_matrix() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BeamFeature.apply.html#compas_grid.elements.BeamFeature.apply">apply() (compas_grid.elements.BeamFeature method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BlockFeature.apply.html#compas_grid.elements.BlockFeature.apply">(compas_grid.elements.BlockFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableFeature.apply.html#compas_grid.elements.CableFeature.apply">(compas_grid.elements.CableFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnFeature.apply.html#compas_grid.elements.ColumnFeature.apply">(compas_grid.elements.ColumnFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersFeature.apply.html#compas_grid.elements.FastenersFeature.apply">(compas_grid.elements.FastenersFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateFeature.apply.html#compas_grid.elements.PlateFeature.apply">(compas_grid.elements.PlateFeature method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.apply_features.html#compas_grid.elements.BeamArcElement.apply_features">apply_features() (compas_grid.elements.BeamArcElement method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.apply_features.html#compas_grid.elements.BeamElement.apply_features">(compas_grid.elements.BeamElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.apply_features.html#compas_grid.elements.BeamIProfileElement.apply_features">(compas_grid.elements.BeamIProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.apply_features.html#compas_grid.elements.BeamSquareElement.apply_features">(compas_grid.elements.BeamSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.apply_features.html#compas_grid.elements.BeamTProfileElement.apply_features">(compas_grid.elements.BeamTProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.apply_features.html#compas_grid.elements.BeamVProfileElement.apply_features">(compas_grid.elements.BeamVProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockElement.apply_features.html#compas_grid.elements.BlockElement.apply_features">(compas_grid.elements.BlockElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.apply_features.html#compas_grid.elements.CableElement.apply_features">(compas_grid.elements.CableElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.apply_features.html#compas_grid.elements.ColumnElement.apply_features">(compas_grid.elements.ColumnElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.apply_features.html#compas_grid.elements.ColumnHeadCrossElement.apply_features">(compas_grid.elements.ColumnHeadCrossElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.apply_features.html#compas_grid.elements.ColumnHeadElement.apply_features">(compas_grid.elements.ColumnHeadElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.apply_features.html#compas_grid.elements.ColumnRoundElement.apply_features">(compas_grid.elements.ColumnRoundElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.apply_features.html#compas_grid.elements.ColumnSquareElement.apply_features">(compas_grid.elements.ColumnSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersElement.apply_features.html#compas_grid.elements.FastenersElement.apply_features">(compas_grid.elements.FastenersElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateElement.apply_features.html#compas_grid.elements.PlateElement.apply_features">(compas_grid.elements.PlateElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateRadialElement.apply_features.html#compas_grid.elements.PlateRadialElement.apply_features">(compas_grid.elements.PlateRadialElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.apply_features.html#compas_grid.elements.ScrewElement.apply_features">(compas_grid.elements.ScrewElement method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.area.html#compas_grid.elements.BlockGeometry.area">area() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.models.GridModel.assign_material.html#compas_grid.models.GridModel.assign_material">assign_material() (compas_grid.models.GridModel method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="B">B</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.html#compas_grid.elements.BeamArcElement">BeamArcElement (class in compas_grid.elements)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BeamElement.html#compas_grid.elements.BeamElement">BeamElement (class in compas_grid.elements)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BeamFeature.html#compas_grid.elements.BeamFeature">BeamFeature (class in compas_grid.elements)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.html#compas_grid.elements.BeamIProfileElement">BeamIProfileElement (class in compas_grid.elements)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BeamSquareElement.html#compas_grid.elements.BeamSquareElement">BeamSquareElement (class in compas_grid.elements)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.html#compas_grid.elements.BeamTProfileElement">BeamTProfileElement (class in compas_grid.elements)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.html#compas_grid.elements.BeamVProfileElement">BeamVProfileElement (class in compas_grid.elements)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockElement.html#compas_grid.elements.BlockElement">BlockElement (class in compas_grid.elements)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockFeature.html#compas_grid.elements.BlockFeature">BlockFeature (class in compas_grid.elements)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.html#compas_grid.elements.BlockGeometry">BlockGeometry (class in compas_grid.elements)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.CableElement.html#compas_grid.elements.CableElement">CableElement (class in compas_grid.elements)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.CableFeature.html#compas_grid.elements.CableFeature">CableFeature (class in compas_grid.elements)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.clear.html#compas_grid.elements.BlockGeometry.clear">clear() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.closest_direction.html#compas_grid.elements.ColumnHeadCrossElement.closest_direction">closest_direction() (compas_grid.elements.ColumnHeadCrossElement static method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.collapse_edge.html#compas_grid.elements.BlockGeometry.collapse_edge">collapse_edge() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.collision.html#compas_grid.elements.BeamArcElement.collision">collision() (compas_grid.elements.BeamArcElement method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.collision.html#compas_grid.elements.BeamElement.collision">(compas_grid.elements.BeamElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.collision.html#compas_grid.elements.BeamIProfileElement.collision">(compas_grid.elements.BeamIProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.collision.html#compas_grid.elements.BeamSquareElement.collision">(compas_grid.elements.BeamSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.collision.html#compas_grid.elements.BeamTProfileElement.collision">(compas_grid.elements.BeamTProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.collision.html#compas_grid.elements.BeamVProfileElement.collision">(compas_grid.elements.BeamVProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockElement.collision.html#compas_grid.elements.BlockElement.collision">(compas_grid.elements.BlockElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.collision.html#compas_grid.elements.CableElement.collision">(compas_grid.elements.CableElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.collision.html#compas_grid.elements.ColumnElement.collision">(compas_grid.elements.ColumnElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.collision.html#compas_grid.elements.ColumnHeadCrossElement.collision">(compas_grid.elements.ColumnHeadCrossElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.collision.html#compas_grid.elements.ColumnHeadElement.collision">(compas_grid.elements.ColumnHeadElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.collision.html#compas_grid.elements.ColumnRoundElement.collision">(compas_grid.elements.ColumnRoundElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.collision.html#compas_grid.elements.ColumnSquareElement.collision">(compas_grid.elements.ColumnSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersElement.collision.html#compas_grid.elements.FastenersElement.collision">(compas_grid.elements.FastenersElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateElement.collision.html#compas_grid.elements.PlateElement.collision">(compas_grid.elements.PlateElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateRadialElement.collision.html#compas_grid.elements.PlateRadialElement.collision">(compas_grid.elements.PlateRadialElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.collision.html#compas_grid.elements.ScrewElement.collision">(compas_grid.elements.ScrewElement method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.models.GridModel.collisions.html#compas_grid.models.GridModel.collisions">collisions() (compas_grid.models.GridModel method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.ColumnElement.html#compas_grid.elements.ColumnElement">ColumnElement (class in compas_grid.elements)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.ColumnFeature.html#compas_grid.elements.ColumnFeature">ColumnFeature (class in compas_grid.elements)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.html#compas_grid.elements.ColumnHeadCrossElement">ColumnHeadCrossElement (class in compas_grid.elements)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.html#compas_grid.elements.ColumnHeadElement">ColumnHeadElement (class in compas_grid.elements)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.html#compas_grid.elements.ColumnRoundElement">ColumnRoundElement (class in compas_grid.elements)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.html#compas_grid.elements.ColumnSquareElement">ColumnSquareElement (class in compas_grid.elements)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.compute_aabb.html#compas_grid.elements.BeamArcElement.compute_aabb">compute_aabb() (compas_grid.elements.BeamArcElement method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.compute_aabb.html#compas_grid.elements.BeamElement.compute_aabb">(compas_grid.elements.BeamElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.compute_aabb.html#compas_grid.elements.BeamIProfileElement.compute_aabb">(compas_grid.elements.BeamIProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.compute_aabb.html#compas_grid.elements.BeamSquareElement.compute_aabb">(compas_grid.elements.BeamSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.compute_aabb.html#compas_grid.elements.BeamTProfileElement.compute_aabb">(compas_grid.elements.BeamTProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.compute_aabb.html#compas_grid.elements.BeamVProfileElement.compute_aabb">(compas_grid.elements.BeamVProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockElement.compute_aabb.html#compas_grid.elements.BlockElement.compute_aabb">(compas_grid.elements.BlockElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockGeometry.compute_aabb.html#compas_grid.elements.BlockGeometry.compute_aabb">(compas_grid.elements.BlockGeometry method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.compute_aabb.html#compas_grid.elements.CableElement.compute_aabb">(compas_grid.elements.CableElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.compute_aabb.html#compas_grid.elements.ColumnElement.compute_aabb">(compas_grid.elements.ColumnElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.compute_aabb.html#compas_grid.elements.ColumnHeadCrossElement.compute_aabb">(compas_grid.elements.ColumnHeadCrossElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.compute_aabb.html#compas_grid.elements.ColumnHeadElement.compute_aabb">(compas_grid.elements.ColumnHeadElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.compute_aabb.html#compas_grid.elements.ColumnRoundElement.compute_aabb">(compas_grid.elements.ColumnRoundElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.compute_aabb.html#compas_grid.elements.ColumnSquareElement.compute_aabb">(compas_grid.elements.ColumnSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersElement.compute_aabb.html#compas_grid.elements.FastenersElement.compute_aabb">(compas_grid.elements.FastenersElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateElement.compute_aabb.html#compas_grid.elements.PlateElement.compute_aabb">(compas_grid.elements.PlateElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateRadialElement.compute_aabb.html#compas_grid.elements.PlateRadialElement.compute_aabb">(compas_grid.elements.PlateRadialElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.compute_aabb.html#compas_grid.elements.ScrewElement.compute_aabb">(compas_grid.elements.ScrewElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.models.GridModel.compute_aabb.html#compas_grid.models.GridModel.compute_aabb">(compas_grid.models.GridModel method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.models.GridModel.compute_bvh.html#compas_grid.models.GridModel.compute_bvh">compute_bvh() (compas_grid.models.GridModel method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.compute_collision_mesh.html#compas_grid.elements.BeamArcElement.compute_collision_mesh">compute_collision_mesh() (compas_grid.elements.BeamArcElement method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.compute_collision_mesh.html#compas_grid.elements.BeamElement.compute_collision_mesh">(compas_grid.elements.BeamElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.compute_collision_mesh.html#compas_grid.elements.BeamIProfileElement.compute_collision_mesh">(compas_grid.elements.BeamIProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.compute_collision_mesh.html#compas_grid.elements.BeamSquareElement.compute_collision_mesh">(compas_grid.elements.BeamSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.compute_collision_mesh.html#compas_grid.elements.BeamTProfileElement.compute_collision_mesh">(compas_grid.elements.BeamTProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.compute_collision_mesh.html#compas_grid.elements.BeamVProfileElement.compute_collision_mesh">(compas_grid.elements.BeamVProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockElement.compute_collision_mesh.html#compas_grid.elements.BlockElement.compute_collision_mesh">(compas_grid.elements.BlockElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.compute_collision_mesh.html#compas_grid.elements.CableElement.compute_collision_mesh">(compas_grid.elements.CableElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.compute_collision_mesh.html#compas_grid.elements.ColumnElement.compute_collision_mesh">(compas_grid.elements.ColumnElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.compute_collision_mesh.html#compas_grid.elements.ColumnHeadCrossElement.compute_collision_mesh">(compas_grid.elements.ColumnHeadCrossElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.compute_collision_mesh.html#compas_grid.elements.ColumnHeadElement.compute_collision_mesh">(compas_grid.elements.ColumnHeadElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.compute_collision_mesh.html#compas_grid.elements.ColumnRoundElement.compute_collision_mesh">(compas_grid.elements.ColumnRoundElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.compute_collision_mesh.html#compas_grid.elements.ColumnSquareElement.compute_collision_mesh">(compas_grid.elements.ColumnSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersElement.compute_collision_mesh.html#compas_grid.elements.FastenersElement.compute_collision_mesh">(compas_grid.elements.FastenersElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateElement.compute_collision_mesh.html#compas_grid.elements.PlateElement.compute_collision_mesh">(compas_grid.elements.PlateElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateRadialElement.compute_collision_mesh.html#compas_grid.elements.PlateRadialElement.compute_collision_mesh">(compas_grid.elements.PlateRadialElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.compute_collision_mesh.html#compas_grid.elements.ScrewElement.compute_collision_mesh">(compas_grid.elements.ScrewElement method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.models.GridModel.compute_contacts.html#compas_grid.models.GridModel.compute_contacts">compute_contacts() (compas_grid.models.GridModel method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.compute_elementgeometry.html#compas_grid.elements.BeamArcElement.compute_elementgeometry">compute_elementgeometry() (compas_grid.elements.BeamArcElement method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.compute_elementgeometry.html#compas_grid.elements.BeamElement.compute_elementgeometry">(compas_grid.elements.BeamElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.compute_elementgeometry.html#compas_grid.elements.BeamIProfileElement.compute_elementgeometry">(compas_grid.elements.BeamIProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.compute_elementgeometry.html#compas_grid.elements.BeamSquareElement.compute_elementgeometry">(compas_grid.elements.BeamSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.compute_elementgeometry.html#compas_grid.elements.BeamTProfileElement.compute_elementgeometry">(compas_grid.elements.BeamTProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.compute_elementgeometry.html#compas_grid.elements.BeamVProfileElement.compute_elementgeometry">(compas_grid.elements.BeamVProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockElement.compute_elementgeometry.html#compas_grid.elements.BlockElement.compute_elementgeometry">(compas_grid.elements.BlockElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.compute_elementgeometry.html#compas_grid.elements.CableElement.compute_elementgeometry">(compas_grid.elements.CableElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.compute_elementgeometry.html#compas_grid.elements.ColumnElement.compute_elementgeometry">(compas_grid.elements.ColumnElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.compute_elementgeometry.html#compas_grid.elements.ColumnHeadCrossElement.compute_elementgeometry">(compas_grid.elements.ColumnHeadCrossElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.compute_elementgeometry.html#compas_grid.elements.ColumnHeadElement.compute_elementgeometry">(compas_grid.elements.ColumnHeadElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.compute_elementgeometry.html#compas_grid.elements.ColumnRoundElement.compute_elementgeometry">(compas_grid.elements.ColumnRoundElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.compute_elementgeometry.html#compas_grid.elements.ColumnSquareElement.compute_elementgeometry">(compas_grid.elements.ColumnSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersElement.compute_elementgeometry.html#compas_grid.elements.FastenersElement.compute_elementgeometry">(compas_grid.elements.FastenersElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateElement.compute_elementgeometry.html#compas_grid.elements.PlateElement.compute_elementgeometry">(compas_grid.elements.PlateElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateRadialElement.compute_elementgeometry.html#compas_grid.elements.PlateRadialElement.compute_elementgeometry">(compas_grid.elements.PlateRadialElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.compute_elementgeometry.html#compas_grid.elements.ScrewElement.compute_elementgeometry">(compas_grid.elements.ScrewElement method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.models.GridModel.compute_kdtree.html#compas_grid.models.GridModel.compute_kdtree">compute_kdtree() (compas_grid.models.GridModel method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.compute_modelgeometry.html#compas_grid.elements.BeamArcElement.compute_modelgeometry">compute_modelgeometry() (compas_grid.elements.BeamArcElement method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.compute_modelgeometry.html#compas_grid.elements.BeamElement.compute_modelgeometry">(compas_grid.elements.BeamElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.compute_modelgeometry.html#compas_grid.elements.BeamIProfileElement.compute_modelgeometry">(compas_grid.elements.BeamIProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.compute_modelgeometry.html#compas_grid.elements.BeamSquareElement.compute_modelgeometry">(compas_grid.elements.BeamSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.compute_modelgeometry.html#compas_grid.elements.BeamTProfileElement.compute_modelgeometry">(compas_grid.elements.BeamTProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.compute_modelgeometry.html#compas_grid.elements.BeamVProfileElement.compute_modelgeometry">(compas_grid.elements.BeamVProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockElement.compute_modelgeometry.html#compas_grid.elements.BlockElement.compute_modelgeometry">(compas_grid.elements.BlockElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.compute_modelgeometry.html#compas_grid.elements.CableElement.compute_modelgeometry">(compas_grid.elements.CableElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.compute_modelgeometry.html#compas_grid.elements.ColumnElement.compute_modelgeometry">(compas_grid.elements.ColumnElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.compute_modelgeometry.html#compas_grid.elements.ColumnHeadCrossElement.compute_modelgeometry">(compas_grid.elements.ColumnHeadCrossElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.compute_modelgeometry.html#compas_grid.elements.ColumnHeadElement.compute_modelgeometry">(compas_grid.elements.ColumnHeadElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.compute_modelgeometry.html#compas_grid.elements.ColumnRoundElement.compute_modelgeometry">(compas_grid.elements.ColumnRoundElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.compute_modelgeometry.html#compas_grid.elements.ColumnSquareElement.compute_modelgeometry">(compas_grid.elements.ColumnSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersElement.compute_modelgeometry.html#compas_grid.elements.FastenersElement.compute_modelgeometry">(compas_grid.elements.FastenersElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateElement.compute_modelgeometry.html#compas_grid.elements.PlateElement.compute_modelgeometry">(compas_grid.elements.PlateElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateRadialElement.compute_modelgeometry.html#compas_grid.elements.PlateRadialElement.compute_modelgeometry">(compas_grid.elements.PlateRadialElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.compute_modelgeometry.html#compas_grid.elements.ScrewElement.compute_modelgeometry">(compas_grid.elements.ScrewElement method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.compute_modeltransformation.html#compas_grid.elements.BeamArcElement.compute_modeltransformation">compute_modeltransformation() (compas_grid.elements.BeamArcElement method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.compute_modeltransformation.html#compas_grid.elements.BeamElement.compute_modeltransformation">(compas_grid.elements.BeamElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.compute_modeltransformation.html#compas_grid.elements.BeamIProfileElement.compute_modeltransformation">(compas_grid.elements.BeamIProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.compute_modeltransformation.html#compas_grid.elements.BeamSquareElement.compute_modeltransformation">(compas_grid.elements.BeamSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.compute_modeltransformation.html#compas_grid.elements.BeamTProfileElement.compute_modeltransformation">(compas_grid.elements.BeamTProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.compute_modeltransformation.html#compas_grid.elements.BeamVProfileElement.compute_modeltransformation">(compas_grid.elements.BeamVProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockElement.compute_modeltransformation.html#compas_grid.elements.BlockElement.compute_modeltransformation">(compas_grid.elements.BlockElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.compute_modeltransformation.html#compas_grid.elements.CableElement.compute_modeltransformation">(compas_grid.elements.CableElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.compute_modeltransformation.html#compas_grid.elements.ColumnElement.compute_modeltransformation">(compas_grid.elements.ColumnElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.compute_modeltransformation.html#compas_grid.elements.ColumnHeadCrossElement.compute_modeltransformation">(compas_grid.elements.ColumnHeadCrossElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.compute_modeltransformation.html#compas_grid.elements.ColumnHeadElement.compute_modeltransformation">(compas_grid.elements.ColumnHeadElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.compute_modeltransformation.html#compas_grid.elements.ColumnRoundElement.compute_modeltransformation">(compas_grid.elements.ColumnRoundElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.compute_modeltransformation.html#compas_grid.elements.ColumnSquareElement.compute_modeltransformation">(compas_grid.elements.ColumnSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersElement.compute_modeltransformation.html#compas_grid.elements.FastenersElement.compute_modeltransformation">(compas_grid.elements.FastenersElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateElement.compute_modeltransformation.html#compas_grid.elements.PlateElement.compute_modeltransformation">(compas_grid.elements.PlateElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateRadialElement.compute_modeltransformation.html#compas_grid.elements.PlateRadialElement.compute_modeltransformation">(compas_grid.elements.PlateRadialElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.compute_modeltransformation.html#compas_grid.elements.ScrewElement.compute_modeltransformation">(compas_grid.elements.ScrewElement method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.compute_obb.html#compas_grid.elements.BeamArcElement.compute_obb">compute_obb() (compas_grid.elements.BeamArcElement method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.compute_obb.html#compas_grid.elements.BeamElement.compute_obb">(compas_grid.elements.BeamElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.compute_obb.html#compas_grid.elements.BeamIProfileElement.compute_obb">(compas_grid.elements.BeamIProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.compute_obb.html#compas_grid.elements.BeamSquareElement.compute_obb">(compas_grid.elements.BeamSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.compute_obb.html#compas_grid.elements.BeamTProfileElement.compute_obb">(compas_grid.elements.BeamTProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.compute_obb.html#compas_grid.elements.BeamVProfileElement.compute_obb">(compas_grid.elements.BeamVProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockElement.compute_obb.html#compas_grid.elements.BlockElement.compute_obb">(compas_grid.elements.BlockElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockGeometry.compute_obb.html#compas_grid.elements.BlockGeometry.compute_obb">(compas_grid.elements.BlockGeometry method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.compute_obb.html#compas_grid.elements.CableElement.compute_obb">(compas_grid.elements.CableElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.compute_obb.html#compas_grid.elements.ColumnElement.compute_obb">(compas_grid.elements.ColumnElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.compute_obb.html#compas_grid.elements.ColumnHeadCrossElement.compute_obb">(compas_grid.elements.ColumnHeadCrossElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.compute_obb.html#compas_grid.elements.ColumnHeadElement.compute_obb">(compas_grid.elements.ColumnHeadElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.compute_obb.html#compas_grid.elements.ColumnRoundElement.compute_obb">(compas_grid.elements.ColumnRoundElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.compute_obb.html#compas_grid.elements.ColumnSquareElement.compute_obb">(compas_grid.elements.ColumnSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersElement.compute_obb.html#compas_grid.elements.FastenersElement.compute_obb">(compas_grid.elements.FastenersElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateElement.compute_obb.html#compas_grid.elements.PlateElement.compute_obb">(compas_grid.elements.PlateElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateRadialElement.compute_obb.html#compas_grid.elements.PlateRadialElement.compute_obb">(compas_grid.elements.PlateRadialElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.compute_obb.html#compas_grid.elements.ScrewElement.compute_obb">(compas_grid.elements.ScrewElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.models.GridModel.compute_obb.html#compas_grid.models.GridModel.compute_obb">(compas_grid.models.GridModel method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.compute_point.html#compas_grid.elements.BeamArcElement.compute_point">compute_point() (compas_grid.elements.BeamArcElement method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.compute_point.html#compas_grid.elements.BeamElement.compute_point">(compas_grid.elements.BeamElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.compute_point.html#compas_grid.elements.BeamIProfileElement.compute_point">(compas_grid.elements.BeamIProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.compute_point.html#compas_grid.elements.BeamSquareElement.compute_point">(compas_grid.elements.BeamSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.compute_point.html#compas_grid.elements.BeamTProfileElement.compute_point">(compas_grid.elements.BeamTProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.compute_point.html#compas_grid.elements.BeamVProfileElement.compute_point">(compas_grid.elements.BeamVProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockElement.compute_point.html#compas_grid.elements.BlockElement.compute_point">(compas_grid.elements.BlockElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.compute_point.html#compas_grid.elements.CableElement.compute_point">(compas_grid.elements.CableElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.compute_point.html#compas_grid.elements.ColumnElement.compute_point">(compas_grid.elements.ColumnElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.compute_point.html#compas_grid.elements.ColumnHeadCrossElement.compute_point">(compas_grid.elements.ColumnHeadCrossElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.compute_point.html#compas_grid.elements.ColumnHeadElement.compute_point">(compas_grid.elements.ColumnHeadElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.compute_point.html#compas_grid.elements.ColumnRoundElement.compute_point">(compas_grid.elements.ColumnRoundElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.compute_point.html#compas_grid.elements.ColumnSquareElement.compute_point">(compas_grid.elements.ColumnSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersElement.compute_point.html#compas_grid.elements.FastenersElement.compute_point">(compas_grid.elements.FastenersElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateElement.compute_point.html#compas_grid.elements.PlateElement.compute_point">(compas_grid.elements.PlateElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateRadialElement.compute_point.html#compas_grid.elements.PlateRadialElement.compute_point">(compas_grid.elements.PlateRadialElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.compute_point.html#compas_grid.elements.ScrewElement.compute_point">(compas_grid.elements.ScrewElement method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.compute_top_and_bottom_polygons.html#compas_grid.elements.BeamArcElement.compute_top_and_bottom_polygons">compute_top_and_bottom_polygons() (compas_grid.elements.BeamArcElement method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.compute_top_and_bottom_polygons.html#compas_grid.elements.BeamElement.compute_top_and_bottom_polygons">(compas_grid.elements.BeamElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.compute_top_and_bottom_polygons.html#compas_grid.elements.BeamIProfileElement.compute_top_and_bottom_polygons">(compas_grid.elements.BeamIProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.compute_top_and_bottom_polygons.html#compas_grid.elements.BeamSquareElement.compute_top_and_bottom_polygons">(compas_grid.elements.BeamSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.compute_top_and_bottom_polygons.html#compas_grid.elements.BeamTProfileElement.compute_top_and_bottom_polygons">(compas_grid.elements.BeamTProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.compute_top_and_bottom_polygons.html#compas_grid.elements.BeamVProfileElement.compute_top_and_bottom_polygons">(compas_grid.elements.BeamVProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.compute_top_and_bottom_polygons.html#compas_grid.elements.CableElement.compute_top_and_bottom_polygons">(compas_grid.elements.CableElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.compute_top_and_bottom_polygons.html#compas_grid.elements.ColumnElement.compute_top_and_bottom_polygons">(compas_grid.elements.ColumnElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.compute_top_and_bottom_polygons.html#compas_grid.elements.ColumnRoundElement.compute_top_and_bottom_polygons">(compas_grid.elements.ColumnRoundElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.compute_top_and_bottom_polygons.html#compas_grid.elements.ColumnSquareElement.compute_top_and_bottom_polygons">(compas_grid.elements.ColumnSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.compute_top_and_bottom_polygons.html#compas_grid.elements.ScrewElement.compute_top_and_bottom_polygons">(compas_grid.elements.ScrewElement method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.connected_faces.html#compas_grid.elements.BlockGeometry.connected_faces">connected_faces() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.connected_vertices.html#compas_grid.elements.BlockGeometry.connected_vertices">connected_vertices() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.connectivity_matrix.html#compas_grid.elements.BlockGeometry.connectivity_matrix">connectivity_matrix() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.contacts.html#compas_grid.elements.BeamArcElement.contacts">contacts() (compas_grid.elements.BeamArcElement method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.contacts.html#compas_grid.elements.BeamElement.contacts">(compas_grid.elements.BeamElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.contacts.html#compas_grid.elements.BeamIProfileElement.contacts">(compas_grid.elements.BeamIProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.contacts.html#compas_grid.elements.BeamSquareElement.contacts">(compas_grid.elements.BeamSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.contacts.html#compas_grid.elements.BeamTProfileElement.contacts">(compas_grid.elements.BeamTProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.contacts.html#compas_grid.elements.BeamVProfileElement.contacts">(compas_grid.elements.BeamVProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockElement.contacts.html#compas_grid.elements.BlockElement.contacts">(compas_grid.elements.BlockElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.contacts.html#compas_grid.elements.CableElement.contacts">(compas_grid.elements.CableElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.contacts.html#compas_grid.elements.ColumnElement.contacts">(compas_grid.elements.ColumnElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.contacts.html#compas_grid.elements.ColumnHeadCrossElement.contacts">(compas_grid.elements.ColumnHeadCrossElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.contacts.html#compas_grid.elements.ColumnHeadElement.contacts">(compas_grid.elements.ColumnHeadElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.contacts.html#compas_grid.elements.ColumnRoundElement.contacts">(compas_grid.elements.ColumnRoundElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.contacts.html#compas_grid.elements.ColumnSquareElement.contacts">(compas_grid.elements.ColumnSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersElement.contacts.html#compas_grid.elements.FastenersElement.contacts">(compas_grid.elements.FastenersElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateElement.contacts.html#compas_grid.elements.PlateElement.contacts">(compas_grid.elements.PlateElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateRadialElement.contacts.html#compas_grid.elements.PlateRadialElement.contacts">(compas_grid.elements.PlateRadialElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.contacts.html#compas_grid.elements.ScrewElement.contacts">(compas_grid.elements.ScrewElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.models.GridModel.contacts.html#compas_grid.models.GridModel.contacts">(compas_grid.models.GridModel method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.copy.html#compas_grid.elements.BeamArcElement.copy">copy() (compas_grid.elements.BeamArcElement method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.copy.html#compas_grid.elements.BeamElement.copy">(compas_grid.elements.BeamElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamFeature.copy.html#compas_grid.elements.BeamFeature.copy">(compas_grid.elements.BeamFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.copy.html#compas_grid.elements.BeamIProfileElement.copy">(compas_grid.elements.BeamIProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.copy.html#compas_grid.elements.BeamSquareElement.copy">(compas_grid.elements.BeamSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.copy.html#compas_grid.elements.BeamTProfileElement.copy">(compas_grid.elements.BeamTProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.copy.html#compas_grid.elements.BeamVProfileElement.copy">(compas_grid.elements.BeamVProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockElement.copy.html#compas_grid.elements.BlockElement.copy">(compas_grid.elements.BlockElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockFeature.copy.html#compas_grid.elements.BlockFeature.copy">(compas_grid.elements.BlockFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockGeometry.copy.html#compas_grid.elements.BlockGeometry.copy">(compas_grid.elements.BlockGeometry method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.copy.html#compas_grid.elements.CableElement.copy">(compas_grid.elements.CableElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableFeature.copy.html#compas_grid.elements.CableFeature.copy">(compas_grid.elements.CableFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.copy.html#compas_grid.elements.ColumnElement.copy">(compas_grid.elements.ColumnElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnFeature.copy.html#compas_grid.elements.ColumnFeature.copy">(compas_grid.elements.ColumnFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.copy.html#compas_grid.elements.ColumnHeadCrossElement.copy">(compas_grid.elements.ColumnHeadCrossElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.copy.html#compas_grid.elements.ColumnHeadElement.copy">(compas_grid.elements.ColumnHeadElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.copy.html#compas_grid.elements.ColumnRoundElement.copy">(compas_grid.elements.ColumnRoundElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.copy.html#compas_grid.elements.ColumnSquareElement.copy">(compas_grid.elements.ColumnSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersElement.copy.html#compas_grid.elements.FastenersElement.copy">(compas_grid.elements.FastenersElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersFeature.copy.html#compas_grid.elements.FastenersFeature.copy">(compas_grid.elements.FastenersFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateElement.copy.html#compas_grid.elements.PlateElement.copy">(compas_grid.elements.PlateElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateFeature.copy.html#compas_grid.elements.PlateFeature.copy">(compas_grid.elements.PlateFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateRadialElement.copy.html#compas_grid.elements.PlateRadialElement.copy">(compas_grid.elements.PlateRadialElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.copy.html#compas_grid.elements.ScrewElement.copy">(compas_grid.elements.ScrewElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.models.GridModel.copy.html#compas_grid.models.GridModel.copy">(compas_grid.models.GridModel method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.cull_vertices.html#compas_grid.elements.BlockGeometry.cull_vertices">cull_vertices() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.degree_matrix.html#compas_grid.elements.BlockGeometry.degree_matrix">degree_matrix() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.delete_face.html#compas_grid.elements.BlockGeometry.delete_face">delete_face() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.delete_vertex.html#compas_grid.elements.BlockGeometry.delete_vertex">delete_vertex() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.dual.html#compas_grid.elements.BlockGeometry.dual">dual() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.edge_attribute.html#compas_grid.elements.BlockGeometry.edge_attribute">edge_attribute() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.edge_attributes.html#compas_grid.elements.BlockGeometry.edge_attributes">edge_attributes() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.edge_coordinates.html#compas_grid.elements.BlockGeometry.edge_coordinates">edge_coordinates() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.edge_direction.html#compas_grid.elements.BlockGeometry.edge_direction">edge_direction() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.edge_end.html#compas_grid.elements.BlockGeometry.edge_end">edge_end() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.edge_faces.html#compas_grid.elements.BlockGeometry.edge_faces">edge_faces() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.edge_length.html#compas_grid.elements.BlockGeometry.edge_length">edge_length() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.edge_line.html#compas_grid.elements.BlockGeometry.edge_line">edge_line() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.edge_loop.html#compas_grid.elements.BlockGeometry.edge_loop">edge_loop() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.edge_midpoint.html#compas_grid.elements.BlockGeometry.edge_midpoint">edge_midpoint() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.edge_point.html#compas_grid.elements.BlockGeometry.edge_point">edge_point() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.edge_sample.html#compas_grid.elements.BlockGeometry.edge_sample">edge_sample() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.edge_start.html#compas_grid.elements.BlockGeometry.edge_start">edge_start() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.edge_strip.html#compas_grid.elements.BlockGeometry.edge_strip">edge_strip() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.edge_vector.html#compas_grid.elements.BlockGeometry.edge_vector">edge_vector() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.edges.html#compas_grid.elements.BlockGeometry.edges">edges() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.edges_attribute.html#compas_grid.elements.BlockGeometry.edges_attribute">edges_attribute() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.edges_attributes.html#compas_grid.elements.BlockGeometry.edges_attributes">edges_attributes() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.edges_on_boundaries.html#compas_grid.elements.BlockGeometry.edges_on_boundaries">edges_on_boundaries() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.edges_on_boundary.html#compas_grid.elements.BlockGeometry.edges_on_boundary">edges_on_boundary() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.edges_where.html#compas_grid.elements.BlockGeometry.edges_where">edges_where() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.edges_where_predicate.html#compas_grid.elements.BlockGeometry.edges_where_predicate">edges_where_predicate() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.models.GridModel.element_nnbrs.html#compas_grid.models.GridModel.element_nnbrs">element_nnbrs() (compas_grid.models.GridModel method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.models.GridModel.elements.html#compas_grid.models.GridModel.elements">elements() (compas_grid.models.GridModel method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.euler.html#compas_grid.elements.BlockGeometry.euler">euler() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.exploded.html#compas_grid.elements.BlockGeometry.exploded">exploded() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.extend.html#compas_grid.elements.BeamArcElement.extend">extend() (compas_grid.elements.BeamArcElement method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.extend.html#compas_grid.elements.BeamElement.extend">(compas_grid.elements.BeamElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.extend.html#compas_grid.elements.BeamIProfileElement.extend">(compas_grid.elements.BeamIProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.extend.html#compas_grid.elements.BeamSquareElement.extend">(compas_grid.elements.BeamSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.extend.html#compas_grid.elements.BeamTProfileElement.extend">(compas_grid.elements.BeamTProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.extend.html#compas_grid.elements.BeamVProfileElement.extend">(compas_grid.elements.BeamVProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.extend.html#compas_grid.elements.CableElement.extend">(compas_grid.elements.CableElement method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.extend_two_sides.html#compas_grid.elements.BeamArcElement.extend_two_sides">extend_two_sides() (compas_grid.elements.BeamArcElement method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.extend_two_sides.html#compas_grid.elements.BeamElement.extend_two_sides">(compas_grid.elements.BeamElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.extend_two_sides.html#compas_grid.elements.BeamIProfileElement.extend_two_sides">(compas_grid.elements.BeamIProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.extend_two_sides.html#compas_grid.elements.BeamSquareElement.extend_two_sides">(compas_grid.elements.BeamSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.extend_two_sides.html#compas_grid.elements.BeamTProfileElement.extend_two_sides">(compas_grid.elements.BeamTProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.extend_two_sides.html#compas_grid.elements.BeamVProfileElement.extend_two_sides">(compas_grid.elements.BeamVProfileElement method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_adjacency_halfedge.html#compas_grid.elements.BlockGeometry.face_adjacency_halfedge">face_adjacency_halfedge() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_adjacency_vertices.html#compas_grid.elements.BlockGeometry.face_adjacency_vertices">face_adjacency_vertices() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_area.html#compas_grid.elements.BlockGeometry.face_area">face_area() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_aspect_ratio.html#compas_grid.elements.BlockGeometry.face_aspect_ratio">face_aspect_ratio() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_attribute.html#compas_grid.elements.BlockGeometry.face_attribute">face_attribute() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_attributes.html#compas_grid.elements.BlockGeometry.face_attributes">face_attributes() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_center.html#compas_grid.elements.BlockGeometry.face_center">face_center() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_centroid.html#compas_grid.elements.BlockGeometry.face_centroid">face_centroid() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_circle.html#compas_grid.elements.BlockGeometry.face_circle">face_circle() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_coordinates.html#compas_grid.elements.BlockGeometry.face_coordinates">face_coordinates() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_corners.html#compas_grid.elements.BlockGeometry.face_corners">face_corners() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_curvature.html#compas_grid.elements.BlockGeometry.face_curvature">face_curvature() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_degree.html#compas_grid.elements.BlockGeometry.face_degree">face_degree() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_flatness.html#compas_grid.elements.BlockGeometry.face_flatness">face_flatness() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_frame.html#compas_grid.elements.BlockGeometry.face_frame">face_frame() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_halfedges.html#compas_grid.elements.BlockGeometry.face_halfedges">face_halfedges() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_matrix.html#compas_grid.elements.BlockGeometry.face_matrix">face_matrix() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_max_degree.html#compas_grid.elements.BlockGeometry.face_max_degree">face_max_degree() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_min_degree.html#compas_grid.elements.BlockGeometry.face_min_degree">face_min_degree() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_neighborhood.html#compas_grid.elements.BlockGeometry.face_neighborhood">face_neighborhood() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_neighbors.html#compas_grid.elements.BlockGeometry.face_neighbors">face_neighbors() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_normal.html#compas_grid.elements.BlockGeometry.face_normal">face_normal() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_plane.html#compas_grid.elements.BlockGeometry.face_plane">face_plane() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_points.html#compas_grid.elements.BlockGeometry.face_points">face_points() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_polygon.html#compas_grid.elements.BlockGeometry.face_polygon">face_polygon() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_sample.html#compas_grid.elements.BlockGeometry.face_sample">face_sample() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_skewness.html#compas_grid.elements.BlockGeometry.face_skewness">face_skewness() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_vertex_after.html#compas_grid.elements.BlockGeometry.face_vertex_after">face_vertex_after() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_vertex_ancestor.html#compas_grid.elements.BlockGeometry.face_vertex_ancestor">face_vertex_ancestor() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_vertex_before.html#compas_grid.elements.BlockGeometry.face_vertex_before">face_vertex_before() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_vertex_descendant.html#compas_grid.elements.BlockGeometry.face_vertex_descendant">face_vertex_descendant() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.face_vertices.html#compas_grid.elements.BlockGeometry.face_vertices">face_vertices() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.faces.html#compas_grid.elements.BlockGeometry.faces">faces() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.faces_attribute.html#compas_grid.elements.BlockGeometry.faces_attribute">faces_attribute() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.faces_attributes.html#compas_grid.elements.BlockGeometry.faces_attributes">faces_attributes() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.faces_on_boundaries.html#compas_grid.elements.BlockGeometry.faces_on_boundaries">faces_on_boundaries() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.faces_on_boundary.html#compas_grid.elements.BlockGeometry.faces_on_boundary">faces_on_boundary() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.faces_where.html#compas_grid.elements.BlockGeometry.faces_where">faces_where() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.faces_where_predicate.html#compas_grid.elements.BlockGeometry.faces_where_predicate">faces_where_predicate() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.FastenersElement.html#compas_grid.elements.FastenersElement">FastenersElement (class in compas_grid.elements)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.FastenersFeature.html#compas_grid.elements.FastenersFeature">FastenersFeature (class in compas_grid.elements)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.flip_cycles.html#compas_grid.elements.BlockGeometry.flip_cycles">flip_cycles() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockElement.from_box.html#compas_grid.elements.BlockElement.from_box">from_box() (compas_grid.elements.BlockElement class method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.from_json.html#compas_grid.elements.BeamArcElement.from_json">from_json() (compas_grid.elements.BeamArcElement class method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.from_json.html#compas_grid.elements.BeamElement.from_json">(compas_grid.elements.BeamElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamFeature.from_json.html#compas_grid.elements.BeamFeature.from_json">(compas_grid.elements.BeamFeature class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.from_json.html#compas_grid.elements.BeamIProfileElement.from_json">(compas_grid.elements.BeamIProfileElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.from_json.html#compas_grid.elements.BeamSquareElement.from_json">(compas_grid.elements.BeamSquareElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.from_json.html#compas_grid.elements.BeamTProfileElement.from_json">(compas_grid.elements.BeamTProfileElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.from_json.html#compas_grid.elements.BeamVProfileElement.from_json">(compas_grid.elements.BeamVProfileElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockElement.from_json.html#compas_grid.elements.BlockElement.from_json">(compas_grid.elements.BlockElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockFeature.from_json.html#compas_grid.elements.BlockFeature.from_json">(compas_grid.elements.BlockFeature class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockGeometry.from_json.html#compas_grid.elements.BlockGeometry.from_json">(compas_grid.elements.BlockGeometry class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.from_json.html#compas_grid.elements.CableElement.from_json">(compas_grid.elements.CableElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableFeature.from_json.html#compas_grid.elements.CableFeature.from_json">(compas_grid.elements.CableFeature class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.from_json.html#compas_grid.elements.ColumnElement.from_json">(compas_grid.elements.ColumnElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnFeature.from_json.html#compas_grid.elements.ColumnFeature.from_json">(compas_grid.elements.ColumnFeature class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.from_json.html#compas_grid.elements.ColumnHeadCrossElement.from_json">(compas_grid.elements.ColumnHeadCrossElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.from_json.html#compas_grid.elements.ColumnHeadElement.from_json">(compas_grid.elements.ColumnHeadElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.from_json.html#compas_grid.elements.ColumnRoundElement.from_json">(compas_grid.elements.ColumnRoundElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.from_json.html#compas_grid.elements.ColumnSquareElement.from_json">(compas_grid.elements.ColumnSquareElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersElement.from_json.html#compas_grid.elements.FastenersElement.from_json">(compas_grid.elements.FastenersElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersFeature.from_json.html#compas_grid.elements.FastenersFeature.from_json">(compas_grid.elements.FastenersFeature class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateElement.from_json.html#compas_grid.elements.PlateElement.from_json">(compas_grid.elements.PlateElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateFeature.from_json.html#compas_grid.elements.PlateFeature.from_json">(compas_grid.elements.PlateFeature class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateRadialElement.from_json.html#compas_grid.elements.PlateRadialElement.from_json">(compas_grid.elements.PlateRadialElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.from_json.html#compas_grid.elements.ScrewElement.from_json">(compas_grid.elements.ScrewElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.models.GridModel.from_json.html#compas_grid.models.GridModel.from_json">(compas_grid.models.GridModel class method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.from_jsonstring.html#compas_grid.elements.BeamArcElement.from_jsonstring">from_jsonstring() (compas_grid.elements.BeamArcElement class method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.from_jsonstring.html#compas_grid.elements.BeamElement.from_jsonstring">(compas_grid.elements.BeamElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamFeature.from_jsonstring.html#compas_grid.elements.BeamFeature.from_jsonstring">(compas_grid.elements.BeamFeature class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.from_jsonstring.html#compas_grid.elements.BeamIProfileElement.from_jsonstring">(compas_grid.elements.BeamIProfileElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.from_jsonstring.html#compas_grid.elements.BeamSquareElement.from_jsonstring">(compas_grid.elements.BeamSquareElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.from_jsonstring.html#compas_grid.elements.BeamTProfileElement.from_jsonstring">(compas_grid.elements.BeamTProfileElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.from_jsonstring.html#compas_grid.elements.BeamVProfileElement.from_jsonstring">(compas_grid.elements.BeamVProfileElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockElement.from_jsonstring.html#compas_grid.elements.BlockElement.from_jsonstring">(compas_grid.elements.BlockElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockFeature.from_jsonstring.html#compas_grid.elements.BlockFeature.from_jsonstring">(compas_grid.elements.BlockFeature class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockGeometry.from_jsonstring.html#compas_grid.elements.BlockGeometry.from_jsonstring">(compas_grid.elements.BlockGeometry class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.from_jsonstring.html#compas_grid.elements.CableElement.from_jsonstring">(compas_grid.elements.CableElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableFeature.from_jsonstring.html#compas_grid.elements.CableFeature.from_jsonstring">(compas_grid.elements.CableFeature class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.from_jsonstring.html#compas_grid.elements.ColumnElement.from_jsonstring">(compas_grid.elements.ColumnElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnFeature.from_jsonstring.html#compas_grid.elements.ColumnFeature.from_jsonstring">(compas_grid.elements.ColumnFeature class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.from_jsonstring.html#compas_grid.elements.ColumnHeadCrossElement.from_jsonstring">(compas_grid.elements.ColumnHeadCrossElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.from_jsonstring.html#compas_grid.elements.ColumnHeadElement.from_jsonstring">(compas_grid.elements.ColumnHeadElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.from_jsonstring.html#compas_grid.elements.ColumnRoundElement.from_jsonstring">(compas_grid.elements.ColumnRoundElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.from_jsonstring.html#compas_grid.elements.ColumnSquareElement.from_jsonstring">(compas_grid.elements.ColumnSquareElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersElement.from_jsonstring.html#compas_grid.elements.FastenersElement.from_jsonstring">(compas_grid.elements.FastenersElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersFeature.from_jsonstring.html#compas_grid.elements.FastenersFeature.from_jsonstring">(compas_grid.elements.FastenersFeature class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateElement.from_jsonstring.html#compas_grid.elements.PlateElement.from_jsonstring">(compas_grid.elements.PlateElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateFeature.from_jsonstring.html#compas_grid.elements.PlateFeature.from_jsonstring">(compas_grid.elements.PlateFeature class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateRadialElement.from_jsonstring.html#compas_grid.elements.PlateRadialElement.from_jsonstring">(compas_grid.elements.PlateRadialElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.from_jsonstring.html#compas_grid.elements.ScrewElement.from_jsonstring">(compas_grid.elements.ScrewElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.models.GridModel.from_jsonstring.html#compas_grid.models.GridModel.from_jsonstring">(compas_grid.models.GridModel class method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.from_lines.html#compas_grid.elements.BlockGeometry.from_lines">from_lines() (compas_grid.elements.BlockGeometry class method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.models.GridModel.from_lines_and_surfaces.html#compas_grid.models.GridModel.from_lines_and_surfaces">from_lines_and_surfaces() (compas_grid.models.GridModel class method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.from_meshgrid.html#compas_grid.elements.BlockGeometry.from_meshgrid">from_meshgrid() (compas_grid.elements.BlockGeometry class method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.from_obj.html#compas_grid.elements.BlockGeometry.from_obj">from_obj() (compas_grid.elements.BlockGeometry class method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.from_off.html#compas_grid.elements.BlockGeometry.from_off">from_off() (compas_grid.elements.BlockGeometry class method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.from_ply.html#compas_grid.elements.BlockGeometry.from_ply">from_ply() (compas_grid.elements.BlockGeometry class method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.from_points.html#compas_grid.elements.BlockGeometry.from_points">from_points() (compas_grid.elements.BlockGeometry class method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.from_polygons.html#compas_grid.elements.BlockGeometry.from_polygons">from_polygons() (compas_grid.elements.BlockGeometry class method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.from_polyhedron.html#compas_grid.elements.BlockGeometry.from_polyhedron">from_polyhedron() (compas_grid.elements.BlockGeometry class method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.from_polylines.html#compas_grid.elements.BlockGeometry.from_polylines">from_polylines() (compas_grid.elements.BlockGeometry class method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.from_shape.html#compas_grid.elements.BlockGeometry.from_shape">from_shape() (compas_grid.elements.BlockGeometry class method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.from_stl.html#compas_grid.elements.BlockGeometry.from_stl">from_stl() (compas_grid.elements.BlockGeometry class method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.from_vertices_and_faces.html#compas_grid.elements.BlockGeometry.from_vertices_and_faces">from_vertices_and_faces() (compas_grid.elements.BlockGeometry class method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.get_direction_combination.html#compas_grid.elements.ColumnHeadCrossElement.get_direction_combination">get_direction_combination() (compas_grid.elements.ColumnHeadCrossElement static method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.gkey_vertex.html#compas_grid.elements.BlockGeometry.gkey_vertex">gkey_vertex() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.models.GridModel.html#compas_grid.models.GridModel">GridModel (class in compas_grid.models)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.halfedge_after.html#compas_grid.elements.BlockGeometry.halfedge_after">halfedge_after() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.halfedge_before.html#compas_grid.elements.BlockGeometry.halfedge_before">halfedge_before() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.halfedge_face.html#compas_grid.elements.BlockGeometry.halfedge_face">halfedge_face() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.halfedge_loop.html#compas_grid.elements.BlockGeometry.halfedge_loop">halfedge_loop() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.halfedge_loop_vertices.html#compas_grid.elements.BlockGeometry.halfedge_loop_vertices">halfedge_loop_vertices() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.halfedge_strip.html#compas_grid.elements.BlockGeometry.halfedge_strip">halfedge_strip() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.halfedge_strip_faces.html#compas_grid.elements.BlockGeometry.halfedge_strip_faces">halfedge_strip_faces() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.has_edge.html#compas_grid.elements.BlockGeometry.has_edge">has_edge() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.models.GridModel.has_element.html#compas_grid.models.GridModel.has_element">has_element() (compas_grid.models.GridModel method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.has_face.html#compas_grid.elements.BlockGeometry.has_face">has_face() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.has_halfedge.html#compas_grid.elements.BlockGeometry.has_halfedge">has_halfedge() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.models.GridModel.has_interaction.html#compas_grid.models.GridModel.has_interaction">has_interaction() (compas_grid.models.GridModel method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.models.GridModel.has_material.html#compas_grid.models.GridModel.has_material">has_material() (compas_grid.models.GridModel method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.has_vertex.html#compas_grid.elements.BlockGeometry.has_vertex">has_vertex() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.models.GridModel.identify_interactions.html#compas_grid.models.GridModel.identify_interactions">identify_interactions() (compas_grid.models.GridModel method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.index_vertex.html#compas_grid.elements.BlockGeometry.index_vertex">index_vertex() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.insert_vertex.html#compas_grid.elements.BlockGeometry.insert_vertex">insert_vertex() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.is_closed.html#compas_grid.elements.BlockGeometry.is_closed">is_closed() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.is_connected.html#compas_grid.elements.BlockGeometry.is_connected">is_connected() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.is_edge_on_boundary.html#compas_grid.elements.BlockGeometry.is_edge_on_boundary">is_edge_on_boundary() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.is_empty.html#compas_grid.elements.BlockGeometry.is_empty">is_empty() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.is_face_on_boundary.html#compas_grid.elements.BlockGeometry.is_face_on_boundary">is_face_on_boundary() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.is_manifold.html#compas_grid.elements.BlockGeometry.is_manifold">is_manifold() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.is_orientable.html#compas_grid.elements.BlockGeometry.is_orientable">is_orientable() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.is_quadmesh.html#compas_grid.elements.BlockGeometry.is_quadmesh">is_quadmesh() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.is_regular.html#compas_grid.elements.BlockGeometry.is_regular">is_regular() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.is_trimesh.html#compas_grid.elements.BlockGeometry.is_trimesh">is_trimesh() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.is_valid.html#compas_grid.elements.BlockGeometry.is_valid">is_valid() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.is_vertex_connected.html#compas_grid.elements.BlockGeometry.is_vertex_connected">is_vertex_connected() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.is_vertex_on_boundary.html#compas_grid.elements.BlockGeometry.is_vertex_on_boundary">is_vertex_on_boundary() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="J">J</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.join.html#compas_grid.elements.BlockGeometry.join">join() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.laplacian_matrix.html#compas_grid.elements.BlockGeometry.laplacian_matrix">laplacian_matrix() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.models.GridModel.materials.html#compas_grid.models.GridModel.materials">materials() (compas_grid.models.GridModel method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.merge_faces.html#compas_grid.elements.BlockGeometry.merge_faces">merge_faces() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.normal.html#compas_grid.elements.BlockGeometry.normal">normal() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.number_of_edges.html#compas_grid.elements.BlockGeometry.number_of_edges">number_of_edges() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.number_of_faces.html#compas_grid.elements.BlockGeometry.number_of_faces">number_of_faces() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.number_of_vertices.html#compas_grid.elements.BlockGeometry.number_of_vertices">number_of_vertices() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.obb.html#compas_grid.elements.BlockGeometry.obb">obb() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.offset.html#compas_grid.elements.BlockGeometry.offset">offset() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.PlateElement.html#compas_grid.elements.PlateElement">PlateElement (class in compas_grid.elements)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.PlateFeature.html#compas_grid.elements.PlateFeature">PlateFeature (class in compas_grid.elements)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.PlateRadialElement.html#compas_grid.elements.PlateRadialElement">PlateRadialElement (class in compas_grid.elements)</a>
+</li>
+      <li><a href="api/generated/compas_grid.models.GridModel.point_nnbrs.html#compas_grid.models.GridModel.point_nnbrs">point_nnbrs() (compas_grid.models.GridModel method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Q">Q</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.quads_to_triangles.html#compas_grid.elements.BlockGeometry.quads_to_triangles">quads_to_triangles() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.remove_duplicate_vertices.html#compas_grid.elements.BlockGeometry.remove_duplicate_vertices">remove_duplicate_vertices() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.models.GridModel.remove_element.html#compas_grid.models.GridModel.remove_element">remove_element() (compas_grid.models.GridModel method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.models.GridModel.remove_interaction.html#compas_grid.models.GridModel.remove_interaction">remove_interaction() (compas_grid.models.GridModel method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.remove_unused_vertices.html#compas_grid.elements.BlockGeometry.remove_unused_vertices">remove_unused_vertices() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.rotate.html#compas_grid.elements.BlockGeometry.rotate">rotate() (compas_grid.elements.BlockGeometry method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.models.GridModel.rotate.html#compas_grid.models.GridModel.rotate">(compas_grid.models.GridModel method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.rotated.html#compas_grid.elements.BlockGeometry.rotated">rotated() (compas_grid.elements.BlockGeometry method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.models.GridModel.rotated.html#compas_grid.models.GridModel.rotated">(compas_grid.models.GridModel method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.scale.html#compas_grid.elements.BlockGeometry.scale">scale() (compas_grid.elements.BlockGeometry method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.models.GridModel.scale.html#compas_grid.models.GridModel.scale">(compas_grid.models.GridModel method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.scaled.html#compas_grid.elements.BlockGeometry.scaled">scaled() (compas_grid.elements.BlockGeometry method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.models.GridModel.scaled.html#compas_grid.models.GridModel.scaled">(compas_grid.models.GridModel method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.elements.ScrewElement.html#compas_grid.elements.ScrewElement">ScrewElement (class in compas_grid.elements)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.set_adjacency.html#compas_grid.elements.ColumnHeadCrossElement.set_adjacency">set_adjacency() (compas_grid.elements.ColumnHeadCrossElement method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.set_vertex_point.html#compas_grid.elements.BlockGeometry.set_vertex_point">set_vertex_point() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.sha256.html#compas_grid.elements.BeamArcElement.sha256">sha256() (compas_grid.elements.BeamArcElement method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.sha256.html#compas_grid.elements.BeamElement.sha256">(compas_grid.elements.BeamElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamFeature.sha256.html#compas_grid.elements.BeamFeature.sha256">(compas_grid.elements.BeamFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.sha256.html#compas_grid.elements.BeamIProfileElement.sha256">(compas_grid.elements.BeamIProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.sha256.html#compas_grid.elements.BeamSquareElement.sha256">(compas_grid.elements.BeamSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.sha256.html#compas_grid.elements.BeamTProfileElement.sha256">(compas_grid.elements.BeamTProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.sha256.html#compas_grid.elements.BeamVProfileElement.sha256">(compas_grid.elements.BeamVProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockElement.sha256.html#compas_grid.elements.BlockElement.sha256">(compas_grid.elements.BlockElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockFeature.sha256.html#compas_grid.elements.BlockFeature.sha256">(compas_grid.elements.BlockFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockGeometry.sha256.html#compas_grid.elements.BlockGeometry.sha256">(compas_grid.elements.BlockGeometry method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.sha256.html#compas_grid.elements.CableElement.sha256">(compas_grid.elements.CableElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableFeature.sha256.html#compas_grid.elements.CableFeature.sha256">(compas_grid.elements.CableFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.sha256.html#compas_grid.elements.ColumnElement.sha256">(compas_grid.elements.ColumnElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnFeature.sha256.html#compas_grid.elements.ColumnFeature.sha256">(compas_grid.elements.ColumnFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.sha256.html#compas_grid.elements.ColumnHeadCrossElement.sha256">(compas_grid.elements.ColumnHeadCrossElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.sha256.html#compas_grid.elements.ColumnHeadElement.sha256">(compas_grid.elements.ColumnHeadElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.sha256.html#compas_grid.elements.ColumnRoundElement.sha256">(compas_grid.elements.ColumnRoundElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.sha256.html#compas_grid.elements.ColumnSquareElement.sha256">(compas_grid.elements.ColumnSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersElement.sha256.html#compas_grid.elements.FastenersElement.sha256">(compas_grid.elements.FastenersElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersFeature.sha256.html#compas_grid.elements.FastenersFeature.sha256">(compas_grid.elements.FastenersFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateElement.sha256.html#compas_grid.elements.PlateElement.sha256">(compas_grid.elements.PlateElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateFeature.sha256.html#compas_grid.elements.PlateFeature.sha256">(compas_grid.elements.PlateFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateRadialElement.sha256.html#compas_grid.elements.PlateRadialElement.sha256">(compas_grid.elements.PlateRadialElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.sha256.html#compas_grid.elements.ScrewElement.sha256">(compas_grid.elements.ScrewElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.models.GridModel.sha256.html#compas_grid.models.GridModel.sha256">(compas_grid.models.GridModel method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.slice.html#compas_grid.elements.BlockGeometry.slice">slice() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.smooth_area.html#compas_grid.elements.BlockGeometry.smooth_area">smooth_area() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.smooth_centroid.html#compas_grid.elements.BlockGeometry.smooth_centroid">smooth_centroid() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.split_edge.html#compas_grid.elements.BlockGeometry.split_edge">split_edge() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.split_face.html#compas_grid.elements.BlockGeometry.split_face">split_face() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.split_strip.html#compas_grid.elements.BlockGeometry.split_strip">split_strip() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.subdivided.html#compas_grid.elements.BlockGeometry.subdivided">subdivided() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.summary.html#compas_grid.elements.BlockGeometry.summary">summary() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.thickened.html#compas_grid.elements.BlockGeometry.thickened">thickened() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.to_json.html#compas_grid.elements.BeamArcElement.to_json">to_json() (compas_grid.elements.BeamArcElement method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.to_json.html#compas_grid.elements.BeamElement.to_json">(compas_grid.elements.BeamElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamFeature.to_json.html#compas_grid.elements.BeamFeature.to_json">(compas_grid.elements.BeamFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.to_json.html#compas_grid.elements.BeamIProfileElement.to_json">(compas_grid.elements.BeamIProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.to_json.html#compas_grid.elements.BeamSquareElement.to_json">(compas_grid.elements.BeamSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.to_json.html#compas_grid.elements.BeamTProfileElement.to_json">(compas_grid.elements.BeamTProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.to_json.html#compas_grid.elements.BeamVProfileElement.to_json">(compas_grid.elements.BeamVProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockElement.to_json.html#compas_grid.elements.BlockElement.to_json">(compas_grid.elements.BlockElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockFeature.to_json.html#compas_grid.elements.BlockFeature.to_json">(compas_grid.elements.BlockFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockGeometry.to_json.html#compas_grid.elements.BlockGeometry.to_json">(compas_grid.elements.BlockGeometry method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.to_json.html#compas_grid.elements.CableElement.to_json">(compas_grid.elements.CableElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableFeature.to_json.html#compas_grid.elements.CableFeature.to_json">(compas_grid.elements.CableFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.to_json.html#compas_grid.elements.ColumnElement.to_json">(compas_grid.elements.ColumnElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnFeature.to_json.html#compas_grid.elements.ColumnFeature.to_json">(compas_grid.elements.ColumnFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.to_json.html#compas_grid.elements.ColumnHeadCrossElement.to_json">(compas_grid.elements.ColumnHeadCrossElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.to_json.html#compas_grid.elements.ColumnHeadElement.to_json">(compas_grid.elements.ColumnHeadElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.to_json.html#compas_grid.elements.ColumnRoundElement.to_json">(compas_grid.elements.ColumnRoundElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.to_json.html#compas_grid.elements.ColumnSquareElement.to_json">(compas_grid.elements.ColumnSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersElement.to_json.html#compas_grid.elements.FastenersElement.to_json">(compas_grid.elements.FastenersElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersFeature.to_json.html#compas_grid.elements.FastenersFeature.to_json">(compas_grid.elements.FastenersFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateElement.to_json.html#compas_grid.elements.PlateElement.to_json">(compas_grid.elements.PlateElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateFeature.to_json.html#compas_grid.elements.PlateFeature.to_json">(compas_grid.elements.PlateFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateRadialElement.to_json.html#compas_grid.elements.PlateRadialElement.to_json">(compas_grid.elements.PlateRadialElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.to_json.html#compas_grid.elements.ScrewElement.to_json">(compas_grid.elements.ScrewElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.models.GridModel.to_json.html#compas_grid.models.GridModel.to_json">(compas_grid.models.GridModel method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.to_jsonstring.html#compas_grid.elements.BeamArcElement.to_jsonstring">to_jsonstring() (compas_grid.elements.BeamArcElement method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.to_jsonstring.html#compas_grid.elements.BeamElement.to_jsonstring">(compas_grid.elements.BeamElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamFeature.to_jsonstring.html#compas_grid.elements.BeamFeature.to_jsonstring">(compas_grid.elements.BeamFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.to_jsonstring.html#compas_grid.elements.BeamIProfileElement.to_jsonstring">(compas_grid.elements.BeamIProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.to_jsonstring.html#compas_grid.elements.BeamSquareElement.to_jsonstring">(compas_grid.elements.BeamSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.to_jsonstring.html#compas_grid.elements.BeamTProfileElement.to_jsonstring">(compas_grid.elements.BeamTProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.to_jsonstring.html#compas_grid.elements.BeamVProfileElement.to_jsonstring">(compas_grid.elements.BeamVProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockElement.to_jsonstring.html#compas_grid.elements.BlockElement.to_jsonstring">(compas_grid.elements.BlockElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockFeature.to_jsonstring.html#compas_grid.elements.BlockFeature.to_jsonstring">(compas_grid.elements.BlockFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockGeometry.to_jsonstring.html#compas_grid.elements.BlockGeometry.to_jsonstring">(compas_grid.elements.BlockGeometry method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.to_jsonstring.html#compas_grid.elements.CableElement.to_jsonstring">(compas_grid.elements.CableElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableFeature.to_jsonstring.html#compas_grid.elements.CableFeature.to_jsonstring">(compas_grid.elements.CableFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.to_jsonstring.html#compas_grid.elements.ColumnElement.to_jsonstring">(compas_grid.elements.ColumnElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnFeature.to_jsonstring.html#compas_grid.elements.ColumnFeature.to_jsonstring">(compas_grid.elements.ColumnFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.to_jsonstring.html#compas_grid.elements.ColumnHeadCrossElement.to_jsonstring">(compas_grid.elements.ColumnHeadCrossElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.to_jsonstring.html#compas_grid.elements.ColumnHeadElement.to_jsonstring">(compas_grid.elements.ColumnHeadElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.to_jsonstring.html#compas_grid.elements.ColumnRoundElement.to_jsonstring">(compas_grid.elements.ColumnRoundElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.to_jsonstring.html#compas_grid.elements.ColumnSquareElement.to_jsonstring">(compas_grid.elements.ColumnSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersElement.to_jsonstring.html#compas_grid.elements.FastenersElement.to_jsonstring">(compas_grid.elements.FastenersElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersFeature.to_jsonstring.html#compas_grid.elements.FastenersFeature.to_jsonstring">(compas_grid.elements.FastenersFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateElement.to_jsonstring.html#compas_grid.elements.PlateElement.to_jsonstring">(compas_grid.elements.PlateElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateFeature.to_jsonstring.html#compas_grid.elements.PlateFeature.to_jsonstring">(compas_grid.elements.PlateFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateRadialElement.to_jsonstring.html#compas_grid.elements.PlateRadialElement.to_jsonstring">(compas_grid.elements.PlateRadialElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.to_jsonstring.html#compas_grid.elements.ScrewElement.to_jsonstring">(compas_grid.elements.ScrewElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.models.GridModel.to_jsonstring.html#compas_grid.models.GridModel.to_jsonstring">(compas_grid.models.GridModel method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.to_lines.html#compas_grid.elements.BlockGeometry.to_lines">to_lines() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.to_obj.html#compas_grid.elements.BlockGeometry.to_obj">to_obj() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.to_off.html#compas_grid.elements.BlockGeometry.to_off">to_off() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.to_ply.html#compas_grid.elements.BlockGeometry.to_ply">to_ply() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.to_points.html#compas_grid.elements.BlockGeometry.to_points">to_points() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.to_polygons.html#compas_grid.elements.BlockGeometry.to_polygons">to_polygons() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.to_polylines.html#compas_grid.elements.BlockGeometry.to_polylines">to_polylines() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.to_stl.html#compas_grid.elements.BlockGeometry.to_stl">to_stl() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.to_vertices_and_faces.html#compas_grid.elements.BlockGeometry.to_vertices_and_faces">to_vertices_and_faces() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.ToString.html#compas_grid.elements.BeamArcElement.ToString">ToString() (compas_grid.elements.BeamArcElement method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.ToString.html#compas_grid.elements.BeamElement.ToString">(compas_grid.elements.BeamElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamFeature.ToString.html#compas_grid.elements.BeamFeature.ToString">(compas_grid.elements.BeamFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.ToString.html#compas_grid.elements.BeamIProfileElement.ToString">(compas_grid.elements.BeamIProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.ToString.html#compas_grid.elements.BeamSquareElement.ToString">(compas_grid.elements.BeamSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.ToString.html#compas_grid.elements.BeamTProfileElement.ToString">(compas_grid.elements.BeamTProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.ToString.html#compas_grid.elements.BeamVProfileElement.ToString">(compas_grid.elements.BeamVProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockElement.ToString.html#compas_grid.elements.BlockElement.ToString">(compas_grid.elements.BlockElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockFeature.ToString.html#compas_grid.elements.BlockFeature.ToString">(compas_grid.elements.BlockFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockGeometry.ToString.html#compas_grid.elements.BlockGeometry.ToString">(compas_grid.elements.BlockGeometry method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.ToString.html#compas_grid.elements.CableElement.ToString">(compas_grid.elements.CableElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableFeature.ToString.html#compas_grid.elements.CableFeature.ToString">(compas_grid.elements.CableFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.ToString.html#compas_grid.elements.ColumnElement.ToString">(compas_grid.elements.ColumnElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnFeature.ToString.html#compas_grid.elements.ColumnFeature.ToString">(compas_grid.elements.ColumnFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.ToString.html#compas_grid.elements.ColumnHeadCrossElement.ToString">(compas_grid.elements.ColumnHeadCrossElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.ToString.html#compas_grid.elements.ColumnHeadElement.ToString">(compas_grid.elements.ColumnHeadElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.ToString.html#compas_grid.elements.ColumnRoundElement.ToString">(compas_grid.elements.ColumnRoundElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.ToString.html#compas_grid.elements.ColumnSquareElement.ToString">(compas_grid.elements.ColumnSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersElement.ToString.html#compas_grid.elements.FastenersElement.ToString">(compas_grid.elements.FastenersElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersFeature.ToString.html#compas_grid.elements.FastenersFeature.ToString">(compas_grid.elements.FastenersFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateElement.ToString.html#compas_grid.elements.PlateElement.ToString">(compas_grid.elements.PlateElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateFeature.ToString.html#compas_grid.elements.PlateFeature.ToString">(compas_grid.elements.PlateFeature method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateRadialElement.ToString.html#compas_grid.elements.PlateRadialElement.ToString">(compas_grid.elements.PlateRadialElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.ToString.html#compas_grid.elements.ScrewElement.ToString">(compas_grid.elements.ScrewElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.models.GridModel.ToString.html#compas_grid.models.GridModel.ToString">(compas_grid.models.GridModel method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.transform.html#compas_grid.elements.BeamArcElement.transform">transform() (compas_grid.elements.BeamArcElement method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.transform.html#compas_grid.elements.BeamElement.transform">(compas_grid.elements.BeamElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.transform.html#compas_grid.elements.BeamIProfileElement.transform">(compas_grid.elements.BeamIProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.transform.html#compas_grid.elements.BeamSquareElement.transform">(compas_grid.elements.BeamSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.transform.html#compas_grid.elements.BeamTProfileElement.transform">(compas_grid.elements.BeamTProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.transform.html#compas_grid.elements.BeamVProfileElement.transform">(compas_grid.elements.BeamVProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockElement.transform.html#compas_grid.elements.BlockElement.transform">(compas_grid.elements.BlockElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockGeometry.transform.html#compas_grid.elements.BlockGeometry.transform">(compas_grid.elements.BlockGeometry method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.transform.html#compas_grid.elements.CableElement.transform">(compas_grid.elements.CableElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.transform.html#compas_grid.elements.ColumnElement.transform">(compas_grid.elements.ColumnElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.transform.html#compas_grid.elements.ColumnHeadCrossElement.transform">(compas_grid.elements.ColumnHeadCrossElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.transform.html#compas_grid.elements.ColumnHeadElement.transform">(compas_grid.elements.ColumnHeadElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.transform.html#compas_grid.elements.ColumnRoundElement.transform">(compas_grid.elements.ColumnRoundElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.transform.html#compas_grid.elements.ColumnSquareElement.transform">(compas_grid.elements.ColumnSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersElement.transform.html#compas_grid.elements.FastenersElement.transform">(compas_grid.elements.FastenersElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateElement.transform.html#compas_grid.elements.PlateElement.transform">(compas_grid.elements.PlateElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateRadialElement.transform.html#compas_grid.elements.PlateRadialElement.transform">(compas_grid.elements.PlateRadialElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.transform.html#compas_grid.elements.ScrewElement.transform">(compas_grid.elements.ScrewElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.models.GridModel.transform.html#compas_grid.models.GridModel.transform">(compas_grid.models.GridModel method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.transform_numpy.html#compas_grid.elements.BlockGeometry.transform_numpy">transform_numpy() (compas_grid.elements.BlockGeometry method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.models.GridModel.transform_numpy.html#compas_grid.models.GridModel.transform_numpy">(compas_grid.models.GridModel method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.transformed.html#compas_grid.elements.BeamArcElement.transformed">transformed() (compas_grid.elements.BeamArcElement method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.transformed.html#compas_grid.elements.BeamElement.transformed">(compas_grid.elements.BeamElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.transformed.html#compas_grid.elements.BeamIProfileElement.transformed">(compas_grid.elements.BeamIProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.transformed.html#compas_grid.elements.BeamSquareElement.transformed">(compas_grid.elements.BeamSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.transformed.html#compas_grid.elements.BeamTProfileElement.transformed">(compas_grid.elements.BeamTProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.transformed.html#compas_grid.elements.BeamVProfileElement.transformed">(compas_grid.elements.BeamVProfileElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockElement.transformed.html#compas_grid.elements.BlockElement.transformed">(compas_grid.elements.BlockElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockGeometry.transformed.html#compas_grid.elements.BlockGeometry.transformed">(compas_grid.elements.BlockGeometry method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.transformed.html#compas_grid.elements.CableElement.transformed">(compas_grid.elements.CableElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.transformed.html#compas_grid.elements.ColumnElement.transformed">(compas_grid.elements.ColumnElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.transformed.html#compas_grid.elements.ColumnHeadCrossElement.transformed">(compas_grid.elements.ColumnHeadCrossElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.transformed.html#compas_grid.elements.ColumnHeadElement.transformed">(compas_grid.elements.ColumnHeadElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.transformed.html#compas_grid.elements.ColumnRoundElement.transformed">(compas_grid.elements.ColumnRoundElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.transformed.html#compas_grid.elements.ColumnSquareElement.transformed">(compas_grid.elements.ColumnSquareElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersElement.transformed.html#compas_grid.elements.FastenersElement.transformed">(compas_grid.elements.FastenersElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateElement.transformed.html#compas_grid.elements.PlateElement.transformed">(compas_grid.elements.PlateElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateRadialElement.transformed.html#compas_grid.elements.PlateRadialElement.transformed">(compas_grid.elements.PlateRadialElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.transformed.html#compas_grid.elements.ScrewElement.transformed">(compas_grid.elements.ScrewElement method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.models.GridModel.transformed.html#compas_grid.models.GridModel.transformed">(compas_grid.models.GridModel method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.transformed_numpy.html#compas_grid.elements.BlockGeometry.transformed_numpy">transformed_numpy() (compas_grid.elements.BlockGeometry method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.models.GridModel.transformed_numpy.html#compas_grid.models.GridModel.transformed_numpy">(compas_grid.models.GridModel method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.translate.html#compas_grid.elements.BlockGeometry.translate">translate() (compas_grid.elements.BlockGeometry method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.models.GridModel.translate.html#compas_grid.models.GridModel.translate">(compas_grid.models.GridModel method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.translated.html#compas_grid.elements.BlockGeometry.translated">translated() (compas_grid.elements.BlockGeometry method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.models.GridModel.translated.html#compas_grid.models.GridModel.translated">(compas_grid.models.GridModel method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.unify_cycles.html#compas_grid.elements.BlockGeometry.unify_cycles">unify_cycles() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.unset_edge_attribute.html#compas_grid.elements.BlockGeometry.unset_edge_attribute">unset_edge_attribute() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.unset_face_attribute.html#compas_grid.elements.BlockGeometry.unset_face_attribute">unset_face_attribute() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.unset_vertex_attribute.html#compas_grid.elements.BlockGeometry.unset_vertex_attribute">unset_vertex_attribute() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.unweld_edges.html#compas_grid.elements.BlockGeometry.unweld_edges">unweld_edges() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.unweld_vertices.html#compas_grid.elements.BlockGeometry.unweld_vertices">unweld_vertices() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.update_default_edge_attributes.html#compas_grid.elements.BlockGeometry.update_default_edge_attributes">update_default_edge_attributes() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.update_default_face_attributes.html#compas_grid.elements.BlockGeometry.update_default_face_attributes">update_default_face_attributes() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.update_default_vertex_attributes.html#compas_grid.elements.BlockGeometry.update_default_vertex_attributes">update_default_vertex_attributes() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BeamArcElement.validate_data.html#compas_grid.elements.BeamArcElement.validate_data">validate_data() (compas_grid.elements.BeamArcElement class method)</a>
+
+      <ul>
+        <li><a href="api/generated/compas_grid.elements.BeamElement.validate_data.html#compas_grid.elements.BeamElement.validate_data">(compas_grid.elements.BeamElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamFeature.validate_data.html#compas_grid.elements.BeamFeature.validate_data">(compas_grid.elements.BeamFeature class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamIProfileElement.validate_data.html#compas_grid.elements.BeamIProfileElement.validate_data">(compas_grid.elements.BeamIProfileElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamSquareElement.validate_data.html#compas_grid.elements.BeamSquareElement.validate_data">(compas_grid.elements.BeamSquareElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamTProfileElement.validate_data.html#compas_grid.elements.BeamTProfileElement.validate_data">(compas_grid.elements.BeamTProfileElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BeamVProfileElement.validate_data.html#compas_grid.elements.BeamVProfileElement.validate_data">(compas_grid.elements.BeamVProfileElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockElement.validate_data.html#compas_grid.elements.BlockElement.validate_data">(compas_grid.elements.BlockElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockFeature.validate_data.html#compas_grid.elements.BlockFeature.validate_data">(compas_grid.elements.BlockFeature class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.BlockGeometry.validate_data.html#compas_grid.elements.BlockGeometry.validate_data">(compas_grid.elements.BlockGeometry class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableElement.validate_data.html#compas_grid.elements.CableElement.validate_data">(compas_grid.elements.CableElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.CableFeature.validate_data.html#compas_grid.elements.CableFeature.validate_data">(compas_grid.elements.CableFeature class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnElement.validate_data.html#compas_grid.elements.ColumnElement.validate_data">(compas_grid.elements.ColumnElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnFeature.validate_data.html#compas_grid.elements.ColumnFeature.validate_data">(compas_grid.elements.ColumnFeature class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadCrossElement.validate_data.html#compas_grid.elements.ColumnHeadCrossElement.validate_data">(compas_grid.elements.ColumnHeadCrossElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnHeadElement.validate_data.html#compas_grid.elements.ColumnHeadElement.validate_data">(compas_grid.elements.ColumnHeadElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnRoundElement.validate_data.html#compas_grid.elements.ColumnRoundElement.validate_data">(compas_grid.elements.ColumnRoundElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ColumnSquareElement.validate_data.html#compas_grid.elements.ColumnSquareElement.validate_data">(compas_grid.elements.ColumnSquareElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersElement.validate_data.html#compas_grid.elements.FastenersElement.validate_data">(compas_grid.elements.FastenersElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.FastenersFeature.validate_data.html#compas_grid.elements.FastenersFeature.validate_data">(compas_grid.elements.FastenersFeature class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateElement.validate_data.html#compas_grid.elements.PlateElement.validate_data">(compas_grid.elements.PlateElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateFeature.validate_data.html#compas_grid.elements.PlateFeature.validate_data">(compas_grid.elements.PlateFeature class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.PlateRadialElement.validate_data.html#compas_grid.elements.PlateRadialElement.validate_data">(compas_grid.elements.PlateRadialElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.elements.ScrewElement.validate_data.html#compas_grid.elements.ScrewElement.validate_data">(compas_grid.elements.ScrewElement class method)</a>
+</li>
+        <li><a href="api/generated/compas_grid.models.GridModel.validate_data.html#compas_grid.models.GridModel.validate_data">(compas_grid.models.GridModel class method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertex_area.html#compas_grid.elements.BlockGeometry.vertex_area">vertex_area() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertex_attribute.html#compas_grid.elements.BlockGeometry.vertex_attribute">vertex_attribute() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertex_attributes.html#compas_grid.elements.BlockGeometry.vertex_attributes">vertex_attributes() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertex_coordinates.html#compas_grid.elements.BlockGeometry.vertex_coordinates">vertex_coordinates() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertex_curvature.html#compas_grid.elements.BlockGeometry.vertex_curvature">vertex_curvature() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertex_degree.html#compas_grid.elements.BlockGeometry.vertex_degree">vertex_degree() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertex_edges.html#compas_grid.elements.BlockGeometry.vertex_edges">vertex_edges() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertex_faces.html#compas_grid.elements.BlockGeometry.vertex_faces">vertex_faces() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertex_gkey.html#compas_grid.elements.BlockGeometry.vertex_gkey">vertex_gkey() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertex_index.html#compas_grid.elements.BlockGeometry.vertex_index">vertex_index() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertex_laplacian.html#compas_grid.elements.BlockGeometry.vertex_laplacian">vertex_laplacian() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertex_max_degree.html#compas_grid.elements.BlockGeometry.vertex_max_degree">vertex_max_degree() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertex_min_degree.html#compas_grid.elements.BlockGeometry.vertex_min_degree">vertex_min_degree() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertex_neighborhood.html#compas_grid.elements.BlockGeometry.vertex_neighborhood">vertex_neighborhood() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertex_neighborhood_centroid.html#compas_grid.elements.BlockGeometry.vertex_neighborhood_centroid">vertex_neighborhood_centroid() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertex_neighbors.html#compas_grid.elements.BlockGeometry.vertex_neighbors">vertex_neighbors() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertex_normal.html#compas_grid.elements.BlockGeometry.vertex_normal">vertex_normal() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertex_point.html#compas_grid.elements.BlockGeometry.vertex_point">vertex_point() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertex_sample.html#compas_grid.elements.BlockGeometry.vertex_sample">vertex_sample() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertices.html#compas_grid.elements.BlockGeometry.vertices">vertices() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertices_attribute.html#compas_grid.elements.BlockGeometry.vertices_attribute">vertices_attribute() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertices_attributes.html#compas_grid.elements.BlockGeometry.vertices_attributes">vertices_attributes() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertices_on_boundaries.html#compas_grid.elements.BlockGeometry.vertices_on_boundaries">vertices_on_boundaries() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertices_on_boundary.html#compas_grid.elements.BlockGeometry.vertices_on_boundary">vertices_on_boundary() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertices_points.html#compas_grid.elements.BlockGeometry.vertices_points">vertices_points() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertices_where.html#compas_grid.elements.BlockGeometry.vertices_where">vertices_where() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.vertices_where_predicate.html#compas_grid.elements.BlockGeometry.vertices_where_predicate">vertices_where_predicate() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/generated/compas_grid.elements.BlockGeometry.weld.html#compas_grid.elements.BlockGeometry.weld">weld() (compas_grid.elements.BlockGeometry method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+
+
+                </article>
+              
+              
+              
+                <footer class="bd-footer-article">
+                  
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright Petras Vestartas.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.13.3.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
