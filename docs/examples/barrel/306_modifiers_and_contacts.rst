@@ -1,13 +1,7 @@
 ********************************************************************************
-Examples
+306 modifiers and contacts
 ********************************************************************************
 
-.. toctree::
-   :maxdepth: 2
-   :titlesonly:
-   :glob:
-
-   examples/elements/index
-   examples/barrel/index
-   examples/gridmodel/index
-   
+.. literalinclude:: 306_modifiers_and_contacts.py
+   :language: python
+   :linenos:

@@ -1,13 +1,7 @@
 ********************************************************************************
-Examples
+305 modifiers
 ********************************************************************************
 
-.. toctree::
-   :maxdepth: 2
-   :titlesonly:
-   :glob:
-
-   examples/elements/index
-   examples/barrel/index
-   examples/gridmodel/index
-   
+.. literalinclude:: 305_modifiers.py
+   :language: python
+   :linenos:

@@ -1,5 +1,28 @@
 # flake8: noqa
 # -*- coding: utf-8 -*-
+import os
+import sys
+# sys.path.insert(0, os.path.abspath('c:/brg/2_code/compas_grid/'))
+sys.path.insert(0, os.path.abspath('c:/brg/2_code/compas_grid/src'))
+sys.path.insert(0, os.path.abspath('c:/brg/2_code/compas_model/src'))
+# sys.path.insert(0, os.path.abspath('c:/brg/2_code/compas_grid/src/compas_grid/'))
+
+# Debug: Print sys.path
+# print("sys.path:", sys.path)
+
+# Debug: Attempt to import compas_grid.elements
+try:
+    import compas_model
+    print("compas_model imported successfully")
+except ImportError as e:
+    print("Error importing compas_model:", e)
+
+# Debug: Attempt to import compas_grid.elements
+try:
+    import compas_grid.elements
+    print("compas_grid.elements imported successfully")
+except ImportError as e:
+    print("Error importing compas_grid.elements:", e)
 
 from sphinx.writers import html, html5
 import sphinx_compas2_theme

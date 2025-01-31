@@ -1,13 +1,7 @@
 ********************************************************************************
-Examples
+200 input barrel vault
 ********************************************************************************
 
-.. toctree::
-   :maxdepth: 2
-   :titlesonly:
-   :glob:
-
-   examples/elements/index
-   examples/barrel/index
-   examples/gridmodel/index
-   
+.. literalinclude:: 200_input_barrel_vault.py
+   :language: python
+   :linenos:

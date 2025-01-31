@@ -1,13 +1,7 @@
 ********************************************************************************
-Examples
+308 grid boolean modifier
 ********************************************************************************
 
-.. toctree::
-   :maxdepth: 2
-   :titlesonly:
-   :glob:
-
-   examples/elements/index
-   examples/barrel/index
-   examples/gridmodel/index
-   
+.. literalinclude:: 308_grid_boolean_modifier.py
+   :language: python
+   :linenos:

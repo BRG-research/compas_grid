@@ -1,13 +1,7 @@
 ********************************************************************************
-Examples
+309 grid contacts
 ********************************************************************************
 
-.. toctree::
-   :maxdepth: 2
-   :titlesonly:
-   :glob:
-
-   examples/elements/index
-   examples/barrel/index
-   examples/gridmodel/index
-   
+.. literalinclude:: 309_grid_contacts.py
+   :language: python
+   :linenos:

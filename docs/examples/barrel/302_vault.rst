@@ -1,13 +1,7 @@
 ********************************************************************************
-Examples
+302 vault
 ********************************************************************************
 
-.. toctree::
-   :maxdepth: 2
-   :titlesonly:
-   :glob:
-
-   examples/elements/index
-   examples/barrel/index
-   examples/gridmodel/index
-   
+.. literalinclude:: 302_vault.py
+   :language: python
+   :linenos:

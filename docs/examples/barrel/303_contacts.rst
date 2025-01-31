@@ -1,13 +1,7 @@
 ********************************************************************************
-Examples
+303 contacts
 ********************************************************************************
 
-.. toctree::
-   :maxdepth: 2
-   :titlesonly:
-   :glob:
-
-   examples/elements/index
-   examples/barrel/index
-   examples/gridmodel/index
-   
+.. literalinclude:: 303_contacts.py
+   :language: python
+   :linenos:

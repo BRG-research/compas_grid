@@ -1,13 +1,7 @@
 ********************************************************************************
-Examples
+301 elements
 ********************************************************************************
 
-.. toctree::
-   :maxdepth: 2
-   :titlesonly:
-   :glob:
-
-   examples/elements/index
-   examples/barrel/index
-   examples/gridmodel/index
-   
+.. literalinclude:: 301_elements.py
+   :language: python
+   :linenos:
