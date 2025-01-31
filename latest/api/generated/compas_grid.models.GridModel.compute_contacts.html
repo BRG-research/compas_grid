@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script src="../../_static/documentation_options.js?v=1be0d999"></script>
+    <script src="../../_static/documentation_options.js?v=bb99e320"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,13 +54,13 @@
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api/generated/compas_grid.models.GridModel.compute_contacts';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com//compas_grid/gh-pages/versions.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/brg-research/compas_grid/gh-pages/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'latest';
         </script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="GridModel.compute_kdtree" href="compas_grid.models.GridModel.compute_kdtree.html" />
-    <link rel="prev" title="GridModel.compute_bvh" href="compas_grid.models.GridModel.compute_bvh.html" />
+    <link rel="prev" title="GridModel.compute_collisions" href="compas_grid.models.GridModel.compute_collisions.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -224,7 +224,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.2  <!-- this text may get changed later by javascript -->
+      latest  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -256,7 +256,7 @@ document.write(`
           
           
           
-          <a href="https://github.com//compas_grid" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github"></i></span>
+          <a href="https://github.com/brg-research/compas_grid" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github"></i></span>
             <label class="sr-only">GitHub</label></a>
         </li>
         <li class="nav-item">
@@ -394,7 +394,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.2  <!-- this text may get changed later by javascript -->
+      latest  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -426,7 +426,7 @@ document.write(`
           
           
           
-          <a href="https://github.com//compas_grid" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github"></i></span>
+          <a href="https://github.com/brg-research/compas_grid" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github"></i></span>
             <label class="sr-only">GitHub</label></a>
         </li>
         <li class="nav-item">
@@ -473,13 +473,17 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="../../examples/elements/cable.html">Cable</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples/masonry/index.html">Masonry</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../examples/masonry/000_input_frame.html">000 Input Frame</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../examples/masonry/001_input_barrel_vault.html">001 Input Barrel Vault</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../examples/masonry/002_model_and_elements.html">002 Model and Elements</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../examples/masonry/003_model_interactions.html">003 Model Interactions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../examples/masonry/004_orient_to_xy.html">003 Orient to XY</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../examples/masonry/005_contacts.html">005 Contacts</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../examples/barrel/index.html">Barrel</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/barrel/200_input_barrel_vault.html">200 input barrel vault</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/barrel/300_input.html">200 input barrel vault</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/barrel/301_elements.html">301 elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/barrel/302_vault.html">302 vault</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/barrel/303_contacts.html">303 contacts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/barrel/305_modifiers.html">305 modifiers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/barrel/306_modifiers_and_contacts.html">306 modifiers and contacts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/barrel/307_grid_elements.html">307 grid elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/barrel/308_grid_boolean_modifier.html">308 grid boolean modifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../examples/barrel/309_grid_contacts.html">309 grid contacts</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../examples/gridmodel/index.html">GridModel</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -502,26 +506,15 @@ document.write(`
 <li class="toctree-l2 has-children"><a class="reference internal" href="../compas_grid.elements.html">compas_grid.elements</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.BlockFeature.html">BlockFeature</a></li>
 <li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.BlockElement.html">BlockElement</a></li>
-<li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.BlockGeometry.html">BlockGeometry</a></li>
 <li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.PlateFeature.html">PlateFeature</a></li>
 <li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.PlateElement.html">PlateElement</a></li>
-<li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.PlateRadialElement.html">PlateRadialElement</a></li>
 <li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.ColumnHeadElement.html">ColumnHeadElement</a></li>
 <li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.ColumnHeadCrossElement.html">ColumnHeadCrossElement</a></li>
 <li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.BeamFeature.html">BeamFeature</a></li>
 <li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.BeamElement.html">BeamElement</a></li>
-<li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.BeamIProfileElement.html">BeamIProfileElement</a></li>
-<li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.BeamSquareElement.html">BeamSquareElement</a></li>
 <li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.BeamTProfileElement.html">BeamTProfileElement</a></li>
-<li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.BeamVProfileElement.html">BeamVProfileElement</a></li>
-<li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.BeamArcElement.html">BeamArcElement</a></li>
 <li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.ColumnFeature.html">ColumnFeature</a></li>
 <li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.ColumnElement.html">ColumnElement</a></li>
-<li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.ColumnRoundElement.html">ColumnRoundElement</a></li>
-<li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.ColumnSquareElement.html">ColumnSquareElement</a></li>
-<li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.FastenersFeature.html">FastenersFeature</a></li>
-<li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.FastenersElement.html">FastenersElement</a></li>
-<li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.ScrewElement.html">ScrewElement</a></li>
 <li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.CableFeature.html">CableFeature</a></li>
 <li class="toctree-l3"><a class="reference internal" href="compas_grid.elements.CableElement.html">CableElement</a></li>
 </ul>
@@ -604,8 +597,26 @@ document.write(`
 <h1>GridModel.compute_contacts</h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="compas_grid.models.GridModel.compute_contacts">
-<span class="sig-prename descclassname"><span class="pre">GridModel.</span></span><span class="sig-name descname"><span class="pre">compute_contacts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">GridModel.</span></span><span class="sig-name descname"><span class="pre">compute_contacts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum_area</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Compute the contacts between the block elements of this model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>tolerance</strong><span class="classifier">float, optional</span></dt><dd><p>The distance tolerance.</p>
+</dd>
+<dt><strong>minimum_area</strong><span class="classifier">float, optional</span></dt><dd><p>The minimum contact size.</p>
+</dd>
+<dt><strong>k</strong><span class="classifier">int, optional</span></dt><dd><p>The number of element neighbours to consider.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>None</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 
