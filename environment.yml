@@ -1,0 +1,9 @@
+name: grid
+channels:
+  - conda-forge
+dependencies:
+  - python >= 3.10
+  - pip
+  - compas >= 2.4
+  - pip:
+      - -e .[dev]
