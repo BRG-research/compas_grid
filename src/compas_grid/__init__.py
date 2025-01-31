@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import os
+
 # Temporary gloval property for debugging.
 debug = False
 global_property = []
