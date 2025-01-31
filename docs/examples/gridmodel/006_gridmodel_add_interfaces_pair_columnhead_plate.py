@@ -27,11 +27,11 @@ model = GridModel.from_lines_and_surfaces(columns_and_beams=lines, floor_surface
 edges_beams = list(model.cell_network.edges_where({"is_beam": True}))
 faces_floors = list(model.cell_network.faces_where({"is_floor": True}))
 
-column_head = ColumnHeadCrossElement(width=150, depth=150, height=300, offset=210)
+column_head = ColumnHeadCrossElement(width=150, height=150, length=300, offset=210)
 plate = PlateElement(Polygon([[-2850, -2850, 0], [-2850, 2850, 0], [2850, 2850, 0], [2850, -2850, 0]]), 200)
 
 model.add_column_head(column_head, edges_beams[0])
-model.add_floor(plate, faces_floors[0])
+model.add_floor(plate, faces_floors[0], 100)
 
 # =============================================================================
 # Add Interaction

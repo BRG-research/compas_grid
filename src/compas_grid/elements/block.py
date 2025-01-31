@@ -1,104 +1,115 @@
 from typing import Optional
-from typing import Union
 
-from compas_model.elements.element import Element
-from compas_model.elements.element import Feature
+# from compas.geometry import trimesh_slice
+from compas_model.elements import Element
+from compas_model.elements import Feature
 
 from compas.datastructures import Mesh
 from compas.geometry import Box
 from compas.geometry import Frame
+from compas.geometry import Plane
 from compas.geometry import Point
+from compas.geometry import Polyhedron
+from compas.geometry import Polyline
 from compas.geometry import Transformation
-from compas.geometry import bestfit_frame_numpy
-from compas.geometry import bounding_box
-from compas.geometry import centroid_points
-from compas.geometry import centroid_polyhedron
-from compas.geometry import dot_vectors
-from compas.geometry import oriented_bounding_box
-from compas.geometry import volume_polyhedron
+from compas.geometry import boolean_difference_mesh_mesh
+from compas.geometry import boolean_intersection_mesh_mesh
+from compas.geometry import boolean_union_mesh_mesh
+from compas.geometry import convex_hull_numpy
+from compas.geometry import oriented_bounding_box_numpy
 
 
-class BlockGeometry(Mesh):
-    """Geometric representation of a block using a mesh."""
+class BlockMesh(Mesh):
+    """Extension of default mesh with API similar to Brep."""
 
     @property
-    def top(self) -> int:
-        """Identify the *top* face of the block.
-
-        Returns
-        -------
-        int
-            The identifier of the face.
-
-        """
-        z = [0, 0, 1]
-        faces = list(self.faces())
-        normals = [self.face_normal(face) for face in faces]
-        return sorted(zip(faces, normals), key=lambda x: dot_vectors(x[1], z))[-1][0]
+    def aabb(self) -> Box:
+        points = self.vertices_attributes("xyz")
+        return Box.from_points(points)
 
     @property
-    def centroid(self) -> Point:
-        """Compute the centroid of the block.
-
-        Returns
-        -------
-        :class:`compas.geometry.Point`
-
-        """
-        x, y, z = centroid_points([self.vertex_coordinates(key) for key in self.vertices()])
-        return Point(x, y, z)
+    def convex_hull(self) -> Mesh:
+        points = self.vertices_attributes("xyz")
+        vertices, faces = convex_hull_numpy(points)
+        vertices = [points[index] for index in vertices]
+        return Mesh.from_vertices_and_faces(vertices, faces)
 
     @property
-    def center(self) -> Point:
-        """Compute the center of mass of the block.
+    def obb(self) -> Box:
+        points = self.vertices_points()
+        return Box.from_bounding_box(oriented_bounding_box_numpy(points))
 
-        Returns
-        -------
-        :class:`compas.geometry.Point`
-
-        """
-        vertex_index = {vertex: index for index, vertex in enumerate(self.vertices())}
-        vertices = [self.vertex_coordinates(vertex) for vertex in self.vertices()]
-        faces = [[vertex_index[vertex] for vertex in self.face_vertices(face)] for face in self.faces()]
-        x, y, z = centroid_polyhedron((vertices, faces))
-        return Point(x, y, z)
-
-    @property
-    def volume(self) -> float:
-        """Compute the volume of the block.
-
-        Returns
-        -------
-        float
-            The volume of the block.
-
-        """
-        vertex_index = {vertex: index for index, vertex in enumerate(self.vertices())}
-        vertices = [self.vertex_coordinates(vertex) for vertex in self.vertices()]
-        faces = [[vertex_index[vertex] for vertex in self.face_vertices(face)] for face in self.faces()]
-        v = volume_polyhedron((vertices, faces))
-        return v
-
-    def face_frame(self, face: int) -> Frame:
-        """Compute the frame of a specific face.
+    def boolean_difference(self, *others: "BlockMesh") -> "BlockMesh":
+        """Return the boolean difference of this mesh and one or more other meshes.
 
         Parameters
         ----------
-        face : int
-            The identifier of the frame.
+        others : :class:`BlockMesh` | list[:class:`BlockMesh`]
+            One or more meshes to subtract.
 
         Returns
         -------
-        :class:`compas.geometry.Frame`
+        :class:`BlockMesh`
 
         """
-        xyz = self.face_coordinates(face)
-        normal = self.face_normal(face)
-        o, u, v = bestfit_frame_numpy(xyz)
-        frame = Frame(o, u, v)
-        if frame.zaxis.dot(normal) < 0:
-            frame.invert()
-        return frame
+        A = self.to_vertices_and_faces()
+        if not isinstance(others, list):
+            others = [others]
+        for mesh in others:
+            B = mesh.to_vertices_and_faces()
+            A = boolean_difference_mesh_mesh(A, B)
+        return type(self).from_vertices_and_faces(*A)
+
+    def boolean_intersection(self, *others: "BlockMesh") -> "BlockMesh":
+        """Return the boolean intersection between this mesh and one or more other meshes.
+
+        Parameters
+        ----------
+        others : :class:`BlockMesh` | list[:class:`BlockMesh`]
+            One or more intersection meshes.
+
+        Returns
+        -------
+        :class:`BlockMesh`
+
+        """
+        A = self.to_vertices_and_faces()
+        if not isinstance(others, list):
+            others = [others]
+        for mesh in others:
+            B = mesh.to_vertices_and_faces()
+            A = boolean_intersection_mesh_mesh(A, B)
+        return type(self).from_vertices_and_faces(*A)
+
+    def boolean_union(self, *others: "BlockMesh") -> "BlockMesh":
+        """Return the boolean union of this mesh and one or more other meshes.
+
+        Parameters
+        ----------
+        others : :class:`BlockMesh` | list[:class:`BlockMesh`]
+            One or more meshes to add.
+
+        Returns
+        -------
+        :class:`BlockMesh`
+
+        """
+        A = self.to_vertices_and_faces()
+        if not isinstance(others, list):
+            others = [others]
+        for mesh in others:
+            B = mesh.to_vertices_and_faces()
+            A = boolean_union_mesh_mesh(A, B)
+        return type(self).from_vertices_and_faces(*A)
+
+    def slice(self, plane: Plane) -> list["Polyline"]:
+        pass
+
+    def split(self, plane: Plane) -> list["BlockMesh"]:
+        pass
+
+    def trim(self, plane: Plane) -> None:
+        pass
 
 
 # A block could have features like notches,
@@ -121,14 +132,12 @@ class BlockElement(Element):
         Additional block features.
     is_support : bool, optional
         Flag indicating that the block is a support.
-    frame : :class:`compas.geometry.Frame`, optional
-        The coordinate frame of the block.
     name : str, optional
         The name of the element.
 
     Attributes
     ----------
-    shape : :class:`compas.datastructure.Mesh`
+    shape : :class:`compas.datastructures.Mesh`
         The base shape of the block.
     features : list[:class:`BlockFeature`]
         A list of additional block features.
@@ -137,8 +146,8 @@ class BlockElement(Element):
 
     """
 
-    elementgeometry: BlockGeometry
-    modelgeometry: BlockGeometry
+    elementgeometry: BlockMesh
+    modelgeometry: BlockMesh
 
     @property
     def __data__(self) -> dict:
@@ -150,50 +159,17 @@ class BlockElement(Element):
 
     def __init__(
         self,
-        shape: Union[Mesh, BlockGeometry],
+        shape: BlockMesh,
         features: Optional[list[BlockFeature]] = None,
         is_support: bool = False,
         frame: Optional[Frame] = None,
         transformation: Optional[Transformation] = None,
         name: Optional[str] = None,
     ) -> None:
-        super().__init__(frame=frame, transformation=transformation, features=features, name=name)
-        self.shape = shape if isinstance(shape, BlockGeometry) else shape.copy()
+        super().__init__(transformation=transformation, features=features, name=name)
+
+        self.shape = shape
         self.is_support = is_support
-
-    # =============================================================================
-    # Implementations of abstract methods
-    # =============================================================================
-
-    def compute_elementgeometry(self) -> Mesh:
-        geometry = self.shape
-        # apply features?
-        return geometry
-
-    def compute_aabb(self) -> Box:
-        points = self.modelgeometry.vertices_attributes("xyz")
-        box = Box.from_bounding_box(bounding_box(points))
-        box.xsize += self.inflate_aabb
-        box.ysize += self.inflate_aabb
-        box.zsize += self.inflate_aabb
-        return box
-
-    def compute_obb(self) -> Box:
-        points = self.modelgeometry.vertices_attributes("xyz")
-        box = Box.from_bounding_box(oriented_bounding_box(points))
-        box.xsize += self.inflate_obb
-        box.ysize += self.inflate_obb
-        box.zsize += self.inflate_obb
-        return box
-
-    def compute_collision_mesh(self) -> Mesh:
-        # TODO: (TvM) make this a pluggable with default implementation in core and move import to top
-        from compas.geometry import convex_hull_numpy
-
-        points = self.modelgeometry.vertices_attributes("xyz")  # type: ignore
-        vertices, faces = convex_hull_numpy(points)
-        vertices = [points[index] for index in vertices]  # type: ignore
-        return Mesh.from_vertices_and_faces(vertices, faces)
 
     # =============================================================================
     # Constructors
@@ -201,9 +177,151 @@ class BlockElement(Element):
 
     @classmethod
     def from_box(cls, box: Box) -> "BlockElement":
-        shape = box.to_mesh()
-        block = cls(shape=shape)
-        return block
+        """Construct a block element from a box.
+
+        Parameters
+        ----------
+        box : :class:`compas.geometry.Box`
+            A box.
+
+        Returns
+        -------
+        :class:`BlockElement`
+
+        """
+        return cls(shape=BlockMesh.from_shape(box))
+
+    @classmethod
+    def from_polyhedron(cls, polyhedron: Polyhedron) -> "BlockElement":
+        """Construct a block element from a polyhedron.
+
+        Parameters
+        ----------
+        polyhedron : :class:`compas.geometry.Polyhedron`
+            A box.
+
+        Returns
+        -------
+        :class:`BlockElement`
+
+        """
+        return cls(shape=BlockMesh.from_shape(polyhedron))
+
+    @classmethod
+    def from_mesh(cls, mesh: Mesh) -> "BlockElement":
+        """Construct a block element from a mesh.
+
+        Parameters
+        ----------
+        mesh : :class:`compas.datastructures.Mesh`
+            A mesh.
+
+        Returns
+        -------
+        :class:`BlockElement`
+
+        """
+        return cls(shape=mesh.copy(cls=BlockMesh))
+
+    # =============================================================================
+    # Implementations of abstract methods
+    # =============================================================================
+
+    def compute_elementgeometry(self) -> BlockMesh:
+        geometry = self.shape
+        self._geometry = geometry
+        return geometry
+
+    def compute_aabb(self, inflate: Optional[bool] = None) -> Box:
+        box = self.modelgeometry.aabb
+        if inflate and inflate != 1.0:
+            box.xsize += inflate
+            box.ysize += inflate
+            box.zsize += inflate
+        self._aabb = box
+        return box
+
+    def compute_obb(self, inflate: Optional[bool] = None) -> Box:
+        box = self.modelgeometry.obb
+        if inflate and inflate != 1.0:
+            box.xsize += inflate
+            box.ysize += inflate
+            box.zsize += inflate
+        self._obb = box
+        return box
+
+    def compute_collision_mesh(self) -> Mesh:
+        mesh = self.modelgeometry.convex_hull
+        self._collision_mesh = mesh
+        return mesh
 
     def compute_point(self) -> Point:
-        return Point(*self.aabb.frame.point)
+        return Point(*self.modelgeometry.centroid())
+
+    # =============================================================================
+    # Geometrical properties
+    # perhaps these should also be added to the list of computed/managed properties
+    # =============================================================================
+
+    # @property
+    # def center(self) -> Point:
+    #     raise NotImplementedError
+
+    # @property
+    # def volume(self) -> float:
+    #     return self.modelgeometry.volume
+
+    # @property
+    # def top(self) -> int:
+    #     """Identify the *top* face of the block.
+
+    #     Returns
+    #     -------
+    #     int
+    #         The identifier of the face.
+
+    #     """
+    #     z = [0, 0, 1]
+    #     faces = list(self.faces())
+    #     normals = [self.face_normal(face) for face in faces]
+    #     return sorted(zip(faces, normals), key=lambda x: dot_vectors(x[1], z))[-1][0]
+
+    # def face_frame(self, face: int) -> Frame:
+    #     """Compute the frame of a specific face.
+
+    #     Parameters
+    #     ----------
+    #     face : int
+    #         The identifier of the frame.
+
+    #     Returns
+    #     -------
+    #     :class:`compas.geometry.Frame`
+
+    #     """
+    #     xyz = self.face_coordinates(face)
+    #     normal = self.face_normal(face)
+    #     o, u, v = bestfit_frame_numpy(xyz)
+    #     frame = Frame(o, u, v)
+    #     if frame.zaxis.dot(normal) < 0:
+    #         frame.invert()
+    #     return frame
+
+    # =============================================================================
+    # Collisions & Contacts
+    # =============================================================================
+
+    def collision(self, other: "BlockElement") -> Mesh:
+        """Compute the collision between this block element and another block element.
+
+        Parameters
+        ----------
+        other : :class:`BlockElement`
+            The other element.
+
+        Returns
+        -------
+        :class:`compas.datastructures.Mesh`
+
+        """
+        pass

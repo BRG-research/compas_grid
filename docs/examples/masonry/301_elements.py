@@ -1,32 +1,29 @@
 from pathlib import Path
 
+import compas
+from compas.geometry import Brep
+from compas.geometry import Frame
+from compas.geometry import Transformation
+from compas.geometry import Translation
+from compas.geometry import Vector
+from compas.tolerance import TOL
+from compas_grid.elements import BeamTProfileElement
+from compas_grid.elements import CableElement
+from compas_grid.elements import ColumnElement
 from compas_model.models import Model
 from compas_viewer import Viewer
 from compas_viewer.config import Config
 
-from compas import json_load
-from compas.geometry import Frame
-from compas.geometry import Line
-from compas.geometry import Point
-from compas.geometry import Translation
-from compas.geometry import Vector
-from compas.geometry.transformation import Transformation
-from compas_grid.elements import BeamTProfileElement
-from compas_grid.elements import BeamVProfileElement  # noqa: F401
-from compas_grid.elements import BlockElement
-from compas_grid.elements import CableElement
-from compas_grid.elements import ColumnSquareElement
-
 # =============================================================================
 # JSON file with the geometry of the model.
 # =============================================================================
-rhino_geometry = json_load(Path("data/frame.json"))
+rhino_geometry = compas.json_load(Path(__file__).parent.parent.parent.parent / "data" / "frame.json")
 lines = rhino_geometry["lines"]
-barrel_vault = json_load(Path("data/barrel_vault.json"))
 
 # =============================================================================
 # Model
 # =============================================================================
+
 model = Model()
 
 # =============================================================================
@@ -35,7 +32,7 @@ model = Model()
 
 # Add columns
 for i in range(0, 4):
-    column = ColumnSquareElement(300, 300, lines[i].length)
+    column = ColumnElement(300, 300, lines[i].length)
     column.transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(lines[i].start))
     model.add_element(column)
 
@@ -69,50 +66,56 @@ for i in range(6, len(lines)):
     model.add_element(cable)
     cables.append(cable)
 
-# Add barrel vault blocks
-blocks = []
-for i in range(len(barrel_vault["meshes"])):
-    mesh = barrel_vault["meshes"][i]
-    frame = barrel_vault["frames"][i]
-    mesh.transform(Transformation.from_frame_to_frame(frame, Frame.worldXY()))
-    block = BlockElement(shape=mesh, is_support=mesh.attributes["is_support"])
-    block.transformation = Translation.from_vector([0, 0, 3800]) * Transformation.from_frame_to_frame(Frame.worldXY(), frame)
-    model.add_element(block)
-    blocks.append(block)
+# =============================================================================
+# Export
+# =============================================================================
+
+compas.json_dump(model, Path(__file__).parent.parent.parent.parent / "data" / "model.json")
 
 # =============================================================================
-# Add Interactions
+# Preprocess
 # =============================================================================
-for beam in beams:
-    for block in blocks:
-        model.add_interaction(beam, block)
-        model.add_modifier(beam, block)  # beam -> cuts -> block
 
-# =============================================================================
-# Compute Contacts
-# =============================================================================
-model.compute_contacts(tolerance=1, minimum_area=1, k=8)
+TOL.lineardeflection = 1
+TOL.angulardeflection = 1
+
+elements = list(model.elements())
+
+columns = [element for element in elements if isinstance(element, ColumnElement)]
+beams = [element for element in elements if isinstance(element, BeamTProfileElement)]
+cables = [element for element in elements if isinstance(element, CableElement)]
 
 # =============================================================================
 # Visualize
 # =============================================================================
+
 config = Config()
-config.camera.target = [0, 0, 100]
-config.camera.position = [10000, -10000, 10000]
+config.camera.target = [0, 1000, 1250]
+config.camera.position = [0, -10000, 8125]
 config.camera.near = 10
 config.camera.far = 100000
+config.camera.pandelta = 100
+config.renderer.gridsize = (20000, 20, 20000, 20)
+
 viewer = Viewer(config=config)
-viewer = Viewer()
 
-lines = []
-for element in list(model.elements()):
-    for line in element.modelgeometry.to_lines():
-        lines.append(Line(Point(*line[0]), Point(*line[1])))
-viewer.scene.add(lines)
+viewer.scene.add(
+    [Brep.from_mesh(e.modelgeometry) for e in columns],
+    show_faces=True,
+    opacity=0.7,
+    name="Columns",
+)
 
-for edge in model.graph.edges():
-    if model.graph.edge_attribute(edge, "contacts"):
-        for contact in model.graph.edge_attribute(edge, "contacts"):
-            viewer.scene.add(contact.mesh, facecolor=(0, 255, 0), hide_coplanaredges=True)
+viewer.scene.add(
+    [Brep.from_mesh(e.modelgeometry) for e in beams],
+    show_faces=True,
+    name="Beams",
+)
+
+viewer.scene.add(
+    [Brep.from_mesh(e.modelgeometry) for e in cables],
+    show_faces=True,
+    name="Cables",
+)
 
 viewer.show()

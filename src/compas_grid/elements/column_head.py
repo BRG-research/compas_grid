@@ -70,10 +70,10 @@ class CrossBlockShape:
     ----------
     width : float
         The width of the column head.
-    depth : float
-        The depth of the column head.
     height : float
         The height of the column head.
+    length : float
+        The length of the column head.
     offset : float
         The offset of the column head.
     v : dict[int, Point]
@@ -87,8 +87,8 @@ class CrossBlockShape:
     Example
     -------
     width: float = 150
-    depth: float = 150
-    height: float = 300
+    height: float = 150
+    length: float = 300
     offset: float = 210
     v: dict[int, Point] = {
         7: Point(0, 0, 0),
@@ -107,7 +107,7 @@ class CrossBlockShape:
 
     f: list[list[int]] = [[5, 7, 6, 10]]
 
-    CrossBlockShape: CrossBlockShape = CrossBlockShape(v, e, f, width, depth, height, offset)
+    CrossBlockShape: CrossBlockShape = CrossBlockShape(v, e, f, width, height, length, offset)
     mesh = CrossBlockShape.mesh.scaled(0.001)
 
     """
@@ -127,14 +127,14 @@ class CrossBlockShape:
         e: list[tuple[int, int]],
         f: list[list[int]],
         width: float = 150,
-        depth: float = 150,
-        height: float = 300,
+        height: float = 150,
+        length: float = 300,
         offset: float = 210,
     ):
         if not hasattr(self, "_initialized"):
             self._width = width
-            self._depth = depth
             self._height = height
+            self._length = length
             self._offset = offset
         rules = self._generate_rules(v, e, f)
         self._generated_meshes[rules] = self._generate_mesh(rules)
@@ -227,24 +227,24 @@ class CrossBlockShape:
 
         vertices: list[Point] = [
             # Outer ring
-            Point(self._width, self._depth + self._offset, -self._height),  # 0
-            Point(-self._width, self._depth + self._offset, -self._height),  # 1
-            Point(-self._width - self._offset, self._depth, -self._height),  # 2
-            Point(-self._width - self._offset, -self._depth, -self._height),  # 3
-            Point(-self._width, -self._depth - self._offset, -self._height),  # 4
-            Point(self._width, -self._depth - self._offset, -self._height),  # 5
-            Point(self._width + self._offset, -self._depth, -self._height),  # 6
-            Point(self._width + self._offset, self._depth, -self._height),  # 7
+            Point(self._width, self._height + self._offset, -self._length),  # 0
+            Point(-self._width, self._height + self._offset, -self._length),  # 1
+            Point(-self._width - self._offset, self._height, -self._length),  # 2
+            Point(-self._width - self._offset, -self._height, -self._length),  # 3
+            Point(-self._width, -self._height - self._offset, -self._length),  # 4
+            Point(self._width, -self._height - self._offset, -self._length),  # 5
+            Point(self._width + self._offset, -self._height, -self._length),  # 6
+            Point(self._width + self._offset, self._height, -self._length),  # 7
             # Inner quad
-            Point(self._width, self._depth, -self._height),  # 8
-            Point(-self._width, self._depth, -self._height),  # 9
-            Point(-self._width, -self._depth, -self._height),  # 10
-            Point(self._width, -self._depth, -self._height),  # 11
+            Point(self._width, self._height, -self._length),  # 8
+            Point(-self._width, self._height, -self._length),  # 9
+            Point(-self._width, -self._height, -self._length),  # 10
+            Point(self._width, -self._height, -self._length),  # 11
             # Top quad
-            Point(self._width, self._depth, 0),  # 12
-            Point(-self._width, self._depth, 0),  # 13
-            Point(-self._width, -self._depth, 0),  # 14
-            Point(self._width, -self._depth, 0),  # 15
+            Point(self._width, self._height, 0),  # 12
+            Point(-self._width, self._height, 0),  # 13
+            Point(-self._width, -self._height, 0),  # 14
+            Point(self._width, -self._height, 0),  # 15
         ]
 
         # Check if two floor plate has two beams else plate cannot be connected to column head.
@@ -351,10 +351,10 @@ class ColumnHeadCrossElement(ColumnHeadElement):
         Faces between points v0-v1-v2-v3 and so on. If face vertices form already given edges, a triangle mesh face is formed.
     width : float
         The width of the column head.
-    depth : float
-        The depth of the column head.
     height : float
         The height of the column head.
+    length : float
+        The length of the column head.
     offset : float
         The offset of the column head.
 
@@ -372,8 +372,8 @@ class ColumnHeadCrossElement(ColumnHeadElement):
     -------
 
     width: float = 150
-    depth: float = 150
-    height: float = 300
+    height: float = 150
+    length: float = 300
     offset: float = 210
     v: dict[int, Point] = {
         7: Point(0, 0, 0),
@@ -391,7 +391,7 @@ class ColumnHeadCrossElement(ColumnHeadElement):
     ]
 
     f: list[list[int]] = [[5, 7, 6, 10]]
-    column_head_cross = ColumnHeadCrossElement(v=v, e=e, f=f, width=width, depth=depth, height=height, offset=offset)
+    column_head_cross = ColumnHeadCrossElement(v=v, e=e, f=f, width=width, height=height, length=length, offset=offset)
     """
 
     @property
@@ -401,8 +401,8 @@ class ColumnHeadCrossElement(ColumnHeadElement):
             "e": self.e,
             "f": self.f,
             "width": self.width,
-            "depth": self.depth,
             "height": self.height,
+            "length": self.length,
             "offset": self.offset,
             "is_support": self.is_support,
             "transformation": self.transformation,
@@ -426,8 +426,8 @@ class ColumnHeadCrossElement(ColumnHeadElement):
         ],
         f: list[list[int]] = [[5, 7, 6, 10]],
         width=150,
-        depth=150,
-        height=300,
+        height=150,
+        length=300,
         offset=210,
         is_support: bool = False,
         transformation: Optional[Transformation] = None,
@@ -439,8 +439,8 @@ class ColumnHeadCrossElement(ColumnHeadElement):
         self.e = e
         self.f = f
         self.width = width
-        self.depth = depth
         self.height = height
+        self.length = length
         self.offset = offset
 
     @property
@@ -455,14 +455,14 @@ class ColumnHeadCrossElement(ColumnHeadElement):
         :class:`compas.datastructures.Mesh`
 
         """
-        column_head_cross_shape: CrossBlockShape = CrossBlockShape(self.v, self.e, self.f, self.width, self.depth, self.height, self.offset)
+        column_head_cross_shape: CrossBlockShape = CrossBlockShape(self.v, self.e, self.f, self.width, self.height, self.length, self.offset)
         return column_head_cross_shape.mesh.copy()  # Copy because the meshes are created only once.
 
     # =============================================================================
     # Implementations of abstract methods
     # =============================================================================
 
-    def compute_aabb(self, inflate: float = 0.0) -> Box:
+    def compute_aabb(self, inflate: Optional[bool] = None) -> Box:
         """Compute the axis-aligned bounding box of the element.
 
         Parameters
@@ -482,7 +482,7 @@ class ColumnHeadCrossElement(ColumnHeadElement):
         box.zsize += inflate
         return box
 
-    def compute_obb(self, inflate: float = 0.0) -> Box:
+    def compute_obb(self, inflate: Optional[bool] = None) -> Box:
         """Compute the oriented bounding box of the element.
 
         Parameters
@@ -552,7 +552,7 @@ class ColumnHeadCrossElement(ColumnHeadElement):
 
         # From the most distance axis point find the nearest column_head frame:
         p: Point = Point(0, 0, 0).transformed(self.modeltransformation)
-        axis: Point = target_element.axis.transformed(target_element.modeltransformation)
+        axis: Point = target_element.center_line.transformed(target_element.modeltransformation)
         column_head_is_closer_to_base: bool = axis.start.distance_to_point(p) > axis.end.distance_to_point(p)
 
         polygon: Polygon = self.modelgeometry.face_polygon(0)  # ColumnHead is on the bottom
@@ -572,7 +572,7 @@ class ColumnHeadCrossElement(ColumnHeadElement):
         # Lastly add the contact.
 
         p: Point = Point(0, 0, 0).transformed(self.modeltransformation)
-        axis: Point = target_element.axis.transformed(target_element.modeltransformation)
+        axis: Point = target_element.center_line.transformed(target_element.modeltransformation)
         column_head_is_closer_to_start: bool = axis.start.distance_to_point(p) < axis.end.distance_to_point(p)
 
         direction: Vector = axis[1] - axis[0] if column_head_is_closer_to_start else axis[0] - axis[1]

@@ -4,7 +4,7 @@ from compas_viewer import Viewer
 from compas_viewer.config import Config
 
 from compas import json_load
-from compas_grid.elements import BeamSquareElement
+from compas_grid.elements import BeamElement
 from compas_grid.elements import ColumnHeadCrossElement
 from compas_grid.models import GridModel
 
@@ -24,9 +24,8 @@ model = GridModel.from_lines_and_surfaces(columns_and_beams=lines, floor_surface
 # Add Elements to CellNetwork Edge
 # =============================================================================
 edges_beams = list(model.cell_network.edges_where({"is_beam": True}))
-
-column_head = ColumnHeadCrossElement(width=150, depth=150, height=300, offset=210)
-beam = BeamSquareElement(width=300, depth=300)
+column_head = ColumnHeadCrossElement(width=150, height=150, length=300, offset=210)
+beam = BeamElement(width=300, height=300)
 
 model.add_column_head(column_head, edges_beams[0])
 model.add_beam(beam, edges_beams[0])

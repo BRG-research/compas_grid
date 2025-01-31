@@ -5,15 +5,15 @@ from compas_viewer.config import Config
 
 from compas import json_load
 from compas_grid.elements import ColumnHeadCrossElement
-from compas_grid.elements import ColumnSquareElement
+from compas_grid.elements import ColumnElement
 from compas_grid.models import GridModel
 
 # =============================================================================
 # JSON file with the geometry of the model. Datasets: frame.json, crea_4x4.json
 # =============================================================================
 rhino_geometry = json_load(Path("data/frame.json"))
-lines = rhino_geometry["lines"]
-surfaces = rhino_geometry["meshes"]
+lines = rhino_geometry["Model::Line::Segments"]
+surfaces = rhino_geometry["Model::Mesh::Floor"]
 
 # =============================================================================
 # Model
@@ -25,8 +25,8 @@ model = GridModel.from_lines_and_surfaces(columns_and_beams=lines, floor_surface
 # =============================================================================
 edges_columns = list(model.cell_network.edges_where({"is_column": True}))
 
-column_head = ColumnHeadCrossElement(width=150, depth=150, height=300, offset=210)
-column = ColumnSquareElement(width=300, depth=300)
+column_head = ColumnHeadCrossElement(width=150, height=150, length=300, offset=210)
+column = ColumnElement(width=300, height=300)
 
 model.add_column_head(column_head, edges_columns[0])
 model.add_column(column, edges_columns[0])

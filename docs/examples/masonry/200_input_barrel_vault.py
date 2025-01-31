@@ -141,18 +141,23 @@ barrel_vault = from_barrel_vault(span=6000, length=6000, thickness=250, rise=600
 # =============================================================================
 # Serialize the Barrel Vault into a JSON file.
 # =============================================================================
+
 model_input = {"meshes": barrel_vault[0], "frames": barrel_vault[1]}
-json_dump(model_input, Path("data/barrel_vault.json"))
+json_dump(model_input, Path(__file__).parent.parent.parent.parent / "data" / "barrel.json")
 
 # =============================================================================
 # Visualize
 # =============================================================================
+
 config = Config()
 config.camera.target = [0, 0, 100]
 config.camera.position = [10000, -10000, 10000]
 config.camera.near = 10
 config.camera.far = 100000
+config.renderer.gridsize = (20000, 20, 20000, 20)
+
 viewer = Viewer(config=config)
+
 for mesh in barrel_vault[0]:
     viewer.scene.add(mesh, hide_coplanaredges=False)
 viewer.show()

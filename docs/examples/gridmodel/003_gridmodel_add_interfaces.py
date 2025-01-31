@@ -5,9 +5,9 @@ from compas_viewer.config import Config
 
 from compas import json_load
 from compas.geometry import Polygon
-from compas_grid.elements import BeamSquareElement
+from compas_grid.elements import BeamElement
 from compas_grid.elements import ColumnHeadCrossElement
-from compas_grid.elements import ColumnSquareElement
+from compas_grid.elements import ColumnElement
 from compas_grid.elements import PlateElement
 from compas_grid.models import GridModel
 
@@ -34,20 +34,20 @@ edges_beams = list(model.cell_network.edges_where({"is_beam": True}))  # Order a
 faces_floors = list(model.cell_network.faces_where({"is_floor": True}))  # Order as in the model
 
 for edge in edges_columns:
-    column_head = ColumnHeadCrossElement(width=150, depth=150, height=300, offset=210)
+    column_head = ColumnHeadCrossElement(width=150, height=150, length=300, offset=210)
     model.add_column_head(column_head, edge)
 
 for edge in edges_columns:
-    column_square = ColumnSquareElement(width=300, depth=300)
+    column_square = ColumnElement(width=300, height=300)
     model.add_column(column_square, edge)
 
 for edge in edges_beams:
-    beam_square = BeamSquareElement(width=300, depth=300)
+    beam_square = BeamElement(width=300, height=300)
     model.add_beam(beam_square, edge)
 
 for face in faces_floors:
     plate = PlateElement(Polygon([[-2850, -2850, 0], [-2850, 2850, 0], [2850, 2850, 0], [2850, -2850, 0]]), 200)
-    model.add_floor(plate, face)
+    model.add_floor(plate, face, 100)
 
 # =============================================================================
 # Add Interaction between Column and Column Head

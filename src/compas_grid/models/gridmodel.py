@@ -292,8 +292,9 @@ class GridModel(Model):
 
         # Create column head and add it to the model.
         column_head.set_adjacency(v, e, f)
+        column_head.length
         orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(self.cell_network.vertex_point(v1)))
-        column_head.transformation = orientation
+        column_head.transformation = orientation * Translation.from_vector([0, 0, column_head.length])
         treenode: ElementNode = self.add_element(element=column_head)
         self.column_head_to_vertex[v1] = column_head
 
@@ -314,7 +315,7 @@ class GridModel(Model):
         axis: Line = self.cell_network.edge_line(edge)
         if axis[0][2] > axis[1][2]:
             axis = Line(axis[1], axis[0])
-        column.height = axis.length
+        column.length = axis.length
         orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(axis.start, [1, 0, 0], [0, 1, 0]))
         column.transformation = orientation
 
@@ -340,16 +341,16 @@ class GridModel(Model):
         orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(axis.start, Vector.cross(axis.direction, [0, 0, -1]), [0, 0, 1]))
         extension_transformation: Transformation = Translation.from_vector([0, 0, -extend])
         if not beam.transformation:
-            beam.transformation = Translation.from_vector([0, 0, -beam.height * -0.5]) * orientation * extension_transformation  # Initialize transformation if it's not set.
+            beam.transformation = orientation * extension_transformation * Translation.from_vector([0, beam.height * 0.5, 0])  # Initialize transformation if it's not set.
         else:
-            beam.transformation = beam.transformation * Translation.from_vector([0, 0, -beam.height * -0.5]) * orientation * extension_transformation
+            beam.transformation = beam.transformation * orientation * extension_transformation * Translation.from_vector([0, beam.height * 0.5, 0])
 
         treenode: ElementNode = self.add_element(element=beam)
         self.beam_to_edge[edge] = beam
 
         return treenode
 
-    def add_floor(self, plate: Element, face: int = None) -> ElementNode:
+    def add_floor(self, plate: Element, face: int = None, offset: float = 0) -> ElementNode:
         """Add a floor to the model.
         NOTE This methods updates the attributes of the Element.
 
@@ -362,11 +363,10 @@ class GridModel(Model):
         """
         orientation: Transformation = Transformation.from_frame_to_frame(Frame.worldXY(), Frame(self.cell_network.face_polygon(face).centroid, [1, 0, 0], [0, 1, 0]))
         # plate.transformation = orientation
-
         if not plate.transformation:
-            plate.transformation = orientation  # Initialize transformation if it's not set.
+            plate.transformation = orientation * Translation.from_vector([0, 0, plate.thickness + offset])  # Initialize transformation if it's not set.
         else:
-            plate.transformation = orientation * plate.transformation
+            plate.transformation = orientation * plate.transformation * Translation.from_vector([0, 0, plate.thickness + offset])
 
         treenode: ElementNode = self.add_element(element=plate)
 

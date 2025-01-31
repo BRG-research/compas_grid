@@ -7,7 +7,6 @@ from compas_model.interactions import BooleanModifier
 
 from compas.datastructures import Mesh
 from compas.geometry import Box
-from compas.geometry import Frame
 from compas.geometry import Line
 from compas.geometry import Plane
 from compas.geometry import Point
@@ -37,12 +36,8 @@ class CableElement(Element):
         Number of sides of the Cable's polygonal section.
     length : float
         Length of the Cable.
-    frame_top : Optional[:class:`compas.geometry.Plane`]
-        Second frame of the Cable that is used to cut the second end, while the first frame is used to cut the first end.
     is_support : bool
         Flag indicating if the Cable is a support.
-    frame : :class:`compas.geometry.Frame`
-        Main frame of the Cable.
     transformation : Optional[:class:`compas.geometry.Transformation`]
         Transformation applied to the Cable.
     features : Optional[list[:class:`compas_model.features.CableFeature`]]
@@ -60,10 +55,6 @@ class CableElement(Element):
         length of the Cable.
     is_support : bool
         Flag indicating if the Cable is a support.
-    frame : :class:`compas.geometry.Frame`
-        Main frame of the Cable.
-    frame_top : :class:`compas.geometry.Frame`
-        Second frame of the Cable.
     axis : :class:`compas.geometry.Line`
         Line axis of the Cable.
     section : :class:`compas.geometry.Polygon`
@@ -86,9 +77,7 @@ class CableElement(Element):
             "radius": self.radius,
             "sides": self.sides,
             "length": self.length,
-            "frame_top": self.frame_top,
             "is_support": self.is_support,
-            "frame": self.frame,
             "transformation": self.transformation,
             "features": self._features,
             "name": self.name,
@@ -99,14 +88,12 @@ class CableElement(Element):
         radius: float = 0.4,
         sides: int = 24,
         length: float = 3.0,
-        frame_top: Optional[Plane] = None,
         is_support: bool = False,
-        frame: Frame = Frame.worldXY(),
         transformation: Optional[Transformation] = None,
         features: Optional[list[CableFeature]] = None,
         name: Optional[str] = None,
     ) -> "CableElement":
-        super().__init__(frame=frame, transformation=transformation, features=features, name=name)
+        super().__init__(transformation=transformation, features=features, name=name)
 
         self.is_support: bool = is_support
 
@@ -115,7 +102,6 @@ class CableElement(Element):
         self._length = length
         self.axis: Line = Line([0, 0, 0], [0, 0, self._length])
         self.section: Polygon = Polygon.from_sides_and_radius_xy(sides, radius)
-        self.frame_top: Frame = frame_top or Frame(self.frame.point + self.axis.vector, self.frame.xaxis, self.frame.yaxis)
         self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()
 
     @property
@@ -130,7 +116,6 @@ class CableElement(Element):
     def length(self, length: float):
         self._length = length
         self.axis: Line = Line([0, 0, 0], [0, 0, self._length])
-        self.frame_top: Frame = Frame(self.frame.point + self.axis.vector, self.frame.xaxis, self.frame.yaxis)
         self.polygon_bottom, self.polygon_top = self.compute_top_and_bottom_polygons()
 
     def compute_top_and_bottom_polygons(self) -> tuple[Polygon, Polygon]:
@@ -141,8 +126,8 @@ class CableElement(Element):
         tuple[:class:`compas.geometry.Polygon`, :class:`compas.geometry.Polygon`]
         """
 
-        plane0: Plane = Plane.from_frame(self.frame)
-        plane1: Plane = Plane.from_frame(self.frame_top)
+        plane0: Plane = Plane(self.axis.start, self.axis.direction)
+        plane1: Plane = Plane(self.axis.end, self.axis.direction)
         points0: list[list[float]] = []
         points1: list[list[float]] = []
         for i in range(len(self.section.points)):
@@ -181,7 +166,7 @@ class CableElement(Element):
     # Implementations of abstract methods
     # =============================================================================
 
-    def compute_aabb(self, inflate: float = 0.0) -> Box:
+    def compute_aabb(self, inflate: Optional[bool] = None) -> Box:
         """Compute the axis-aligned bounding box of the element.
 
         Parameters
@@ -196,12 +181,13 @@ class CableElement(Element):
         """
         points: list[list[float]] = self.modelgeometry.vertices_attributes("xyz")  # type: ignore
         box: Box = Box.from_bounding_box(bounding_box(points))
-        box.xsize += inflate
-        box.ysize += inflate
-        box.zsize += inflate
+        if inflate and inflate != 1.0:
+            box.xsize += inflate
+            box.ysize += inflate
+            box.zsize += inflate
         return box
 
-    def compute_obb(self, inflate: float = 0.0) -> Box:
+    def compute_obb(self, inflate: Optional[bool] = None) -> Box:
         """Compute the oriented bounding box of the element.
 
         Parameters
@@ -216,9 +202,10 @@ class CableElement(Element):
         """
         points: list[list[float]] = self.modelgeometry.vertices_attributes("xyz")  # type: ignore
         box: Box = Box.from_bounding_box(oriented_bounding_box(points))
-        box.xsize += inflate
-        box.ysize += inflate
-        box.zsize += inflate
+        if inflate and inflate != 1.0:
+            box.xsize += inflate
+            box.ysize += inflate
+            box.zsize += inflate
         return box
 
     def compute_collision_mesh(self) -> Mesh:
