@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import compas
-from compas_grid import GridModel
+from compas_grid.models import GridModel
 from compas_grid.elements import BeamTProfileElement
 from compas_grid.elements import BlockElement
 from compas_grid.elements import ColumnElement
@@ -86,7 +86,7 @@ for beam in beams:
 # Compute Contacts
 # =============================================================================
 
-model.compute_contacts(tolerance=1, minimum_area=1, k=8)
+model.compute_contacts(tolerance=1, minimum_area=1, k=6)
 
 contacts = []
 for edge in model.graph.edges():

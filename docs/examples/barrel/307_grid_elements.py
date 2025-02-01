@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import compas
-from compas_grid import GridModel
+from compas_grid.models import GridModel
 from compas_grid.elements import BeamTProfileElement
 from compas_grid.elements import BlockElement
 from compas_grid.elements import ColumnElement

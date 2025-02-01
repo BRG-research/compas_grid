@@ -43,6 +43,7 @@ TOL.angulardeflection = 1
 columns = [element for element in elements if isinstance(element, ColumnElement)]
 
 blocks = []
+
 for element in elements:
     if isinstance(element, BlockElement):
         mesh = element.modelgeometry
@@ -93,6 +94,8 @@ config.camera.pandelta = 100
 config.renderer.gridsize = (20000, 20, 20000, 20)
 
 viewer = Viewer(config=config)
+
+viewer.scene.add(points)
 
 viewer.scene.add(
     [Brep.from_mesh(e.modelgeometry) for e in columns],

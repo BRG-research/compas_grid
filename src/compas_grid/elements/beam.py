@@ -433,6 +433,59 @@ class BeamTProfileElement(BeamElement):
         self.transformation = self.transformation * xform
         self.compute_elementgeometry()
 
+    def compute_aabb(self, inflate: Optional[bool] = None) -> Box:
+        """Compute the axis-aligned bounding box of the element.
+
+        Parameters
+        ----------
+        inflate : float, optional
+            The inflation factor of the bounding box.
+
+        Returns
+        -------
+        :class:`compas.geometry.Box`
+            The axis-aligned bounding box.
+        """
+
+        box = self.modelgeometry.aabb()
+        if inflate and inflate != 1.0:
+            box.xsize += inflate
+            box.ysize += inflate
+            box.zsize += inflate
+        self._aabb = box
+        return box
+
+    def compute_obb(self, inflate: Optional[bool] = None) -> Box:
+        """Compute the oriented bounding box of the element.
+
+        Parameters
+        ----------
+        inflate : float, optional
+            The inflation factor of the bounding box.
+
+        Returns
+        -------
+        :class:`compas.geometry.Box`
+            The oriented bounding box.
+        """
+        box = self.modelgeometry.oobb()
+        if inflate and inflate != 1.0:
+            box.xsize += inflate
+            box.ysize += inflate
+            box.zsize += inflate
+        self._obb = box
+        return box
+
+    def compute_collision_mesh(self) -> Mesh:
+        """Compute the collision mesh of the element.
+
+        Returns
+        -------
+        :class:`compas.datastructures.Mesh`
+            The collision mesh.
+        """
+        return self.modelgeometry
+
     # =============================================================================
     # Constructors
     # =============================================================================

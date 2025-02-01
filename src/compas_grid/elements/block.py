@@ -6,7 +6,6 @@ from compas_model.elements import Feature
 
 from compas.datastructures import Mesh
 from compas.geometry import Box
-from compas.geometry import Frame
 from compas.geometry import Plane
 from compas.geometry import Point
 from compas.geometry import Polyhedron
@@ -21,23 +20,6 @@ from compas.geometry import oriented_bounding_box_numpy
 
 class BlockMesh(Mesh):
     """Extension of default mesh with API similar to Brep."""
-
-    @property
-    def aabb(self) -> Box:
-        points = self.vertices_attributes("xyz")
-        return Box.from_points(points)
-
-    @property
-    def convex_hull(self) -> Mesh:
-        points = self.vertices_attributes("xyz")
-        vertices, faces = convex_hull_numpy(points)
-        vertices = [points[index] for index in vertices]
-        return Mesh.from_vertices_and_faces(vertices, faces)
-
-    @property
-    def obb(self) -> Box:
-        points = self.vertices_points()
-        return Box.from_bounding_box(oriented_bounding_box_numpy(points))
 
     def boolean_difference(self, *others: "BlockMesh") -> "BlockMesh":
         """Return the boolean difference of this mesh and one or more other meshes.
@@ -162,7 +144,6 @@ class BlockElement(Element):
         shape: BlockMesh,
         features: Optional[list[BlockFeature]] = None,
         is_support: bool = False,
-        frame: Optional[Frame] = None,
         transformation: Optional[Transformation] = None,
         name: Optional[str] = None,
     ) -> None:
@@ -233,7 +214,8 @@ class BlockElement(Element):
         return geometry
 
     def compute_aabb(self, inflate: Optional[bool] = None) -> Box:
-        box = self.modelgeometry.aabb
+        points = self.modelgeometry.vertices_attributes("xyz")
+        box = Box.from_points(points)
         if inflate and inflate != 1.0:
             box.xsize += inflate
             box.ysize += inflate
@@ -242,7 +224,8 @@ class BlockElement(Element):
         return box
 
     def compute_obb(self, inflate: Optional[bool] = None) -> Box:
-        box = self.modelgeometry.obb
+        points = self.modelgeometry.vertices_attributes("xyz")
+        box = Box.from_bounding_box(oriented_bounding_box_numpy(points))
         if inflate and inflate != 1.0:
             box.xsize += inflate
             box.ysize += inflate
@@ -251,9 +234,10 @@ class BlockElement(Element):
         return box
 
     def compute_collision_mesh(self) -> Mesh:
-        mesh = self.modelgeometry.convex_hull
-        self._collision_mesh = mesh
-        return mesh
+        points = self.vertices_attributes("xyz")
+        vertices, faces = convex_hull_numpy(points)
+        vertices = [points[index] for index in vertices]
+        return Mesh.from_vertices_and_faces(vertices, faces)
 
     def compute_point(self) -> Point:
         return Point(*self.modelgeometry.centroid())

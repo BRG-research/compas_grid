@@ -47,7 +47,9 @@ beams = [element for element in elements if isinstance(element, BeamTProfileElem
 columns = [element for element in elements if isinstance(element, ColumnElement)]
 
 blocks = []
+points = []
 for element in elements:
+    points.append(element.aabb.frame.point)
     if isinstance(element, BlockElement):
         brep = Brep.from_mesh(element.modelgeometry)
         brep.simplify(lineardeflection=TOL.lineardeflection, angulardeflection=TOL.angulardeflection)
@@ -72,6 +74,8 @@ config.camera.pandelta = 100
 config.renderer.gridsize = (20000, 20, 20000, 20)
 
 viewer = Viewer(config=config)
+
+viewer.scene.add(points)
 
 viewer.scene.add(
     [Brep.from_mesh(e.modelgeometry) for e in columns],
