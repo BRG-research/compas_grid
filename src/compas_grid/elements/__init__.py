@@ -6,7 +6,8 @@ from .column_head import ColumnHeadElement
 from .column_head import ColumnHeadCrossElement
 from .beam import BeamFeature
 from .beam import BeamElement
-from .beam import BeamTProfileElement
+from .beam import BeamProfileElement
+from .beam import BeamProfileFeature
 from .column import ColumnFeature
 from .column import ColumnElement
 from .cable import CableFeature
@@ -22,7 +23,8 @@ __all__ = [
     ColumnHeadCrossElement,
     BeamFeature,
     BeamElement,
-    BeamTProfileElement,
+    BeamProfileFeature,
+    BeamProfileElement,
     ColumnFeature,
     ColumnElement,
     CableFeature,

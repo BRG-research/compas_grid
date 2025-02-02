@@ -3,7 +3,7 @@ from pathlib import Path
 import compas
 from compas.geometry import Brep
 from compas.tolerance import TOL
-from compas_grid.elements import BeamTProfileElement
+from compas_grid.elements import BeamProfileElement
 from compas_grid.elements import BlockElement
 from compas_grid.elements import ColumnElement
 from compas_model.models import Model
@@ -32,7 +32,7 @@ TOL.angulardeflection = 1
 elements = list(model.elements())
 
 columns = [element for element in elements if isinstance(element, ColumnElement)]
-beams = [element for element in elements if isinstance(element, BeamTProfileElement)]
+beams = [element for element in elements if isinstance(element, BeamProfileElement)]
 
 blocks = []
 for element in elements:

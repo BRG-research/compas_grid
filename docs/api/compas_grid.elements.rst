@@ -19,7 +19,7 @@ Classes
     ColumnHeadCrossElement
     BeamFeature
     BeamElement
-    BeamTProfileElement
+    BeamProfileElement
     ColumnFeature
     ColumnElement
     CableFeature

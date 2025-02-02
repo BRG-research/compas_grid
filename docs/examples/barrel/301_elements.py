@@ -7,7 +7,7 @@ from compas.geometry import Transformation
 from compas.geometry import Translation
 from compas.geometry import Vector
 from compas.tolerance import TOL
-from compas_grid.elements import BeamTProfileElement
+from compas_grid.elements import BeamProfileElement
 from compas_grid.elements import CableElement
 from compas_grid.elements import ColumnElement
 from compas_model.models import Model
@@ -39,7 +39,7 @@ for i in range(0, 4):
 # Add beams
 beams = []
 for i in range(4, len(lines) - 2):
-    beam = BeamTProfileElement(width=300, height=700, step_width_left=75, step_height_left=150, length=lines[i].length)
+    beam = BeamProfileElement(width=300, height=700, step_width_left=75, step_height_left=150, length=lines[i].length)
     point = lines[i].start
     xaxis = Vector.Zaxis().cross(lines[i].vector)
     yaxis = Vector.Zaxis()
@@ -82,7 +82,7 @@ TOL.angulardeflection = 1
 elements = list(model.elements())
 
 columns = [element for element in elements if isinstance(element, ColumnElement)]
-beams = [element for element in elements if isinstance(element, BeamTProfileElement)]
+beams = [element for element in elements if isinstance(element, BeamProfileElement)]
 cables = [element for element in elements if isinstance(element, CableElement)]
 
 # =============================================================================

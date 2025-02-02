@@ -2,9 +2,9 @@ from compas_viewer import Viewer
 from compas_viewer.config import Config
 
 from compas_grid.elements import BeamElement
-from compas_grid.elements import BeamTProfileElement
+from compas_grid.elements import BeamProfileElement
 
-beam_t: BeamTProfileElement = BeamTProfileElement(
+beam_t: BeamProfileElement = BeamProfileElement.from_t_profile(
     width=0.2,
     height=0.3,
     step_height_left=0.1,

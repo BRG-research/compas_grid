@@ -2,7 +2,7 @@ from pathlib import Path
 
 import compas
 from compas_grid.models import GridModel
-from compas_grid.elements import BeamTProfileElement
+from compas_grid.elements import BeamProfileElement
 from compas_grid.elements import BlockElement
 from compas_grid.elements import ColumnElement
 from compas.datastructures import Mesh
@@ -42,7 +42,7 @@ for edge in edges_columns:
 # =============================================================================
 
 for edge_index in [0, 3]:
-    beam = BeamTProfileElement(width=300, height=700, step_width_left=75, step_height_left=150)
+    beam = BeamProfileElement(width=300, height=700, step_width_left=75, step_height_left=150)
     model.add_beam(beam, edges_beams[edge_index], 150)
 
 # =============================================================================
@@ -65,7 +65,7 @@ for i in range(len(barrel_model["meshes"])):
 # =============================================================================
 elements = list(model.elements())
 columns = [element for element in elements if isinstance(element, ColumnElement)]
-beams = [element for element in elements if isinstance(element, BeamTProfileElement)]
+beams = [element for element in elements if isinstance(element, BeamProfileElement)]
 blocks = [element for element in elements if isinstance(element, BlockElement)]
 
 
@@ -74,7 +74,7 @@ blocks = [element for element in elements if isinstance(element, BlockElement)]
 # =============================================================================
 
 elements = list(model.elements())
-beams = [element for element in elements if isinstance(element, BeamTProfileElement)]
+beams = [element for element in elements if isinstance(element, BeamProfileElement)]
 for beam in beams:
     for block in blocks:
         model.add_interaction(beam, block)

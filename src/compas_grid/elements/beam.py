@@ -16,6 +16,7 @@ from compas.geometry import Point
 from compas.geometry import Polygon
 from compas.geometry import Transformation
 from compas.geometry import Translation
+from compas.geometry import Scale
 from compas.geometry import intersection_line_plane
 from compas.geometry import is_point_in_polygon_xy
 from compas.geometry import mirror_points_line
@@ -25,6 +26,20 @@ from compas_grid.elements import BlockElement
 class BeamFeature(Feature):
     pass
 
+class BeamProfileFeature(Feature):
+    """Profile that is used to cut the beam element."""
+
+
+    @property
+    def __data__(self) -> dict:
+        return {
+            "section": self.section,
+            "name": self.name,
+        }
+    
+    def __init__(self, section: Polygon, name: Optional[str] = None):
+        super().__init__(name=name)
+        self.section = section
 
 class BeamElement(Element):
     """Class representing a beam element with a square section, constructed from the WorldXY Frame.
@@ -249,57 +264,40 @@ class BeamElement(Element):
         return SlicerModifier(plane)
 
 
-class BeamTProfileElement(BeamElement):
+class BeamProfileElement(BeamElement):
     """Class representing a beam element with I profile.
 
     Parameters
     ----------
-    width : float, optional
-        The width of the beam.
-    height : float, optional
-        The height of the beam.
-    step_width_left : float, optional
-        The step width on the left side of the beam.
-    step_height_left : float, optional
-        The step height on the left side of the beam.
+    polygon : :class:`compas.geometry.Polygon`
+        The section of the beam.
     length : float, optional
         The length of the beam.
-    inverted : bool, optional
-        Flag indicating if the beam section is inverted as upside down letter T.
-    step_width_right : float, optional
-        The step width on the right side of the beam, if None then the left side step width is used.
-    step_height_right : float, optional
-        The step height on the right side of the beam, if None then the left side step height is used.
+    is_support : bool, optional
+        Flag indicating if the beam is a support.
+    transformation : :class:`compas.geometry.Transformation`, optional
+        The transformation applied to the beam.
+    features : list[:class:`compas_model.features.BeamFeature`], optional
+        The features of the beam.
     name : str, optional
         The name of the element.
 
     Attributes
     ----------
-    axis : :class:`compas.geometry.Line`
+    center_line : :class:`compas.geometry.Line`
         The axis of the beam.
     section : :class:`compas.geometry.Polygon`
         The section of the beam.
-    polygon_bottom : :class:`compas.geometry.Polygon`
-        The bottom polygon of the beam.
-    polygon_top : :class:`compas.geometry.Polygon`
-        The top polygon of the beam.
-    transformation : :class:`compas.geometry.Transformation`
-        The transformation applied to the beam.
 
     """
 
     @property
     def __data__(self) -> dict:
         return {
-            "width": self.width,
-            "height": self.height,
-            "step_width_left": self.step_width_left,
-            "step_height_left": self.step_height_left,
+            "polygon": self.section,
             "length": self.length,
-            "inverted": self.inverted,
-            "step_height_right": self.step_height_right,
-            "step_width_right": self.step_width_right,
             "is_support": self.is_support,
+            "shape": self.shape,
             "transformation": self.transformation,
             "features": self._features,
             "name": self.name,
@@ -307,70 +305,38 @@ class BeamTProfileElement(BeamElement):
 
     def __init__(
         self,
-        width: float = 0.1,
-        height: float = 0.2,
-        step_width_left: float = 0.02,
-        step_height_left: float = 0.02,
+        polygon: Polygon,
         length: float = 3.0,
-        inverted: bool = False,
-        step_height_right: Optional[float] = None,
-        step_width_right: Optional[float] = None,
         is_support: bool = False,
+        shape: Optional[Mesh] = None,
         transformation: Optional[Transformation] = None,
         features: Optional[list[BeamFeature]] = None,
         name: Optional[str] = None,
-    ) -> "BeamTProfileElement":
+    ) -> "BeamProfileElement":
         super().__init__(transformation=transformation, features=features, name=name)
 
         self.is_support: bool = is_support
-
-        self.width: float = abs(width)
-        self.height: float = abs(height)
-        self.step_width_left: float = abs(step_width_left)
-        self.step_width_right: float = abs(step_width_right) if step_width_right is not None else step_width_left
-        self.step_height_left: float = abs(step_height_left)
-        self.step_height_right: float = abs(step_height_right) if step_height_right is not None else step_height_left
-        self.inverted: bool = inverted
         self._length: float = abs(length)
+        self.section: Polygon = polygon
+        self._shape: Optional[Mesh] = shape # public property that can be changed any time
 
-        self.step_width_left = min(self.step_width_left, width * 0.5 * 0.999)
-        self.step_width_right = min(self.step_width_right, width * 0.5 * 0.999)
-        self.step_height_left = min(self.step_height_left, height)
-        self.step_height_right = min(self.step_height_right, height)
+    @property
+    def shape(self) -> Mesh:
+        return self._shape
+    
+    @shape.setter
+    def shape(self, shape: Mesh):
+        self._shape = shape
+        self._geometry = None
 
-        self.points: list[float] = [
-            [self.width * 0.5, -self.height * 0.5, 0],
-            [-self.width * 0.5, -self.height * 0.5, 0],
-            [-self.width * 0.5, -self.height * 0.5 + self.step_height_left, 0],
-            [-self.width * 0.5 + self.step_width_left, -self.height * 0.5 + self.step_height_left, 0],
-            [-self.width * 0.5 + self.step_width_left, self.height * 0.5, 0],
-            [self.width * 0.5 - self.step_width_right, self.height * 0.5, 0],
-            [self.width * 0.5 - self.step_width_right, -self.height * 0.5 + self.step_height_right, 0],
-            [self.width * 0.5, -self.height * 0.5 + self.step_height_right, 0],
-        ]
+    def _loft (self, polygon: Polygon) -> Mesh:
 
-        if inverted:
-            mirror_line: Line = Line([0, 0, 0], [1, 0, 0])
-            self.points = mirror_points_line(self.points, mirror_line)
-
-        # Create the polygon of the T profile
-        self.section: Polygon = Polygon(self.points)
-        self.axis: Line = Line([0, 0, 0], [0, 0, length])
-
-    def compute_elementgeometry(self) -> tuple[Polygon, Polygon]:
-        """Compute the top and bottom polygons of the beam.
-
-        Returns
-        -------
-        tuple[:class:`compas.geometry.Polygon`, :class:`compas.geometry.Polygon`]
-        """
-
-        plane0: Plane = Plane(self.axis.start, self.axis.direction)
-        plane1: Plane = Plane(self.axis.end, self.axis.direction)
+        plane0: Plane = Plane(self.center_line.start, self.center_line.direction)
+        plane1: Plane = Plane(self.center_line.end, self.center_line.direction)
         points0: list[list[float]] = []
         points1: list[list[float]] = []
-        for i in range(len(self.section.points)):
-            line: Line = Line(self.section.points[i], self.section.points[i] + self.axis.vector)
+        for i in range(len(polygon.points)):
+            line: Line = Line(polygon.points[i], polygon.points[i] + self.center_line.vector)
             result0: Optional[list[float]] = intersection_line_plane(line, plane0)
             result1: Optional[list[float]] = intersection_line_plane(line, plane1)
             if not result0 or not result1:
@@ -395,17 +361,55 @@ class BeamTProfileElement(BeamElement):
             for j in range(3):
                 triangle_top.append(triangles[i][j] + offset)
                 triangle_bottom.append(triangles[i][j])
-            triangle_bottom.reverse()
             top_faces.append(triangle_top)
+            triangle_bottom.reverse()
             bottom_faces.append(triangle_bottom)
         faces: list[list[int]] = bottom_faces + top_faces
 
         bottom: list[int] = list(range(offset))
         top: list[int] = [i + offset for i in bottom]
         for (a, b), (c, d) in zip(pairwise(bottom + bottom[:1]), pairwise(top + top[:1])):
-            faces.append([c, d, b, a])
+            faces.append([a, b, d, c])  # Ensure consistent winding order
         mesh: Mesh = Mesh.from_vertices_and_faces(vertices, faces)
         return mesh
+
+
+    def compute_elementgeometry(self) -> Mesh:
+        """Compute the top and bottom polygons of the beam.
+
+        Returns
+        -------
+        :class:`compas.datastructures.Mesh`
+            The mesh of the beam.
+        """
+
+        if self.features:
+            shape = self.shape if self.shape else self._loft(self.section)
+            mid_point: Point = self.center_line.midpoint
+            cut_meshes : list[Mesh] = []
+            for feature in self.features:
+                if isinstance(feature, BeamProfileFeature):
+                    cut_mesh: Mesh = self._loft(feature.section)
+                    frame = Frame(mid_point, [1,0,0], [0,1,0])
+                    cut_mesh.transform(Scale.from_factors([1,1,2], frame))
+                    cut_meshes.append(cut_mesh)
+            
+            from compas.geometry import boolean_intersection_mesh_mesh
+
+            for cut_mesh in cut_meshes:
+                A = shape.to_vertices_and_faces(triangulated=True)
+                B = cut_mesh.to_vertices_and_faces(triangulated=True)
+
+                from compas import json_dump
+
+                V, F = boolean_intersection_mesh_mesh(A, B)
+                shape: Mesh = Mesh.from_vertices_and_faces(V, F) if len(V) > 0 and len(F) > 0 else shape
+
+            return shape
+
+        else:
+            mesh: Mesh = self._loft(self.section)
+            return mesh
 
     @property
     def length(self) -> float:
@@ -414,11 +418,13 @@ class BeamTProfileElement(BeamElement):
     @length.setter
     def length(self, length: float):
         self._length = length
-
         self.section = Polygon(list(self.points))
-
-        self.axis = Line([0, 0, 0], [0, 0, length])
         self.compute_elementgeometry()
+
+
+    @property
+    def center_line(self) -> Line:
+        return Line([0, 0, 0], [0, 0, self.length])
 
     def extend(self, distance: float) -> None:
         """Extend the beam.
@@ -489,3 +495,86 @@ class BeamTProfileElement(BeamElement):
     # =============================================================================
     # Constructors
     # =============================================================================
+
+    @classmethod
+    def from_t_profile(
+        cls,  # type: ignore
+        width: float = 0.1,
+        height: float = 0.2,
+        step_width_left: float = 0.02,
+        step_height_left: float = 0.02,
+        length: float = 3.0,
+        inverted: bool = False,
+        step_height_right: Optional[float] = None,
+        step_width_right: Optional[float] = None,
+        is_support: bool = False,
+        transformation: Optional[Transformation] = None,
+        features: Optional[list[BeamFeature]] = None,
+        name: Optional[str] = None,) -> None:
+        """Create a T profile beam element.
+
+        Parameters
+        ----------
+        width : float, optional
+            The width of the beam.
+        height : float, optional
+            The height of the beam.
+        step_width_left : float, optional
+            The step width on the left side of the beam.
+        step_height_left : float, optional
+            The step height on the left side of the beam.
+        length : float, optional
+            The length of the beam.
+        inverted : bool, optional
+            Flag indicating if the beam section is inverted as upside down letter T.
+        step_width_right : float, optional
+            The step width on the right side of the beam, if None then the left side step width is used.
+        step_height_right : float, optional
+            The step height on the right side of the beam, if None then the left side step height is used.
+        name : str, optional
+            The name of the element.
+        """
+
+        _width: float = abs(width)
+        _height: float = abs(height)
+        _step_width_left: float = abs(step_width_left)
+        _step_width_right: float = abs(step_width_right) if step_width_right is not None else step_width_left
+        _step_height_left: float = abs(step_height_left)
+        _step_height_right: float = abs(step_height_right) if step_height_right is not None else step_height_left
+     
+
+        _step_width_left = min(_step_width_left, width * 0.5 * 0.999)
+        _step_width_right = min(_step_width_right, width * 0.5 * 0.999)
+        _step_height_left = min(_step_height_left, height)
+        _step_height_right = min(_step_height_right, height)
+
+        polygon = Polygon([
+            [_width * 0.5, -_height * 0.5, 0],
+            [-_width * 0.5, -_height * 0.5, 0],
+            [-_width * 0.5, -_height * 0.5 + _step_height_left, 0],
+            [-_width * 0.5 + _step_width_left, -_height * 0.5 + _step_height_left, 0],
+            [-_width * 0.5 + _step_width_left, _height * 0.5, 0],
+            [_width * 0.5 - _step_width_right, _height * 0.5, 0],
+            [_width * 0.5 - _step_width_right, -_height * 0.5 + _step_height_right, 0],
+            [_width * 0.5, -_height * 0.5 + _step_height_right, 0],
+        ])
+
+        if inverted:
+            mirror_line: Line = Line([0, 0, 0], [1, 0, 0])
+            polygon = Polygon(mirror_points_line(polygon.points, mirror_line))
+
+        return cls(polygon, abs(length), is_support, transformation, features, name)
+
+    # @classmethod
+    # def from_v_profile(
+    #     radius : float = 0.0,
+    #     height0 : float = 0.0,
+    #     hright1 : float = 0.0,
+    #     wdith : float = 3.0,
+    #     is_support: bool = False,
+    #     transformation: Optional[Transformation] = None,
+    #     features: Optional[list[BeamFeature]] = None,
+    #     name: Optional[str] = None,) -> None:
+    #     """Create a V profile beam element."""
+
+    # pass
