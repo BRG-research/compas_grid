@@ -9,14 +9,16 @@ from compas_model.interactions import SlicerModifier
 
 from compas.datastructures import Mesh
 from compas.geometry import Box
+from compas.geometry import Brep
 from compas.geometry import Frame
 from compas.geometry import Line
 from compas.geometry import Plane
 from compas.geometry import Point
 from compas.geometry import Polygon
+from compas.geometry import Scale
 from compas.geometry import Transformation
 from compas.geometry import Translation
-from compas.geometry import Scale
+from compas.geometry import bounding_box
 from compas.geometry import intersection_line_plane
 from compas.geometry import is_point_in_polygon_xy
 from compas.geometry import mirror_points_line
@@ -26,20 +28,6 @@ from compas_grid.elements import BlockElement
 class BeamFeature(Feature):
     pass
 
-class BeamProfileFeature(Feature):
-    """Profile that is used to cut the beam element."""
-
-
-    @property
-    def __data__(self) -> dict:
-        return {
-            "section": self.section,
-            "name": self.name,
-        }
-    
-    def __init__(self, section: Polygon, name: Optional[str] = None):
-        super().__init__(name=name)
-        self.section = section
 
 class BeamElement(Element):
     """Class representing a beam element with a square section, constructed from the WorldXY Frame.
@@ -318,19 +306,21 @@ class BeamProfileElement(BeamElement):
         self.is_support: bool = is_support
         self._length: float = abs(length)
         self.section: Polygon = polygon
-        self._shape: Optional[Mesh] = shape # public property that can be changed any time
+        self._shape: Optional[Mesh] = shape  # public property that can be changed any time
+        box = Box.from_points(bounding_box(polygon.points))
+        self.width = box.xsize
+        self.height = box.ysize
 
     @property
     def shape(self) -> Mesh:
         return self._shape
-    
+
     @shape.setter
     def shape(self, shape: Mesh):
         self._shape = shape
         self._geometry = None
 
-    def _loft (self, polygon: Polygon) -> Mesh:
-
+    def _loft(self, polygon: Polygon) -> Mesh:
         plane0: Plane = Plane(self.center_line.start, self.center_line.direction)
         plane1: Plane = Plane(self.center_line.end, self.center_line.direction)
         points0: list[list[float]] = []
@@ -356,23 +346,21 @@ class BeamProfileElement(BeamElement):
         top_faces: list[list[int]] = []
         bottom_faces: list[list[int]] = []
         for i in range(len(triangles)):
-            triangle_top: list[int] = []
-            triangle_bottom: list[int] = []
-            for j in range(3):
-                triangle_top.append(triangles[i][j] + offset)
-                triangle_bottom.append(triangles[i][j])
-            top_faces.append(triangle_top)
-            triangle_bottom.reverse()
-            bottom_faces.append(triangle_bottom)
+            # Create bottom faces with original winding
+            bottom_faces.append(triangles[i])
+            # Create top faces with consistent winding and offset
+            top_face = [triangles[i][0] + offset, triangles[i][2] + offset, triangles[i][1] + offset]
+            top_faces.append(top_face)
+
         faces: list[list[int]] = bottom_faces + top_faces
 
+        # Create side faces with consistent winding
         bottom: list[int] = list(range(offset))
         top: list[int] = [i + offset for i in bottom]
         for (a, b), (c, d) in zip(pairwise(bottom + bottom[:1]), pairwise(top + top[:1])):
-            faces.append([a, b, d, c])  # Ensure consistent winding order
+            faces.append([a, c, d, b])  # Changed winding order for side faces
         mesh: Mesh = Mesh.from_vertices_and_faces(vertices, faces)
         return mesh
-
 
     def compute_elementgeometry(self) -> Mesh:
         """Compute the top and bottom polygons of the beam.
@@ -386,21 +374,19 @@ class BeamProfileElement(BeamElement):
         if self.features:
             shape = self.shape if self.shape else self._loft(self.section)
             mid_point: Point = self.center_line.midpoint
-            cut_meshes : list[Mesh] = []
+            cut_meshes: list[Mesh] = []
             for feature in self.features:
-                if isinstance(feature, BeamProfileFeature):
+                if isinstance(feature, BeamFeature):
                     cut_mesh: Mesh = self._loft(feature.section)
-                    frame = Frame(mid_point, [1,0,0], [0,1,0])
-                    cut_mesh.transform(Scale.from_factors([1,1,2], frame))
+                    frame = Frame(mid_point, [1, 0, 0], [0, 1, 0])
+                    cut_mesh.transform(Scale.from_factors([1, 1, 2], frame))
                     cut_meshes.append(cut_mesh)
-            
+
             from compas.geometry import boolean_intersection_mesh_mesh
 
             for cut_mesh in cut_meshes:
                 A = shape.to_vertices_and_faces(triangulated=True)
                 B = cut_mesh.to_vertices_and_faces(triangulated=True)
-
-                from compas import json_dump
 
                 V, F = boolean_intersection_mesh_mesh(A, B)
                 shape: Mesh = Mesh.from_vertices_and_faces(V, F) if len(V) > 0 and len(F) > 0 else shape
@@ -418,9 +404,7 @@ class BeamProfileElement(BeamElement):
     @length.setter
     def length(self, length: float):
         self._length = length
-        self.section = Polygon(list(self.points))
         self.compute_elementgeometry()
-
 
     @property
     def center_line(self) -> Line:
@@ -510,7 +494,8 @@ class BeamProfileElement(BeamElement):
         is_support: bool = False,
         transformation: Optional[Transformation] = None,
         features: Optional[list[BeamFeature]] = None,
-        name: Optional[str] = None,) -> None:
+        name: Optional[str] = None,
+    ) -> None:
         """Create a T profile beam element.
 
         Parameters
@@ -541,23 +526,24 @@ class BeamProfileElement(BeamElement):
         _step_width_right: float = abs(step_width_right) if step_width_right is not None else step_width_left
         _step_height_left: float = abs(step_height_left)
         _step_height_right: float = abs(step_height_right) if step_height_right is not None else step_height_left
-     
 
         _step_width_left = min(_step_width_left, width * 0.5 * 0.999)
         _step_width_right = min(_step_width_right, width * 0.5 * 0.999)
         _step_height_left = min(_step_height_left, height)
         _step_height_right = min(_step_height_right, height)
 
-        polygon = Polygon([
-            [_width * 0.5, -_height * 0.5, 0],
-            [-_width * 0.5, -_height * 0.5, 0],
-            [-_width * 0.5, -_height * 0.5 + _step_height_left, 0],
-            [-_width * 0.5 + _step_width_left, -_height * 0.5 + _step_height_left, 0],
-            [-_width * 0.5 + _step_width_left, _height * 0.5, 0],
-            [_width * 0.5 - _step_width_right, _height * 0.5, 0],
-            [_width * 0.5 - _step_width_right, -_height * 0.5 + _step_height_right, 0],
-            [_width * 0.5, -_height * 0.5 + _step_height_right, 0],
-        ])
+        polygon = Polygon(
+            [
+                [_width * 0.5, -_height * 0.5, 0],
+                [-_width * 0.5, -_height * 0.5, 0],
+                [-_width * 0.5, -_height * 0.5 + _step_height_left, 0],
+                [-_width * 0.5 + _step_width_left, -_height * 0.5 + _step_height_left, 0],
+                [-_width * 0.5 + _step_width_left, _height * 0.5, 0],
+                [_width * 0.5 - _step_width_right, _height * 0.5, 0],
+                [_width * 0.5 - _step_width_right, -_height * 0.5 + _step_height_right, 0],
+                [_width * 0.5, -_height * 0.5 + _step_height_right, 0],
+            ]
+        )
 
         if inverted:
             mirror_line: Line = Line([0, 0, 0], [1, 0, 0])
@@ -578,3 +564,166 @@ class BeamProfileElement(BeamElement):
     #     """Create a V profile beam element."""
 
     # pass
+
+
+class BeamShapeElement(BeamElement):
+    """Class representing a beam element with I profile.
+
+    Parameters
+    ----------
+    polygon : :class:`compas.geometry.Polygon`
+        The section of the beam.
+    length : float, optional
+        The length of the beam.
+    is_support : bool, optional
+        Flag indicating if the beam is a support.
+    transformation : :class:`compas.geometry.Transformation`, optional
+        The transformation applied to the beam.
+    features : list[:class:`compas_model.features.BeamFeature`], optional
+        The features of the beam.
+    name : str, optional
+        The name of the element.
+
+    Attributes
+    ----------
+    center_line : :class:`compas.geometry.Line`
+        The axis of the beam.
+    section : :class:`compas.geometry.Polygon`
+        The section of the beam.
+
+    """
+
+    @property
+    def __data__(self) -> dict:
+        return {
+            "shape": self.shape,
+            "length": self.length,
+            "is_support": self.is_support,
+            "transformation": self.transformation,
+            "features": self._features,
+            "name": self.name,
+        }
+
+    def __init__(
+        self,
+        shape: Union[Mesh, Brep] = None,
+        length: float = 3.0,
+        is_support: bool = False,
+        transformation: Optional[Transformation] = None,
+        features: Optional[list[BeamFeature]] = None,
+        name: Optional[str] = None,
+    ) -> "BeamProfileElement":
+        super().__init__(transformation=transformation, features=features, name=name)
+
+        self._shape: Union[Mesh, Brep] = shape  # public property that can be changed any time
+        self._length: float = abs(length)
+        self.is_support: bool = is_support
+        self._sticky_frame = shape.face_polygon(0).frame
+
+    @property
+    def shape(self) -> Union[Mesh, Brep]:
+        return self._shape
+
+    @shape.setter
+    def shape(self, shape: Union[Mesh, Brep]):
+        self._shape = shape
+        self._geometry = None
+
+    @property
+    def sticky_frame(self) -> Frame:
+        return self._sticky_frame
+
+    def compute_elementgeometry(self) -> Mesh:
+        """Compute the top and bottom polygons of the beam.
+
+        Returns
+        -------
+        :class:`compas.datastructures.Mesh`
+            The mesh of the beam.
+        """
+
+        return self.shape
+
+    @property
+    def length(self) -> float:
+        return self._length
+
+    @length.setter
+    def length(self, length: float):
+        self._length = length
+        self.section = Polygon(list(self.points))
+        self.compute_elementgeometry()
+
+    @property
+    def center_line(self) -> Line:
+        return Line([0, 0, 0], [0, 0, self.length])
+
+    def extend(self, distance: float) -> None:
+        """Extend the beam.
+
+        Parameters
+        ----------
+        distance : float
+            The distance to extend the beam.
+        """
+        self.length = self.length + distance * 2
+        xform: Transformation = Translation.from_vector([0, 0, -distance])
+        self.transformation = self.transformation * xform
+        self.compute_elementgeometry()
+
+    def compute_aabb(self, inflate: Optional[bool] = None) -> Box:
+        """Compute the axis-aligned bounding box of the element.
+
+        Parameters
+        ----------
+        inflate : float, optional
+            The inflation factor of the bounding box.
+
+        Returns
+        -------
+        :class:`compas.geometry.Box`
+            The axis-aligned bounding box.
+        """
+
+        box = self.modelgeometry.aabb()
+        if inflate and inflate != 1.0:
+            box.xsize += inflate
+            box.ysize += inflate
+            box.zsize += inflate
+        self._aabb = box
+        return box
+
+    def compute_obb(self, inflate: Optional[bool] = None) -> Box:
+        """Compute the oriented bounding box of the element.
+
+        Parameters
+        ----------
+        inflate : float, optional
+            The inflation factor of the bounding box.
+
+        Returns
+        -------
+        :class:`compas.geometry.Box`
+            The oriented bounding box.
+        """
+        box = self.modelgeometry.oobb()
+        if inflate and inflate != 1.0:
+            box.xsize += inflate
+            box.ysize += inflate
+            box.zsize += inflate
+        self._obb = box
+        return box
+
+    def compute_collision_mesh(self) -> Mesh:
+        """Compute the collision mesh of the element.
+
+        Returns
+        -------
+        :class:`compas.datastructures.Mesh`
+            The collision mesh.
+        """
+        return self.modelgeometry
+
+    # =============================================================================
+    # Constructors
+    # =============================================================================
