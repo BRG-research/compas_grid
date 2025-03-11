@@ -458,7 +458,7 @@ class BeamProfileElement(BeamElement):
         :class:`compas.geometry.Box`
             The oriented bounding box.
         """
-        box = self.modelgeometry.oobb()
+        box = self.modelgeometry.obb()
         if inflate and inflate != 1.0:
             box.xsize += inflate
             box.ysize += inflate
