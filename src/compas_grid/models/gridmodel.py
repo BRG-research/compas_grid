@@ -165,7 +165,6 @@ class GridModel(Model):
             "elements": list(self.elements()),
             "materials": list(self.materials()),
             "element_material": {str(element.guid): str(element.material.guid) for element in self.elements() if element.material},
-            
         }
         return data
 
