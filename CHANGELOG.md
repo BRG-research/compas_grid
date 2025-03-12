@@ -13,12 +13,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [0.5.0] 2025-03-12
+
+### Added
+
+### Changed
+-   Alignment with compas_model transformations.
+
+### Removed
+
 
 ## [0.3.0] 2025-01-22
 
 ### Added
 
-### Changed
+### 
+
+-   Preparation for CARBCOMN workshop.
 
 ### Removed
 
