@@ -159,11 +159,13 @@ class GridModel(Model):
         # refer to model elements by their GUID, to avoid storing duplicate data representations of those elements
         # the elements are stored in a global list
         data = {
+            "transformation": self.transformation,
             "tree": self._tree.__data__,
             "graph": self._graph.__data__,
             "elements": list(self.elements()),
             "materials": list(self.materials()),
             "element_material": {str(element.guid): str(element.material.guid) for element in self.elements() if element.material},
+            
         }
         return data
 
